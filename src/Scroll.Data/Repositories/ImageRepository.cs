@@ -1,104 +1,90 @@
-﻿namespace Scroll.Service.Data;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Scroll.Library.Models.DTOs;
+
+namespace Scroll.Service.Data;
 
 public class ImageRepository
 {
-    //private readonly IMongoDatabase _database;
-    //private readonly GridFSBucket _bucket;
+    private const string ImageContainerName = "ScrollImages";
 
-    //public ImageRepository(
-    //    IMongoDatabase database)
-    //{
-    //    _database = database;
+    private readonly BlobServiceClient _blobServiceClient;
+    private readonly BlobContainerClient _containerClient;
 
-    //    _bucket =
-    //        new GridFSBucket(
-    //            database,
-    //            MongoDbConfig.ImageBucketOptions);
-    //}
+    public ImageRepository(
+        BlobServiceClient blobServiceClient)
+    {
+        _blobServiceClient =
+            blobServiceClient;
 
-    //public async Task<Image> Upload(Image image)
-    //{
-    //    var id =
-    //        await _bucket
-    //            .UploadFromBytesAsync(
-    //                image.Name,
-    //                image.Data);
+        _containerClient =
+            _blobServiceClient
+                .GetBlobContainerClient(ImageContainerName);
+    }
 
-    //    return image with { Id = id };
-    //}
+    public async Task Upload(string filePath, string fileName)
+    {
+        var blobClient =
+            _containerClient.GetBlobClient(fileName);
 
-    //public async Task<Image?> Download(ObjectId id)
-    //{
-    //    var bytes =
-    //        await _bucket.DownloadAsBytesAsync(id);
+        await blobClient
+            .UploadAsync(
+                filePath,
+                new BlobHttpHeaders
+                {
+                    ContentType = filePath.GetContentType()
+                });
+    }
 
-    //    if (bytes is not { Length: > 0 })
-    //    {
-    //        return null;
-    //    }
+    public Task Upload(FileInfo fileInfo) =>
+        Upload(fileInfo.FullName, fileInfo.Name);
 
-    //    return new Image
-    //    {
-    //        Id   = id,
-    //        Data = bytes
-    //    };
-    //}
+    public async Task Upload(Stream stream, string fileName)
+    {
+        var blobClient =
+            _containerClient.GetBlobClient(fileName);
 
-    //public async Task<Image?> Download(string name)
-    //{
-    //    var bytes =
-    //        await _bucket.DownloadAsBytesByNameAsync(name);
+        await blobClient.UploadAsync(stream);
+    }
 
-    //    var id =
-    //        await GetIdFromFileName(name);
+    public async Task<Picture?> Download(string fileName)
+    {
+        var blobClient =
+            _containerClient.GetBlobClient(fileName);
 
-    //    if (id is null)
-    //    {
-    //        return null;
-    //    }
+        var downloadInfo =
+            await blobClient.DownloadAsync();
 
-    //    return new Image
-    //    {
-    //        Id   = id.Value,
-    //        Name = name,
-    //        Data = bytes
-    //    };
-    //}
+        if (downloadInfo is null)
+        {
+            return null;
+        }
 
-    //public async Task<ObjectId?> GetIdFromFileName(string fileName)
-    //{
-    //    var filesCollection =
-    //        _database.GetCollection<dynamic>(
-    //            MongoDbConfig.ImageBucketOptions.BucketName
-    //            + ".files");
+        var picture =
+            new Picture(
+                downloadInfo.Value.Content,
+                fileName,
+                downloadInfo.Value.Details.ContentType,
+                downloadInfo.Value.Details.ContentLength);
 
-    //    var filter =
-    //        Builders<dynamic>.Filter
-    //            .Eq("filename", fileName);
+        return picture;
+    }
 
-    //    var projection =
-    //        Builders<dynamic>.Projection
-    //            .Include("_id");
+    public async Task<bool> Exists(string name)
+    {
+        var blobClient =
+            _containerClient.GetBlobClient(name);
 
-    //    var document =
-    //        await filesCollection
-    //            .Find(filter)
-    //            .Project(projection)
-    //            .FirstOrDefaultAsync();
+        return await blobClient.ExistsAsync();
+    }
 
-    //    return document?[0].AsNullableObjectId;
-    //}
+    public async Task Delete(string name)
+    {
+        var blobClient =
+            _containerClient.GetBlobClient(name);
 
-    //public async Task<bool> Exists(string name) =>
-    //    await GetIdFromFileName(name) is not null;
-
-    //public async Task Delete(string name)
-    //{
-    //    var id =
-    //        await GetIdFromFileName(name);
-
-    //    await _bucket.DeleteAsync(id);
-    //}
+        await blobClient.DeleteIfExistsAsync();
+    }
 
     //public async Task<PagedList<ImageInfo>> GetAll(
     //    int pageIndex = 0,
