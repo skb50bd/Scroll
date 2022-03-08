@@ -1,4 +1,5 @@
-﻿using Scroll.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Scroll.Data;
 using Scroll.Library.Models.Entities;
 
 namespace Scroll.Service.Data;
@@ -50,4 +51,9 @@ public class Repository<T> : IRepository<T> where T : Entity
 
         return numOfRowsAffected > 0;
     }
+
+    public Task<bool> Exists(int id) =>
+        _dbContext
+            .Set<T>()
+            .AnyAsync(p => p.Id == id);
 }

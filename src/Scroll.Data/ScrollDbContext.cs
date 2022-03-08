@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Scroll.Data.Mappers;
 
 namespace Scroll.Data;
 
-public class ScrollDbContext : DbContext
+public class ScrollDbContext : IdentityDbContext
 {
     public ScrollDbContext(
         DbContextOptions<ScrollDbContext> options)

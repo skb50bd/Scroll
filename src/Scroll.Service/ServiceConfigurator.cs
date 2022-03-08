@@ -13,8 +13,9 @@ public static class ServiceConfigurator
     {
         services.ConfigureData(config);
 
-        services.AddScoped<ImageProcessingService>();
-        services.AddScoped<ImageService>();
+        services.AddScoped<IPictureProcessor, PictureProcessor>();
+        services.AddScoped<IPictureService, PictureService>();
+        services.AddScoped<IProductService, ProductService>();
 
         return services;
     }

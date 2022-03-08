@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Scroll.Library.Models;
 using Scroll.Library.Models.EditModels;
 using Scroll.Library.Models.Entities;
-using Scroll.Service.Data;
+using Scroll.Service.Services;
 
 namespace Scroll.Web.Controllers;
 
@@ -10,42 +10,54 @@ namespace Scroll.Web.Controllers;
 [Route("api/[controller]")]
 public class ProductController : ControllerBase
 {
-    //private readonly ILogger<ProductController> _logger;
-    //private readonly ProductRepository _repo;
+    private readonly ILogger<ProductController> _logger;
+    private readonly IProductService _productService;
 
-    //public ProductController(
-    //    ILogger<ProductController> logger,
-    //    ProductRepository repo)
-    //{
-    //    _logger = logger;
-    //    _repo   = repo;
-    //}
+    public ProductController(
+        ILogger<ProductController> logger,
+        IProductService productService)
+    {
+        _logger = logger;
+        _productService   = productService;
+    }
 
-    //[HttpGet]
-    //public Task<PagedList<Product>> Get(
-    //    int pageIndex = 0,
-    //    int pageSize = 40) =>
-    //        _repo.Get(pageIndex, pageSize);
+    [HttpGet]
+    public Task<PagedList<Product>> Get(
+        int pageIndex = 0,
+        int pageSize = 40) =>
+            _productService.GetPaged(pageIndex, pageSize);
 
-    //[HttpPost]
-    //[HttpPut]
-    //public async Task<ActionResult<Product>> Post(ProductEditModel model)
-    //{
-    //    if (ModelState.IsValid is false)
-    //    {
-    //        return BadRequest(model);
-    //    }
+    [HttpPost]
+    public async Task<ActionResult<Product>> Post(ProductEditModel model)
+    {
+        if (ModelState.IsValid is false)
+        {
+            return BadRequest(model);
+        }
 
-    //    var product = await _repo.Upsert(model);
+        var product = await _productService.Insert(model);
 
-    //    return product;
-    //}
+        return product;
+    }
 
-    //[HttpDelete]
-    //public Task<bool> Delete(string productId) =>
-    //    _repo.Delete(ObjectId.Parse(productId));
+    [HttpPut]
+    public async Task<ActionResult<Product>> Put(ProductEditModel model)
+    {
+        if (ModelState.IsValid is false)
+        {
+            return BadRequest(model);
+        }
 
-    //[HttpPost("{productId}")]
-    //public Task<int> Clicked(string productId) =>
-    //    _repo.Clicked(ObjectId.Parse(productId));
+        var product = await _productService.Update(model);
+
+        return product;
+    }
+
+    [HttpDelete]
+    public Task<bool> Delete(int productId) =>
+        _productService.Delete(productId);
+
+    [HttpPost("Clicked/{productId}")]
+    public Task<int?> Clicked(int productId) =>
+        _productService.IncrementClickedCount(productId);
 }

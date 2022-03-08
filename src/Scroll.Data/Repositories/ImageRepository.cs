@@ -1,18 +1,22 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Microsoft.EntityFrameworkCore;
 using Scroll.Library.Models.DTOs;
+using Scroll.Library.Models.Entities;
 
 namespace Scroll.Service.Data;
 
-public class ImageRepository
+public class ImageRepository : IImageRepository
 {
     private const string ImageContainerName = "ScrollImages";
 
     private readonly BlobServiceClient _blobServiceClient;
     private readonly BlobContainerClient _containerClient;
+    private readonly IRepository<Product> _productsRepository;
 
     public ImageRepository(
-        BlobServiceClient blobServiceClient)
+        BlobServiceClient blobServiceClient,
+        IRepository<Product> productsRepository)
     {
         _blobServiceClient =
             blobServiceClient;
@@ -20,6 +24,9 @@ public class ImageRepository
         _containerClient =
             _blobServiceClient
                 .GetBlobContainerClient(ImageContainerName);
+
+        _productsRepository =
+            productsRepository;
     }
 
     public async Task Upload(string filePath, string fileName)
@@ -86,85 +93,41 @@ public class ImageRepository
         await blobClient.DeleteIfExistsAsync();
     }
 
-    //public async Task<PagedList<ImageInfo>> GetAll(
-    //    int pageIndex = 0,
-    //    int pageSize = 10)
-    //{
-    //    var filesCollection =
-    //        _database.GetCollection<dynamic>(
-    //            MongoDbConfig.ImageBucketOptions.BucketName
-    //            + ".files");
+    private static PictureInfo ConvertToPictureInfo(BlobItem blobItem) =>
+        new()
+        {
+            Name        = blobItem.Name,
+            ContentType = blobItem.Properties.ContentType,
+            UploadedOn  = blobItem.Properties.CreatedOn,
+            Size        = blobItem.Properties.ContentLength ?? 0
+        };
 
-    //    var filter =
-    //        Builders<dynamic>.Filter.Empty;
+    public async IAsyncEnumerable<PictureInfo> GetAll()
+    {
+        await foreach (var blobItem in _containerClient.GetBlobsAsync())
+        {
+            yield return ConvertToPictureInfo(blobItem);
+        }
+    }
 
-    //    var projection =
-    //        Builders<dynamic>.Projection
-    //            .Include("_id")
-    //            .Include("length")
-    //            .Include("uploadDate")
-    //            .Include("filename");
+    public async Task DeleteFilesWithoutReference()
+    {
+        var referencedImageNames =
+            await _productsRepository
+                .GetAll()
+                .Select(p => p.ImageName)
+                .ToListAsync();
 
-    //    var query =
-    //        filesCollection
-    //            .Find(filter)
-    //            .Project(projection);
+        var referencedImageNamesSet =
+            referencedImageNames.ToHashSet();
 
-    //    var totalCount =
-    //        await query.CountDocumentsAsync();
-
-    //    var documents =
-    //        await query
-    //            .Skip(pageSize * pageIndex)
-    //            .Limit(pageSize)
-    //            .ToListAsync();
-
-    //    var files =
-    //        documents
-    //            .Select(doc => new ImageInfo
-    //            {
-    //                Id         = doc[0].AsObjectId,
-    //                Size       = doc[1].AsInt64,
-    //                UploadedOn = doc[2].AsBsonDateTime.ToLocalTime(),
-    //                Name       = doc[3].AsString
-    //            })
-    //            .ToList();
-
-    //    return new(
-    //        files,
-    //        pageSize,
-    //        pageIndex,
-    //        (int)totalCount);
-    //}
-
-    //public async Task DeleteFilesWithoutReference()
-    //{
-    //    var productCol =
-    //        _database.GetCollection<Product>(nameof(Product));
-
-    //    var referencedImageNames =
-    //        await productCol
-    //            .Find(Builders<Product>.Filter.Empty)
-    //            .Project(Builders<Product>.Projection.Expression(p => p.ImageName))
-    //            .ToListAsync();
-
-    //    var referencedImageNamesSet =
-    //        referencedImageNames.ToHashSet();
-
-    //    var allImages =
-    //        await GetAll(0, int.MaxValue);
-
-    //    var allImageIdsWithoutRereference =
-    //        allImages
-    //            .Items
-    //            .Where(i => referencedImageNamesSet.Contains(i.Name) is false)
-    //            .Where(i => i.UploadedOn < DateTime.Now.AddDays(1))
-    //            .Select(i => i.Id)
-    //            .ToList();
-
-    //    foreach (var id in allImageIdsWithoutRereference)
-    //    {
-    //        await _bucket.DeleteAsync(id);
-    //    }
-    //}
+        await foreach (var picture in GetAll())
+        {
+            if (referencedImageNamesSet.Contains(picture.Name) is false
+                && picture.UploadedOn < DateTimeOffset.UtcNow.AddDays(-1))
+            {
+                await Delete(picture.Name);
+            }
+        }
+    }
 }

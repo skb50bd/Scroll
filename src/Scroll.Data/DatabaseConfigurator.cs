@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Storage.Blobs;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Scroll.Data;
@@ -12,11 +13,17 @@ public static class DatabaseConfigurator
         this IServiceCollection services,
         IConfiguration config)
     {
+        // Add the SQL Server DB Connection
         services.AddDbContext<ScrollDbContext>(opt =>
             opt.UseSqlServer(
                 config.GetConnectionString("ScrollDb")));
 
-        services.AddScoped<ImageRepository>();
+        // Add the Blob Storage Connection
+        services.AddSingleton(x =>
+            new BlobServiceClient(
+                config.GetConnectionString("BlobStorage")));
+
+        services.AddScoped<IImageRepository, ImageRepository>();
         services.AddScoped<IRepository<Product>, Repository<Product>>();
         services.AddScoped<IRepository<Category>, Repository<Category>>();
 

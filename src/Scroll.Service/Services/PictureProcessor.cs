@@ -4,12 +4,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Scroll.Service.Services;
 
-public class ImageProcessingService
+public class PictureProcessor : IPictureProcessor
 {
-    private readonly ILogger<ImageProcessingService> _logger;
+    private readonly ILogger<PictureProcessor> _logger;
 
-    public ImageProcessingService(
-        ILogger<ImageProcessingService> logger)
+    public PictureProcessor(
+        ILogger<PictureProcessor> logger)
     {
         _logger = logger;
     }
