@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,10 @@ public static class DatabaseConfigurator
         services.AddDbContext<ScrollDbContext>(opt =>
             opt.UseSqlServer(
                 config.GetConnectionString("ScrollDb")));
+
+        services
+            .AddIdentity<AppUser, IdentityRole<int>>()
+            .AddEntityFrameworkStores<ScrollDbContext>();
 
         // Add the Blob Storage Connection
         services.AddSingleton(x =>
