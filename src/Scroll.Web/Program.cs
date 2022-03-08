@@ -1,4 +1,5 @@
 using Scroll.Service.DependencyInjection;
+using Scroll.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.ConfigureServices(builder.Configuration);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddOptions();
+builder.Services.Configure<SiteSetting>(
+    builder.Configuration.GetSection(SiteSetting.Key));
 
 var app = builder.Build();
 
