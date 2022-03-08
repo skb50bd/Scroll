@@ -8,7 +8,7 @@ namespace Scroll.Service.Data;
 
 public class ImageRepository : IImageRepository
 {
-    private const string ImageContainerName = "ScrollImages";
+    private const string ImageContainerName = "scrollimages";
 
     private readonly BlobServiceClient _blobServiceClient;
     private readonly BlobContainerClient _containerClient;

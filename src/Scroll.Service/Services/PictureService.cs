@@ -33,20 +33,22 @@ public class PictureService : IPictureService
         var resizedImageInfo =
             await _processor.ResizeImage(convertedFile);
 
-        var compressedImageInfo =
-            _processor.CompressImage(resizedImageInfo);
+        // Tests show compression save no space
+        // after webp conversion
+        //var compressedImageInfo =
+        //    _processor.CompressImage(resizedImageInfo);
 
         var nameWithoutExt =
             Path.GetFileNameWithoutExtension(name);
 
         var extension =
-            Path.GetExtension(compressedImageInfo.Name);
+            Path.GetExtension(resizedImageInfo.Name);
 
         var fileName =
             nameWithoutExt + extension;
 
         await _repo.Upload(
-            filePath: compressedImageInfo.FullName,
+            filePath: resizedImageInfo.FullName,
             fileName);
 
         return fileName;
