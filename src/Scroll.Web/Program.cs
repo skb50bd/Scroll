@@ -1,7 +1,11 @@
+using Scroll.Library.Models.Mappers;
 using Scroll.Service.DependencyInjection;
 using Scroll.Web;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAutoMapper(
+    typeof(MappingConfig).Assembly);
 
 builder.Services.AddControllers();
 builder.Services.AddRazorPages();

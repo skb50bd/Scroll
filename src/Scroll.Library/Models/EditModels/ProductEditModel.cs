@@ -11,7 +11,7 @@ public class ProductEditModel
     public string Title { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(500, MinimumLength = 5)]
+    [StringLength(5000, MinimumLength = 5)]
     public string Description { get; set; } = string.Empty;
 
     [DataType(DataType.Currency)]
@@ -23,6 +23,4 @@ public class ProductEditModel
 
     [Required]
     public string ImageName { get; set; } = string.Empty;
-
-    public List<string> Tags { get; set; } = new();
 }

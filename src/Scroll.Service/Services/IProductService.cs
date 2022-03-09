@@ -1,18 +1,41 @@
 ﻿using Scroll.Library.Models;
+using Scroll.Library.Models.DTOs;
 using Scroll.Library.Models.EditModels;
-using Scroll.Library.Models.Entities;
 
-namespace Scroll.Service.Services
+namespace Scroll.Service.Services;
+
+public enum ProductSortOrder
 {
-    public interface IProductService
-    {
-        Task<bool> Delete(int id);
-        Task<bool> Exists(int id);
-        Task<Product?> Get(int id);
-        Task<PagedList<Product>> GetPaged(int pageIndex = 0, int pageSize = 40);
-        Task<int?> IncrementClickedCount(int productId);
-        Task<Product> Insert(ProductEditModel editModel);
-        Task<int> NewProductFavorite(int productId, string userName);
-        Task<Product> Update(ProductEditModel editModel);
-    }
+    IdAsc          = 1,
+    IdDesc         = 2,
+    NameAsc        = 3,
+    NameDesc       = 4,
+    FavoriteAsc    = 5,
+    FavoriteDesc   = 6,
+    ClickedAsc     = 7,
+    ClickedDesc    = 8
+}
+
+public class ProductFilterModel
+{
+    public string? SearchString { get; set; } = string.Empty;
+    public int? CategoryId { get; set; }
+    public ProductSortOrder? SortBy { get; set; } = ProductSortOrder.IdDesc;
+}
+
+public interface IProductService
+{
+    Task<bool> Delete(int id);
+    Task<bool> Exists(int id);
+    Task<ProductDto?> Get(int id);
+
+    Task<PagedList<ProductDto>> GetPaged(
+        int pageIndex = 0,
+        int pageSize = 40,
+        ProductFilterModel? filter = null);
+
+    Task<int?> IncrementClickedCount(int productId);
+    Task<ProductDto> Insert(ProductEditModel editModel);
+    Task<int> NewProductFavorite(int productId, string userName);
+    Task<ProductDto> Update(ProductEditModel editModel);
 }

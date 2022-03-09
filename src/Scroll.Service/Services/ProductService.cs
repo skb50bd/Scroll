@@ -1,63 +1,116 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Scroll.Data;
 using Scroll.Library.Models;
+using Scroll.Library.Models.DTOs;
 using Scroll.Library.Models.EditModels;
 using Scroll.Library.Models.Entities;
-using Scroll.Library.Models.Mappers;
+using Scroll.Library.Utils;
 using Scroll.Service.Data;
+using static Scroll.Service.Services.ProductSortOrder;
 
 namespace Scroll.Service.Services;
 
 public class ProductService : IProductService
 {
+    private readonly IMapper _mapper;
     private readonly IRepository<Product> _productRepo;
     private readonly UserManager<AppUser> _userManager;
 
     public ProductService(
         IRepository<Product> productRepo,
-        UserManager<AppUser> userManager)
+        UserManager<AppUser> userManager,
+        IMapper mapper)
     {
         _productRepo = productRepo;
         _userManager = userManager;
+        _mapper      = mapper;
     }
 
-    public Task<Product?> Get(int id) =>
-        _productRepo.Get(id);
+    public async Task<ProductDto?> Get(int id) =>
+        _mapper.Map<ProductDto?>(
+            await _productRepo.Get(id));
 
-    public Task<PagedList<Product>> GetPaged(
+    public async Task<PagedList<ProductDto>> GetPaged(
         int pageIndex = 0,
-        int pageSize = 40) =>
-            _productRepo
-                .GetAll()
-                .ToPagedList(pageIndex, pageSize);
+        int pageSize = 40,
+        ProductFilterModel? filter = null)
+    {
+        var query =
+            _productRepo.GetAll();
 
-    public async Task<Product> Insert(ProductEditModel editModel)
+        if (filter?.CategoryId > 0 )
+        {
+            query =
+                query.Where(c =>
+                    c.Categories.Any(c =>
+                        c.Id == filter.CategoryId));
+        }
+
+        if (filter?.SearchString.IsNotBlank() ?? false)
+        {
+            query =
+                query.Where(c =>
+                    c.Title.Contains(filter.SearchString));
+        }
+
+        if (filter?.SortBy is not null)
+        {
+            query =
+                filter.SortBy switch
+                {
+                    IdAsc        => query.OrderBy(c => c.Id),
+                    IdDesc       => query.OrderByDescending(c => c.Id),
+                    NameAsc      => query.OrderBy(p => p.Title),
+                    NameDesc     => query.OrderByDescending(p => p.Title),
+                    FavoriteAsc  => query.OrderBy(p => p.FavoriteCount),
+                    FavoriteDesc => query.OrderByDescending(p => p.FavoriteCount),
+                    ClickedAsc   => query.OrderBy(p => p.ClickCount),
+                    ClickedDesc  => query.OrderByDescending(p => p.ClickCount),
+                    _            => throw new NotImplementedException(
+                                        $"{filter.SortBy} not implemented.")
+                };
+        }
+
+        var products =
+            await query.ToPagedList(pageIndex, pageSize);
+
+        return _mapper.Map<PagedList<ProductDto>>(products);
+    }
+
+    public async Task<ProductDto> Insert(ProductEditModel editModel)
     {
         var entity =
-            editModel.ToEntity();
+            _mapper.Map<Product>(editModel);
 
         await _productRepo.Upsert(entity);
 
-        return entity;
+        return _mapper.Map<ProductDto>(entity);
     }
 
-    public async Task<Product> Update(ProductEditModel editModel)
+    public async Task<ProductDto> Update(ProductEditModel editModel)
     {
-        var original =
-            await Get(editModel.Id);
+        var originalProduct =
+            await _productRepo.Get(editModel.Id);
 
-        if (original is null)
+        if (originalProduct is null)
         {
             throw new ArgumentException(
                 "Invalid Update Operation. Entity doesn't exist");
         }
 
-        var updated =
-            editModel.ToEntity(original);
+        var updatedProduct =
+            _mapper.Map(editModel, originalProduct);
 
-        await _productRepo.Upsert(updated);
+        if (updatedProduct is null)
+        {
+            throw new NullReferenceException(
+                $"{nameof(updatedProduct)} is null");
+        }
 
-        return updated;
+        await _productRepo.Upsert(updatedProduct);
+
+        return _mapper.Map<ProductDto>(updatedProduct);
     }
 
     public Task<bool> Delete(int id) =>
@@ -69,7 +122,7 @@ public class ProductService : IProductService
     public async Task<int?> IncrementClickedCount(int productId)
     {
         var product =
-            await Get(productId);
+            await _productRepo.Get(productId);
 
         if (product is null)
         {
