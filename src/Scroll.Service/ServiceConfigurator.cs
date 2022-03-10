@@ -15,6 +15,7 @@ public static class ServiceConfigurator
 
         services.AddScoped<IPictureProcessor, PictureProcessor>();
         services.AddScoped<IPictureService, PictureService>();
+        services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
 
         return services;

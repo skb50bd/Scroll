@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Scroll.Library.Models.DTOs;
 using Scroll.Service.Services;
 
-namespace Scroll.Web.Areas.Admin.Products;
+namespace Scroll.Web.Areas.Admin.Pages.Products;
 
 public class IndexModel : PageModel
 {

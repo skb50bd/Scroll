@@ -16,3 +16,13 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.form-floating {
+    margin-bottom: 1rem;
+}

@@ -2,7 +2,7 @@
 
 namespace Scroll.Library.Models.EditModels;
 
-public class ProductEditModel
+public record class ProductEditModel
 {
     public int Id { get; set; }
 

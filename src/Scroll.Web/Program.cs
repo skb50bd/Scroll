@@ -5,10 +5,17 @@ using Scroll.Web;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAutoMapper(
-    typeof(MappingConfig).Assembly);
+    typeof(MappingProfile).Assembly);
 
 builder.Services.AddControllers();
-builder.Services.AddRazorPages();
+
+var mvcBuilder = builder.Services.AddRazorPages();
+
+if (builder.Environment.IsDevelopment())
+{
+    mvcBuilder.AddRazorRuntimeCompilation();
+}
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.ConfigureServices(builder.Configuration);

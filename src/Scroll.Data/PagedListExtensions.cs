@@ -15,7 +15,7 @@ public static class PagedListExtensions
 
         var items =
             await source
-                .Skip(pageIndex)
+                .Skip(pageIndex * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
@@ -39,7 +39,7 @@ public static class PagedListExtensions
 
         var items =
             await source
-                .Skip(pageIndex)
+                .Skip(pageIndex * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 

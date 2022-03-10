@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Scroll.Data;
 using Scroll.Library.Models;
 using Scroll.Library.Models.DTOs;
@@ -73,7 +74,9 @@ public class ProductService : IProductService
         }
 
         var products =
-            await query.ToPagedList(pageIndex, pageSize);
+            await query
+                .Include(p => p.Categories)
+                .ToPagedList(pageIndex, pageSize);
 
         return _mapper.Map<PagedList<ProductDto>>(products);
     }

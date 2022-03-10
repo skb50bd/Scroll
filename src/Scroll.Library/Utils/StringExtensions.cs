@@ -13,11 +13,21 @@ public static class StringExtensions
         [MaybeNullWhen(true)]
         [NotNullWhen(false)]
         this string? str) =>
-            str.IsNotBlank() is false;
+            string.IsNullOrWhiteSpace(str);
 
     public static bool IsNotBlank(
         [MaybeNullWhen(false)]
         [NotNullWhen(true)]
         this string? str) =>
-            string.IsNullOrWhiteSpace(str);
+            str.IsBlank() is false;
+
+    public static string Glimpse(this string str, int length)
+    {
+        if (str.Length <= length)
+        {
+            return str;
+        }
+
+        return $"{str[..length].TrimEnd()}...";
+    }
 }

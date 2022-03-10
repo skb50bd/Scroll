@@ -1,8 +1,7 @@
 ﻿namespace Scroll.Library.Models;
 
-public class PagedList<T>
+public class PagedList
 {
-    public IList<T> Items { get; set; }
     public int PageSize { get; set; }
     public int PageIndex { get; set; }
     public int Count { get; set; }
@@ -15,6 +14,16 @@ public class PagedList<T>
     public bool HasPreviousPage => PageIndex > 0;
     public int FirstItemIndexInThisPage => PageIndex * PageSize;
     public int LastItemIndexInThisPage => FirstItemIndexInThisPage + Count - 1;
+}
+
+public class PagedList<T> : PagedList
+{
+    public IList<T> Items { get; set; }
+
+    public PagedList()
+    {
+        Items = new List<T>();
+    }
 
     public PagedList(
         IList<T> items,

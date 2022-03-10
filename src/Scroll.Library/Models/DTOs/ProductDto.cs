@@ -1,8 +1,6 @@
-﻿using Scroll.Library.Models.Entities;
+﻿namespace Scroll.Library.Models.DTOs;
 
-namespace Scroll.Library.Models.DTOs;
-
-public class ProductDto
+public record ProductDto
 {
     public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
@@ -13,5 +11,5 @@ public class ProductDto
     public string ImageName { get; set; } = string.Empty;
     public int ClickCount { get; set; }
     public int FavoriteCount { get; set; }
-    public virtual List<Category> Categories { get; set; } = new();
+    public virtual ComparableList<CategoryDto> Categories { get; set; } = new();
 }

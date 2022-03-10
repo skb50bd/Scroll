@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Scroll.Data;
 using Scroll.Library.Models;
 using Scroll.Library.Models.DTOs;
 using Scroll.Library.Models.EditModels;
 using Scroll.Library.Models.Entities;
+using Scroll.Library.Utils;
 using Scroll.Service.Data;
 
 namespace Scroll.Service.Services;
@@ -25,14 +27,31 @@ public class CategoryService : ICategoryService
         _mapper.Map<CategoryDto?>(
             await _repo.Get(id));
 
+    public async Task<CategoryEditModel?> GetForEdit(int id) =>
+        _mapper.Map<CategoryEditModel?>(
+            await _repo.Get(id));
+
     public async Task<PagedList<CategoryDto>> GetPaged(
         int pageIndex = 0,
-        int pageSize = 40) =>
-            _mapper.Map<PagedList<CategoryDto>>(
-                await _repo.GetAll()
-                    .ToPagedList(
-                        pageIndex,
-                        pageSize));
+        int pageSize = 40,
+        string? filterString = null)
+    {
+        var query = _repo.GetAll();
+
+        if (filterString.IsNotBlank())
+        {
+            query =
+                query.Where(c =>
+                    c.Name.Contains(filterString));
+        }
+
+        var categories =
+            await query
+                    .OrderBy(c => c.Name)
+                    .ToPagedList(pageIndex, pageSize);
+
+        return _mapper.Map<PagedList<CategoryDto>>(categories);
+    }
 
     public async Task<CategoryDto> Insert(
         CategoryEditModel editModel)
@@ -77,4 +96,31 @@ public class CategoryService : ICategoryService
 
     public Task<bool> Exists(int id) =>
         _repo.Exists(id);
+
+    public async Task<PagedList<ProductDto>> GetProductsInCategory(
+        int categoryId,
+        int pageIndex = 0,
+        int pageSize = 40)
+    {
+        var productsInCategory =
+            await _repo.GetAll()
+                .Where(c => c.Id == categoryId)
+                .SelectMany(c => c.Products)
+                .ToPagedList(pageIndex, pageSize);
+
+        return _mapper.Map<PagedList<ProductDto>>(productsInCategory);
+    }
+
+    public async Task<int> GetProductCountInCategory(
+        int categoryId)
+    {
+        var productCount =
+            await _repo.GetAll()
+                .Where(c => c.Id == categoryId)
+                .SelectMany(c => c.Products)
+                .CountAsync();
+
+        return productCount;
+    }
+
 }

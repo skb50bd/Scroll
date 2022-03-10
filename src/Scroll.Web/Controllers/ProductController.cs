@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Scroll.Library.Models;
+using Scroll.Library.Models.DTOs;
 using Scroll.Library.Models.EditModels;
-using Scroll.Library.Models.Entities;
 using Scroll.Service.Services;
 
 namespace Scroll.Web.Controllers;
@@ -21,14 +21,30 @@ public class ProductController : ControllerBase
         _productService   = productService;
     }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ProductDto>> Get(int productId)
+    {
+        var product =
+            await _productService.Get(productId);
+
+        if (product is null)
+        {
+            return NotFound();
+        }
+        else
+        {
+            return Ok(product);
+        }
+    }
+
     [HttpGet]
-    public Task<PagedList<Product>> Get(
+    public Task<PagedList<ProductDto>> Get(
         int pageIndex = 0,
         int pageSize = 40) =>
             _productService.GetPaged(pageIndex, pageSize);
 
     [HttpPost]
-    public async Task<ActionResult<Product>> Post(ProductEditModel model)
+    public async Task<ActionResult<ProductDto>> Post(ProductEditModel model)
     {
         if (ModelState.IsValid is false)
         {
@@ -41,7 +57,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<Product>> Put(ProductEditModel model)
+    public async Task<ActionResult<ProductDto>> Put(ProductEditModel model)
     {
         if (ModelState.IsValid is false)
         {

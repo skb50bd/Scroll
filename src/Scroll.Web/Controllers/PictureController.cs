@@ -23,7 +23,7 @@ public class PictureController : ControllerBase
         int pageSize = 10) =>
             _pictureService.Get(pageIndex, pageSize);
 
-    [HttpGet]
+    [HttpGet("{name}")]
     public async Task<ActionResult> Get(string name)
     {
         var picture =

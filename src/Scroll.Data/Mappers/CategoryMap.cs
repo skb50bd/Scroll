@@ -17,6 +17,11 @@ public class CategoryMap: IEntityTypeConfiguration<Category>
             .HasMaxLength(50);
 
         builder
+            .Property(c => c.Description)
+            .IsRequired()
+            .HasMaxLength(1000);
+
+        builder
             .HasMany(c => c.Products)
             .WithMany(p => p.Categories);
 
