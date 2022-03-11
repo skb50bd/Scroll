@@ -21,6 +21,11 @@ public static class StringExtensions
         this string? str) =>
             str.IsBlank() is false;
 
+    public static string CleanLink(this string url) =>
+        url.Replace("https://", "")
+            .Replace("http://", "")
+            .TrimEnd('/');
+
     public static string Glimpse(this string str, int length)
     {
         if (str.Length <= length)

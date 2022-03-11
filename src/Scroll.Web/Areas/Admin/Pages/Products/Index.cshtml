@@ -97,40 +97,52 @@ else
         </div>
     </form>
 
-    <table class="table table-hover table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Title</th>
-                <th scope="col" colspan="2">Description</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Model.Products.Items)
-            {
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead class="table-dark">
                 <tr>
-                    <td>@product.Title</td>
-                    <td colspan="2">@product.Description.Glimpse(30)</td>
-                    <td>
-                        <a asp-page="./CreateOrEdit"
-                           asp-route-id="@product.Id"
-                           class="link-primary text-decoration-none">
-                            Edit
-                        </a>
-
-                        &nbsp;
-
-                        <a href="#delete"
-                           class="link-danger text-decoration-none js-delete-action"
-                           data-delete-url="@Url.Action("Delete", "Product", new { productId = product.Id })"
-                           data-redirect-url="@Url.Page("./Index")">
-                            Delete
-                        </a>
-                    </td>
+                    <th scope="col">Title</th>
+                    <th scope="col">Link</th>
+                    <th scope="col">Clicks</th>
+                    <th scope="col">Favorites</th>
+                    <th scope="col">Categories</th>
+                    <th scope="col"></th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var product in Model.Products.Items)
+                {
+                    <tr>
+                        <th scope="row">@product.Title</th>
+                        <td>
+                            <a href="@product.Link">
+                                @product.Link?.CleanLink().Glimpse(15)
+                            </a>
+                        </td>
+                        <td>@product.ClickCount</td>
+                        <td>@product.FavoriteCount</td>
+                        <td>@product.Categories.Count</td>
+                        <td>
+                            <a asp-page="./CreateOrEdit"
+                               asp-route-id="@product.Id"
+                               class="link-primary text-decoration-none">
+                                Edit
+                            </a>
+
+                            &nbsp;
+
+                            <a href="#delete"
+                               class="link-danger text-decoration-none js-delete-action"
+                               data-delete-url="@Url.Action("Delete", "Product", new { productId = product.Id })"
+                               data-redirect-url="@Url.Page("./Index")">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
     <partial name="_Pagination" for="@Model.Products" />
 }
