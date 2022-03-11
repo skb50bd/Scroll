@@ -19,33 +19,40 @@
 }
 else
 {
-    <form asp-page="./Index" method="get">
-        <input asp-for="@Model.Categories.PageSize"
-                name="pageSize"
-                value="@Model.Categories.PageSize"
-                hidden />
-        <input asp-for="@Model.Categories.PageIndex"
-                name="pageIndex"
-                value="0"
-                hidden />
+    <div class="clearfix w-100">
+        <div class="float-start">
+            <form asp-page="./Index" method="get">
+            <input asp-for="@Model.Categories.PageSize"
+                   name="pageSize"
+                   value="@Model.Categories.PageSize"
+                   hidden/>
+            <input asp-for="@Model.Categories.PageIndex"
+                   name="pageIndex"
+                   value="0"
+                   hidden/>
 
-        <div class="input-group mb-1">
-            <input asp-for="@Model.Filter"
-                   name="filter"
-                   value="@Model.Filter"
-                   type="text"
-                   placeholder="Search Categories"
-                   class="form-control"
-                   aria-label="Search Categories"
-                   aria-describedby="searchButton" />
-            <button class="btn btn-outline-secondary"
-                    type="button"
-                    id="searchButton">
-                Go
-            </button>
+            <div class="input-group mb-1">
+                <input asp-for="@Model.Filter"
+                       name="filter"
+                       value="@Model.Filter"
+                       type="search"
+                       placeholder="Search Categories"
+                       class="form-control"
+                       aria-label="Search Categories"
+                       aria-describedby="searchButton"/>
+                <button class="btn btn-outline-secondary"
+                        type="submit"
+                        id="searchButton">
+                    Go
+                </button>
+            </div>
+        </form>
         </div>
-    </form>
-
+        <a class="btn btn-outline-primary float-end"
+           asp-page="./CreateOrEdit">
+            New
+        </a>
+    </div>
     <table class="table table-hover table-striped">
         <thead>
             <tr>
@@ -64,9 +71,9 @@ else
                     <td colspan="2">@category.Description.Glimpse(30)</td>
                     <td>
                         <a asp-area="Admin"
-                   asp-page="/Categories/CreateOrEdit"
-                   asp-route-id="@category.Id"
-                   class="link-primary text-decoration-none">
+                           asp-page="/Categories/CreateOrEdit"
+                           asp-route-id="@category.Id"
+                           class="link-primary text-decoration-none">
                             Edit
                         </a>
 
@@ -74,7 +81,8 @@ else
 
                         <a href="#delete"
                            class="link-danger text-decoration-none js-delete-action"
-                           data-action-link="@Url.Action("Delete", "Category", new { categoryId = category.Id })">
+                           data-delete-url="@Url.Action("Delete", "Category", new { categoryId = category.Id })"
+                           data-redirect-url="@Url.Page("./Index")">
                             Delete
                         </a>
                     </td>
