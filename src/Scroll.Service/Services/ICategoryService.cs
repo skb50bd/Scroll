@@ -9,6 +9,7 @@ public interface ICategoryService
     Task<bool> Delete(int id);
     Task<bool> Exists(int id);
     Task<CategoryDto?> Get(int id);
+    Task<CategoryDto?> GetByName(string name);
     Task<CategoryEditModel?> GetForEdit(int id);
     Task<PagedList<CategoryDto>> GetPaged(int pageIndex = 0, int pageSize = 40, string? filterString = null);
     Task<int> GetProductCountInCategory(int categoryId);

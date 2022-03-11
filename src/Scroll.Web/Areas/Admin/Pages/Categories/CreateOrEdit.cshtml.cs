@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Scroll.Library.Models.EditModels;
 using Scroll.Service.Services;
 
@@ -43,13 +44,28 @@ public class CreateOrEditModel : PageModel
             return Page();
         }
 
-        if (EditModel.Id > 0)
+        try
         {
-            await _categoryService.Update(EditModel);
+            if (EditModel.Id > 0)
+            {
+                await _categoryService.Update(EditModel);
+            }
+            else
+            {
+                await _categoryService.Insert(EditModel);
+            }
         }
-        else
+        catch (DbUpdateException)
         {
-            await _categoryService.Insert(EditModel);
+            if (await _categoryService.GetByName(EditModel.Name) is not null)
+            {
+                return BadRequest(
+                    $"Category with same name \"{EditModel.Name}\" already exists.");
+            }
+            else
+            {
+                throw;
+            }
         }
 
         return RedirectToPage("./Index");

@@ -27,6 +27,12 @@ public class CategoryService : ICategoryService
         _mapper.Map<CategoryDto?>(
             await _repo.Get(id));
 
+    public async Task<CategoryDto?> GetByName(string name) =>
+        _mapper.Map<CategoryDto?>(
+            await _repo.GetAll()
+                        .Where(c => c.Name == name)
+                        .FirstOrDefaultAsync());
+    
     public async Task<CategoryEditModel?> GetForEdit(int id) =>
         _mapper.Map<CategoryEditModel?>(
             await _repo.Get(id));
