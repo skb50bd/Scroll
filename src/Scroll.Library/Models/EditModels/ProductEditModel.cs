@@ -17,10 +17,10 @@ public record class ProductEditModel
     [DataType(DataType.Currency)]
     public decimal Price { get; set; }
 
-    [Required]
     [DataType(DataType.Url)]
-    public string Link { get; set; } = string.Empty;
+    public string? Link { get; set; }
 
     [Required]
+    [Display(Name = "Image Name")]
     public string ImageName { get; set; } = string.Empty;
 }

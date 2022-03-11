@@ -68,6 +68,9 @@ public class PictureService : IPictureService
     public Task Delete(string name) =>
         _repo.Delete(name);
 
+    public Task<bool> Exists(string name) =>
+        _repo.Exists(name);
+
     public Task DeleteFilesWithoutReference() =>
         _repo.DeleteFilesWithoutReference();
 }

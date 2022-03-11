@@ -9,7 +9,7 @@
     <a class="text-decoration-none text-black"
         asp-area="Admin"
         asp-page="/Categories/Index">
-        Categories
+        @ViewData["Title"]
     </a>
 </div>
 
@@ -70,8 +70,7 @@ else
                     <td>@category.Name</td>
                     <td colspan="2">@category.Description.Glimpse(30)</td>
                     <td>
-                        <a asp-area="Admin"
-                           asp-page="/Categories/CreateOrEdit"
+                        <a asp-page="./CreateOrEdit"
                            asp-route-id="@category.Id"
                            class="link-primary text-decoration-none">
                             Edit

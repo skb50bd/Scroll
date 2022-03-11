@@ -32,46 +32,56 @@ public class ProductService : IProductService
         _mapper.Map<ProductDto?>(
             await _productRepo.Get(id));
 
+    public async Task<ProductDto?> GetByTitle(string title) =>
+        _mapper.Map<ProductDto?>(
+            await _productRepo
+                    .GetAll()
+                    .Where(p => p.Title == title)
+                    .FirstOrDefaultAsync());
+
+    public async Task<ProductEditModel?> GetForEdit(int id) =>
+        _mapper.Map<ProductEditModel?>(
+            await _productRepo.Get(id));
+
     public async Task<PagedList<ProductDto>> GetPaged(
         int pageIndex = 0,
         int pageSize = 40,
-        ProductFilterModel? filter = null)
+        string? searchString = null,
+        ProductSortOrder sortBy = IdDesc,
+        int? categoryId = null)
     {
         var query =
             _productRepo.GetAll();
 
-        if (filter?.CategoryId > 0 )
+        if (categoryId > 0)
         {
             query =
                 query.Where(c =>
                     c.Categories.Any(c =>
-                        c.Id == filter.CategoryId));
+                        c.Id == categoryId));
         }
 
-        if (filter?.SearchString.IsNotBlank() ?? false)
+        if (searchString.IsNotBlank())
         {
             query =
                 query.Where(c =>
-                    c.Title.Contains(filter.SearchString));
+                    c.Title.Contains(searchString));
         }
 
-        if (filter?.SortBy is not null)
-        {
-            query =
-                filter.SortBy switch
-                {
-                    IdAsc        => query.OrderBy(c => c.Id),
-                    IdDesc       => query.OrderByDescending(c => c.Id),
-                    NameAsc      => query.OrderBy(p => p.Title),
-                    NameDesc     => query.OrderByDescending(p => p.Title),
-                    FavoriteAsc  => query.OrderBy(p => p.FavoriteCount),
-                    FavoriteDesc => query.OrderByDescending(p => p.FavoriteCount),
-                    ClickedAsc   => query.OrderBy(p => p.ClickCount),
-                    ClickedDesc  => query.OrderByDescending(p => p.ClickCount),
-                    _            => throw new NotImplementedException(
-                                        $"{filter.SortBy} not implemented.")
-                };
-        }
+        query =
+            sortBy switch
+            {
+                IdAsc        => query.OrderBy(c => c.Id),
+                IdDesc       => query.OrderByDescending(c => c.Id),
+                NameAsc      => query.OrderBy(p => p.Title),
+                NameDesc     => query.OrderByDescending(p => p.Title),
+                FavoriteAsc  => query.OrderBy(p => p.FavoriteCount),
+                FavoriteDesc => query.OrderByDescending(p => p.FavoriteCount),
+                ClickedAsc   => query.OrderBy(p => p.ClickCount),
+                ClickedDesc  => query.OrderByDescending(p => p.ClickCount),
+                _            => throw new NotImplementedException(
+                                    $"{sortBy} not implemented.")
+            };
 
         var products =
             await query

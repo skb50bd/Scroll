@@ -19,7 +19,7 @@ public class IndexModel : PageModel
 
     public string? Filter { get; set; }
 
-    public async Task<ActionResult> OnGet(
+    public async Task<ActionResult> OnGetAsync(
         int pageIndex = 0,
         int pageSize = 40,
         string? filter = null)

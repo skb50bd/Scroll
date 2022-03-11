@@ -1,13 +1,13 @@
 ﻿@page
-@model Categories.CreateOrEditModel
+@model Products.CreateOrEditModel
 @{
     var isCreateMode =
         Model.EditModel.Id is not > 0;
 
     ViewData["Title"] =
         isCreateMode
-            ? "Create Category"
-            : "Edit Category";
+            ? "Create Product"
+            : "Edit Product";
 }
 
 <div class="card mb-2" style="max-width: 36rem;">
@@ -25,9 +25,9 @@
                    asp-for="EditModel.Id" />
 
             <div class="form-floating">
-                <input asp-for="EditModel.Name" class="form-control" />
-                <label asp-for="EditModel.Name"></label>
-                <span asp-validation-for="EditModel.Name" class="text-danger"></span>
+                <input asp-for="EditModel.Title" class="form-control" />
+                <label asp-for="EditModel.Title"></label>
+                <span asp-validation-for="EditModel.Title" class="text-danger"></span>
             </div>
 
             <div class="form-floating">
@@ -37,6 +37,24 @@
                 </textarea>
                 <label asp-for="EditModel.Description"></label>
                 <span asp-validation-for="EditModel.Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating">
+                <input asp-for="EditModel.Price" class="form-control" />
+                <label asp-for="EditModel.Price"></label>
+                <span asp-validation-for="EditModel.Price" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating">
+                <input asp-for="EditModel.Link" class="form-control" />
+                <label asp-for="EditModel.Link"></label>
+                <span asp-validation-for="EditModel.Link" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating">
+                <input asp-for="EditModel.ImageName" class="form-control" />
+                <label asp-for="EditModel.ImageName"></label>
+                <span asp-validation-for="EditModel.ImageName" class="text-danger"></span>
             </div>
 
             <input type="submit"

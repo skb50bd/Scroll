@@ -17,8 +17,8 @@ public class ProductController : ControllerBase
         ILogger<ProductController> logger,
         IProductService productService)
     {
-        _logger = logger;
-        _productService   = productService;
+        _logger         = logger;
+        _productService = productService;
     }
 
     [HttpGet("{id}")]
@@ -40,8 +40,16 @@ public class ProductController : ControllerBase
     [HttpGet]
     public Task<PagedList<ProductDto>> Get(
         int pageIndex = 0,
-        int pageSize = 40) =>
-            _productService.GetPaged(pageIndex, pageSize);
+        int pageSize = 40,
+        string? searchString = null,
+        ProductSortOrder sortBy = ProductSortOrder.IdDesc,
+        int? categoryId = null) =>
+            _productService.GetPaged(
+                pageIndex,
+                pageSize,
+                searchString,
+                sortBy,
+                categoryId);
 
     [HttpPost]
     public async Task<ActionResult<ProductDto>> Post(ProductEditModel model)

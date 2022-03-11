@@ -32,7 +32,7 @@ public class CategoryService : ICategoryService
             await _repo.GetAll()
                         .Where(c => c.Name == name)
                         .FirstOrDefaultAsync());
-    
+
     public async Task<CategoryEditModel?> GetForEdit(int id) =>
         _mapper.Map<CategoryEditModel?>(
             await _repo.Get(id));

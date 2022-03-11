@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Scroll.Library.Models;
 using Scroll.Library.Models.DTOs;
 using Scroll.Service.Services;
 
@@ -17,17 +18,38 @@ public class IndexModel : PageModel
         _categoryService = categoryService;
     }
 
-    public ProductFilterModel Filter { get; set; } = new();
-    public List<ProductDto> Products { get; set; } = new();
+    [BindProperty]
+    public string? SearchString { get; set; } = string.Empty;
 
-    public async Task<ActionResult> OnGet()
-    {
-        return Page();
-    }
+    [BindProperty]
+    public int? CategoryId { get; set; }
 
-    public async Task<ActionResult> OnPost(
-        ProductFilterModel filter)
+    [BindProperty]
+    public ProductSortOrder SortBy { get; set; } = ProductSortOrder.IdDesc;
+
+    [BindProperty]
+    public int PageIndex { get; set; } = 0;
+
+    [BindProperty]
+    public int PageSize { get; set; } = 40;
+
+    public PagedList<CategoryDto> Categories { get; set; } = new();
+
+    public PagedList<ProductDto> Products { get; set; } = new();
+
+    public async Task<ActionResult> OnGetAsync()
     {
+        Categories =
+            await _categoryService.GetPaged(0, int.MaxValue);
+
+        Products =
+            await _productService.GetPaged(
+                pageIndex: PageIndex,
+                pageSize: PageSize,
+                searchString: SearchString,
+                sortBy: SortBy,
+                categoryId: CategoryId);
+
         return Page();
     }
 }

@@ -16,23 +16,20 @@ public enum ProductSortOrder
     ClickedDesc    = 8
 }
 
-public class ProductFilterModel
-{
-    public string? SearchString { get; set; } = string.Empty;
-    public int? CategoryId { get; set; }
-    public ProductSortOrder? SortBy { get; set; } = ProductSortOrder.IdDesc;
-}
-
 public interface IProductService
 {
     Task<bool> Delete(int id);
     Task<bool> Exists(int id);
     Task<ProductDto?> Get(int id);
+    Task<ProductDto?> GetByTitle(string title);
+    Task<ProductEditModel?> GetForEdit(int id);
 
     Task<PagedList<ProductDto>> GetPaged(
         int pageIndex = 0,
         int pageSize = 40,
-        ProductFilterModel? filter = null);
+        string? searchString = null,
+        ProductSortOrder sortBy = ProductSortOrder.IdDesc,
+        int? categoryId = null);
 
     Task<int?> IncrementClickedCount(int productId);
     Task<ProductDto> Insert(ProductEditModel editModel);

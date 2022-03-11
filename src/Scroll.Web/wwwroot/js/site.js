@@ -9,13 +9,13 @@
                     event => {
                         const deleteActionUrl =
                             event.target.getAttribute('data-delete-url');
-                        
-                        const redirectUrl = 
+
+                        const redirectUrl =
                             event.target.getAttribute('data-redirect-url');
-                        
-                        const isDeletionConfirmed = 
+
+                        const isDeletionConfirmed =
                             confirm("Are you sure want to delete this item?");
-                        
+
                         if (isDeletionConfirmed) {
                             fetch(deleteActionUrl, {method: 'DELETE'})
                                 .then(_ => window.location = redirectUrl);
