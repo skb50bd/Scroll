@@ -6,12 +6,21 @@
     ViewData["Title"] = "Products";
 }
 
-<div class="display-4 mb-3" style="margin-bottom: 10rem;">
-    <a class="text-decoration-none text-black"
-       asp-area="Admin"
-       asp-page="/Products/Index">
-        @ViewData["Title"]
-    </a>
+<div class="clearfix w-100">
+    <div class="display-4 mb-3 float-start" style="margin-bottom: 10rem;">
+        <a class="text-decoration-none text-black"
+           asp-area="Admin"
+           asp-page="/Products/Index">
+            @ViewData["Title"]
+        </a>
+    </div>
+
+    <div class="float-end">
+        <a class="btn btn-outline-primary"
+           asp-page="./CreateOrEdit">
+            New
+        </a>
+    </div>
 </div>
 
 @if (Model?.Products?.Count is not > 0)
@@ -20,35 +29,36 @@
 }
 else
 {
-    <div class="clearfix w-100">
-        <div class="float-start">
-            <form asp-page="./Index"
-                  method="get"
-                  class="vstack gap-1">
+    <form asp-page="./Index"
+            method="get"
+            class="vstack gap-1">
 
-                <input asp-for="@Model.PageSize"
-                       name="pageSize"
-                       value="@Model.PageSize"
-                       hidden />
+        <div class="row">
+            <input asp-for="@Model.PageSize"
+                    name="pageSize"
+                    value="@Model.PageSize"
+                    hidden />
 
-                <input asp-for="@Model.PageIndex"
-                       name="pageIndex"
-                       value="0"
-                       hidden />
+            <input asp-for="@Model.PageIndex"
+                    name="pageIndex"
+                    value="0"
+                    hidden />
 
+            <div class="col-sm-12 col-md-3 mb-1">
                 <input asp-for="@Model.SearchString"
-                        name="filter"
                         value="@Model.SearchString"
                         type="search"
-                        placeholder="Product Title Filter"
+                        placeholder="Title Filter"
                         class="form-control"
-                        aria-label="Product Title Filter"
+                        aria-label="Title Filter"
                         aria-describedby="searchButton" />
+            </div>
 
+            <div class="col-sm-12 col-md-3 mb-1">
                 <select class="form-select"
                         asp-for="@Model.CategoryId">
-                    <option selected disabled>
-                        Filter Category
+                    <option value="" selected>
+                        All Categories
                     </option>
 
                     @foreach(var category in Model.Categories.Items)
@@ -58,7 +68,9 @@ else
                         </option>
                     }
                 </select>
+            </div>
 
+            <div class="col-sm-12 col-md-3 mb-1">
                 <select class="form-select"
                         asp-for="@Model.SortBy">
 
@@ -73,20 +85,17 @@ else
                         </option>
                     }
                 </select>
+            </div>
 
+            <div class="col-sm-12 col-md-3 mb-1">
                 <button class="btn btn-success"
                         type="submit"
                         id="searchButton">
                     Go
                 </button>
-            </form>
+            </div>
         </div>
-
-        <a class="btn btn-outline-primary float-end"
-           asp-page="./CreateOrEdit">
-            New
-        </a>
-    </div>
+    </form>
 
     <table class="table table-hover table-striped">
         <thead>
