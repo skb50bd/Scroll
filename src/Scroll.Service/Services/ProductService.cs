@@ -41,7 +41,10 @@ public class ProductService : IProductService
 
     public async Task<ProductEditModel?> GetForEdit(int id) =>
         _mapper.Map<ProductEditModel?>(
-            await _productRepo.Get(id));
+            await _productRepo
+                    .GetAll()
+                    .Include(p => p.ProductCategories)
+                    .FirstOrDefaultAsync(p => p.Id == id));
 
     public async Task<PagedList<ProductDto>> GetPaged(
         int pageIndex = 0,
@@ -96,6 +99,17 @@ public class ProductService : IProductService
         var entity =
             _mapper.Map<Product>(editModel);
 
+        var productCategories =
+            editModel.CategoryIds
+                .Select(cId => new ProductCategoryMapping
+                {
+                    ProductId  = editModel.Id,
+                    CategoryId = cId
+                })
+                .ToList();
+
+        entity.ProductCategories = productCategories;
+
         await _productRepo.Upsert(entity);
 
         return _mapper.Map<ProductDto>(entity);
@@ -114,6 +128,18 @@ public class ProductService : IProductService
 
         var updatedProduct =
             _mapper.Map(editModel, originalProduct);
+
+
+        var productCategories =
+            editModel.CategoryIds
+                .Select(cId => new ProductCategoryMapping
+                {
+                    ProductId  = editModel.Id,
+                    CategoryId = cId
+                })
+                .ToList();
+
+        updatedProduct.ProductCategories = productCategories;
 
         if (updatedProduct is null)
         {

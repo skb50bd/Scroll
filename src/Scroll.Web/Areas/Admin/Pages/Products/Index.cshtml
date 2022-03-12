@@ -1,5 +1,4 @@
 ﻿@page
-@using Humanizer
 @using Scroll.Service.Services
 @model Scroll.Web.Areas.Admin.Pages.Products.IndexModel
 @{
@@ -81,7 +80,7 @@ else
                     @foreach(var sortBy in Enum.GetValues(typeof(ProductSortOrder)).Cast<ProductSortOrder>())
                     {
                         <option value="@sortBy">
-                            @sortBy.Humanize(LetterCasing.Title)
+                            @sortBy.ToSpaced()
                         </option>
                     }
                 </select>

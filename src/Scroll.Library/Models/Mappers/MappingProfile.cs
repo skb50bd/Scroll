@@ -9,7 +9,14 @@ public class MappingProfile: Profile
 {
     public MappingProfile() : base()
     {
-        CreateMap<Product, ProductEditModel>();
+        CreateMap<Product, ProductEditModel>()
+            .ForMember(
+                dest => dest.CategoryIds,
+                opt  => opt.MapFrom(src =>
+                            src.ProductCategories
+                               .Select(c => c.CategoryId)
+                               .ToList()));
+
         CreateMap<ProductEditModel, Product>()
             .ForMember(
                 dest => dest.AddedOn,
@@ -38,5 +45,7 @@ public class MappingProfile: Profile
 
         CreateMap<Category, CategoryDto>();
         CreateMap<PagedList<Category>, PagedList<CategoryDto>>();
+
+        CreateMap<ProductCategoryMapping, ProductCategoryMappingDto>();
     }
 }

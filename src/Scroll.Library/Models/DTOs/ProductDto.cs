@@ -11,5 +11,6 @@ public record ProductDto
     public string ImageName { get; set; } = string.Empty;
     public int ClickCount { get; set; }
     public int FavoriteCount { get; set; }
+    public virtual ComparableList<ProductCategoryMappingDto> ProductCategories {get;set;} = new();
     public virtual ComparableList<CategoryDto> Categories { get; set; } = new();
 }

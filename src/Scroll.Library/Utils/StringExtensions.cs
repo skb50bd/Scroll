@@ -5,9 +5,10 @@ namespace Scroll.Library.Utils;
 
 public static class StringExtensions
 {
-    public static string ToSpaced(
-        this string str) =>
+    public static string ToSpaced(this string str) =>
             str.Humanize();
+    public static string ToSpaced(this Enum input) =>
+        input.Humanize(LetterCasing.Title);
 
     public static bool IsBlank(
         [MaybeNullWhen(true)]

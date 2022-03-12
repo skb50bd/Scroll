@@ -11,5 +11,6 @@ public class Product : Entity
     public int ClickCount { get; set; }
     public virtual List<Favorite> Favorites { get; set; } = new();
     public int FavoriteCount { get; set; }
+    public virtual List<ProductCategoryMapping> ProductCategories { get; set; } = new();
     public virtual List<Category> Categories { get; set; } = new();
 }

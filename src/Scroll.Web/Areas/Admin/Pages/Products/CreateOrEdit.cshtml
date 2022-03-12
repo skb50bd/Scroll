@@ -46,6 +46,24 @@
             </div>
 
             <div class="form-floating">
+                <select class="selectpicker w-100"
+                        asp-for="EditModel.CategoryIds"
+                        multiple
+                        aria-label="Categories"
+                        data-live-search="true"
+                        placeholder="Categories">
+
+                    @foreach(var category in Model.AvailableCategories)
+                    {
+                        <option value="@category.Id">
+                            @category.Name
+                        </option>
+                    }
+                </select>
+                <span asp-validation-for="EditModel.CategoryIds" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating">
                 <input asp-for="EditModel.Link" class="form-control" />
                 <label asp-for="EditModel.Link"></label>
                 <span asp-validation-for="EditModel.Link" class="text-danger"></span>

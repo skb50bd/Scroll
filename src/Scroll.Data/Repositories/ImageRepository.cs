@@ -94,13 +94,10 @@ public class ImageRepository : IImageRepository
     }
 
     private static PictureInfo ConvertToPictureInfo(BlobItem blobItem) =>
-        new()
-        {
-            Name        = blobItem.Name,
-            ContentType = blobItem.Properties.ContentType,
-            UploadedOn  = blobItem.Properties.CreatedOn,
-            Size        = blobItem.Properties.ContentLength ?? 0
-        };
+        new(blobItem.Name,
+            blobItem.Properties.ContentLength ?? 0,
+            blobItem.Properties.ContentType,
+            blobItem.Properties.CreatedOn);
 
     public async IAsyncEnumerable<PictureInfo> GetAll()
     {

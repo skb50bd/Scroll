@@ -17,6 +17,8 @@ public record class ProductEditModel
     [DataType(DataType.Currency)]
     public decimal Price { get; set; }
 
+    public List<int>? CategoryIds { get; set; } = new();
+
     [DataType(DataType.Url)]
     public string? Link { get; set; }
 

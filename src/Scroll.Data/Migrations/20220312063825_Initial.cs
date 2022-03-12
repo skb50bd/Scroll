@@ -15,7 +15,8 @@ namespace Scroll.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -155,24 +156,24 @@ namespace Scroll.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CategoryProduct",
+                name: "ProductCategoryMapping",
                 columns: table => new
                 {
-                    CategoriesId = table.Column<int>(type: "int", nullable: false),
-                    ProductsId = table.Column<int>(type: "int", nullable: false)
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CategoryProduct", x => new { x.CategoriesId, x.ProductsId });
+                    table.PrimaryKey("PK_ProductCategoryMapping", x => new { x.ProductId, x.CategoryId });
                     table.ForeignKey(
-                        name: "FK_CategoryProduct_Category_CategoriesId",
-                        column: x => x.CategoriesId,
+                        name: "FK_ProductCategoryMapping_Category_CategoryId",
+                        column: x => x.CategoryId,
                         principalTable: "Category",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CategoryProduct_Product_ProductsId",
-                        column: x => x.ProductsId,
+                        name: "FK_ProductCategoryMapping_Product_ProductId",
+                        column: x => x.ProductId,
                         principalTable: "Product",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -202,16 +203,58 @@ namespace Scroll.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Category",
+                columns: new[] { "Id", "Description", "Name" },
+                values: new object[,]
+                {
+                    { 1, "This is a toy category. Toys are nice, aren't they?", "Toy" },
+                    { 2, "This is a food category. Food is tasty.", "Food" },
+                    { 3, "These are products for geeks. If you are a geek, you're gonna love these.", "Geek" },
+                    { 4, "These products will improve your lifestyle. And will help you enjoy a better life.", "Lifestyle" },
+                    { 5, "You’re a funny guy, but if you really want to ramp up the LOLs at your next party, you need one of these hilarious and downright evil prank gifts.", "Pranks" },
+                    { 6, "Level up your gift giving powers and find the perfect gift for gamers in this hand curated list. Whether you're looking for something for console gamer, the PC gamer, the old school gaming type who loves everything in 8-bit pixelation or the youngster who loves virtual reality and microtransactions, this collection of gifts features all of the best sellers from this year.", "Gamer" },
+                    { 7, "Capture the heart of your photographer friend with one of these delightful gifts for photographers. Professionals and shutterbugs who enjoy it as a hobby alike will light up brighter than a flash when they unwrap something fun or functional from this list of great gift ideas.", "Photography" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Product",
+                columns: new[] { "Id", "AddedOn", "ClickCount", "Description", "FavoriteCount", "ImageName", "Link", "Price", "Title" },
+                values: new object[,]
+                {
+                    { 1, new DateTimeOffset(new DateTime(2022, 3, 12, 12, 38, 24, 480, DateTimeKind.Unspecified).AddTicks(2652), new TimeSpan(0, 6, 0, 0, 0)), 10, "If you need to get even with someone you love, the impossible to open frustration box is just what you need.", 0, "abc-xyz.webp", "https://mynextdig.com/1", 17.99m, "The Impossible To Open Frustration Box" },
+                    { 2, new DateTimeOffset(new DateTime(2022, 3, 12, 12, 38, 24, 481, DateTimeKind.Unspecified).AddTicks(1891), new TimeSpan(0, 6, 0, 0, 0)), 3, "Nothing will embarrass your poor unsuspecting victim quite like receiving one of these prank mail packages at their place or work.", 0, "abc-xyz.webp", "https://mynextdig.com/2", 11.86m, "Prank Mail Packages" },
+                    { 3, new DateTimeOffset(new DateTime(2022, 3, 12, 12, 38, 24, 481, DateTimeKind.Unspecified).AddTicks(2036), new TimeSpan(0, 6, 0, 0, 0)), 69, "Ensure your buddy has nightmares for years to come by sending him 1500 live ladybugs.", 0, "abc-xyz.webp", "https://mynextdig.com/3", 30.96m, "1500 Live Ladybugs" },
+                    { 4, new DateTimeOffset(new DateTime(2022, 3, 12, 12, 38, 24, 481, DateTimeKind.Unspecified).AddTicks(2046), new TimeSpan(0, 6, 0, 0, 0)), 3, "Gamers rejoice! Ensure no good game slips under your nose by playing everything on the 100 Video Games Bucket List poster.", 0, "abc-xyz.webp", "https://mynextdig.com/4", 17.47m, "100 Must Play Video Games Scratch Off Poster" },
+                    { 5, new DateTimeOffset(new DateTime(2022, 3, 12, 12, 38, 24, 481, DateTimeKind.Unspecified).AddTicks(2054), new TimeSpan(0, 6, 0, 0, 0)), 1, "For both streamers and gamers, this backlit LED is the perfect way to give a customized gift to any gamer.", 0, "abc-xyz.webp", "https://mynextdig.com/5", 58.49m, "Personalized Gamertag Backlit LED" },
+                    { 6, new DateTimeOffset(new DateTime(2022, 3, 12, 12, 38, 24, 481, DateTimeKind.Unspecified).AddTicks(2061), new TimeSpan(0, 6, 0, 0, 0)), 4, "After an intense gaming session getting pwned by kids half your age, you need a way to relax and calm your nerves.", 0, "abc-xyz.webp", "https://mynextdig.com/6", 7.96m, "Video Game Rage Candle" },
+                    { 7, new DateTimeOffset(new DateTime(2022, 3, 12, 12, 38, 24, 481, DateTimeKind.Unspecified).AddTicks(2067), new TimeSpan(0, 6, 0, 0, 0)), 420, "Take the rainbow with a photography prism.", 0, "abc-xyz.webp", "https://mynextdig.com/7", 16.49m, "Photography Prism" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ProductCategoryMapping",
+                columns: new[] { "CategoryId", "ProductId" },
+                values: new object[,]
+                {
+                    { 1, 1 },
+                    { 2, 1 },
+                    { 3, 1 },
+                    { 2, 2 },
+                    { 3, 2 },
+                    { 3, 3 },
+                    { 4, 4 },
+                    { 1, 5 },
+                    { 2, 5 },
+                    { 7, 6 },
+                    { 2, 7 },
+                    { 7, 7 }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Category_Name",
                 table: "Category",
                 column: "Name",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CategoryProduct_ProductsId",
-                table: "CategoryProduct",
-                column: "ProductsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Favorite_ProductId",
@@ -233,6 +276,11 @@ namespace Scroll.Data.Migrations
                 table: "Product",
                 column: "Title",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductCategoryMapping_CategoryId",
+                table: "ProductCategoryMapping",
+                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserLogins_User",
@@ -258,10 +306,10 @@ namespace Scroll.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CategoryProduct");
+                name: "Favorite");
 
             migrationBuilder.DropTable(
-                name: "Favorite");
+                name: "ProductCategoryMapping");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
@@ -282,13 +330,13 @@ namespace Scroll.Data.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
+                name: "Users");
+
+            migrationBuilder.DropTable(
                 name: "Category");
 
             migrationBuilder.DropTable(
                 name: "Product");
-
-            migrationBuilder.DropTable(
-                name: "Users");
         }
     }
 }

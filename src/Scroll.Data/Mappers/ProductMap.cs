@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Scroll.Library.FakeData;
 using Scroll.Library.Models.Entities;
 
 namespace Scroll.Data.Mappers;
@@ -59,6 +60,10 @@ public class ProductMap: IEntityTypeConfiguration<Product>
             .WithOne(c => c.Product);
 
         builder
+            .HasMany(p => p.ProductCategories)
+            .WithOne(pcm => pcm.Product);
+
+        builder
             .HasIndex(p => p.Title)
             .IsUnique()
             .HasDatabaseName("IX_Product_Title");
@@ -70,5 +75,8 @@ public class ProductMap: IEntityTypeConfiguration<Product>
         builder
             .HasIndex(p => new { p.FavoriteCount, p.ClickCount })
             .HasDatabaseName("IX_Product_Engagement");
+
+        builder
+            .HasData(FakeData.Products);
     }
 }

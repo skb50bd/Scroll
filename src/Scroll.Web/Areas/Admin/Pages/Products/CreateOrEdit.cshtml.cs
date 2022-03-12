@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Scroll.Library.Models.DTOs;
 using Scroll.Library.Models.EditModels;
 using Scroll.Library.Utils;
 using Scroll.Service.Services;
@@ -26,8 +27,16 @@ public class CreateOrEditModel : PageModel
     [BindProperty]
     public ProductEditModel EditModel { get; set; } = new();
 
+    public IList<CategoryDto> AvailableCategories { get; set; } = new List<CategoryDto>();
+
     public async Task<ActionResult> OnGetAsync(int? id = null)
     {
+        var categories =
+            await _categoryService.GetPaged(0, int.MaxValue);
+
+        AvailableCategories =
+            categories.Items;
+
         if (id > 0)
         {
             var editModel =

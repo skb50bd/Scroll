@@ -18,5 +18,15 @@ public class ScrollDbContext : IdentityDbContext<AppUser, IdentityRole<int>, int
         builder
             .ApplyConfigurationsFromAssembly(
                 typeof(ScrollDbContext).Assembly);
+
+        builder.Entity<Product>()
+            .HasMany(p => p.Categories)
+            .WithMany(c => c.Products)
+            .UsingEntity<ProductCategoryMapping>();
+
+        builder.Entity<Category>()
+            .HasMany(c => c.Products)
+            .WithMany(p => p.Categories)
+            .UsingEntity<ProductCategoryMapping>();
     }
 }
