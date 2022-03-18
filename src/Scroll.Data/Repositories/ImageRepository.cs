@@ -12,11 +12,11 @@ public class ImageRepository : IImageRepository
 
     private readonly BlobServiceClient _blobServiceClient;
     private readonly BlobContainerClient _containerClient;
-    private readonly IRepository<Product> _productsRepository;
+    private readonly IEntityRepository<Product> _productsRepository;
 
     public ImageRepository(
         BlobServiceClient blobServiceClient,
-        IRepository<Product> productsRepository)
+        IEntityRepository<Product> productsRepository)
     {
         _blobServiceClient =
             blobServiceClient;

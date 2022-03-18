@@ -53,8 +53,8 @@ else
             New
         </a>
     </div>
-    <table class="table table-hover table-striped">
-        <thead>
+    <table class="table table-hover table-striped mt-2">
+        <thead class="table-dark">
             <tr>
                 @*<th scope="col">#</th>*@
                 <th scope="col">Name</th>
@@ -67,7 +67,7 @@ else
             {
                 <tr>
                     @*<td>@category.Id</td>*@
-                    <td>@category.Name</td>
+                    <th scope="row">@category.Name</th>
                     <td colspan="2">@category.Description.Glimpse(30)</td>
                     <td>
                         <a asp-page="./CreateOrEdit"

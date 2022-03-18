@@ -15,17 +15,20 @@ namespace Scroll.Service.Services;
 public class ProductService : IProductService
 {
     private readonly IMapper _mapper;
-    private readonly IRepository<Product> _productRepo;
+    private readonly IEntityRepository<Product> _productRepo;
     private readonly UserManager<AppUser> _userManager;
+    private readonly IRepository<ProductCategoryMapping> _productCategoryMappingRepo;
 
     public ProductService(
-        IRepository<Product> productRepo,
+        IEntityRepository<Product> productRepo,
         UserManager<AppUser> userManager,
-        IMapper mapper)
+        IMapper mapper,
+        IRepository<ProductCategoryMapping> productCategoryMappingRepo)
     {
-        _productRepo = productRepo;
-        _userManager = userManager;
-        _mapper      = mapper;
+        _productRepo                = productRepo;
+        _productCategoryMappingRepo = productCategoryMappingRepo;
+        _userManager                = userManager;
+        _mapper                     = mapper;
     }
 
     public async Task<ProductDto?> Get(int id) =>
@@ -99,6 +102,8 @@ public class ProductService : IProductService
         var entity =
             _mapper.Map<Product>(editModel);
 
+        editModel.CategoryIds ??= new();
+
         var productCategories =
             editModel.CategoryIds
                 .Select(cId => new ProductCategoryMapping
@@ -118,7 +123,9 @@ public class ProductService : IProductService
     public async Task<ProductDto> Update(ProductEditModel editModel)
     {
         var originalProduct =
-            await _productRepo.Get(editModel.Id);
+            await _productRepo.GetAll()
+                    .Include(p => p.ProductCategories)
+                    .FirstOrDefaultAsync(p => p.Id == editModel.Id);
 
         if (originalProduct is null)
         {
@@ -129,17 +136,49 @@ public class ProductService : IProductService
         var updatedProduct =
             _mapper.Map(editModel, originalProduct);
 
+        var originalCategoryIds =
+            originalProduct.ProductCategories
+                .Select(pc => pc.CategoryId);
 
-        var productCategories =
+        editModel.CategoryIds ??= new();
+
+        var removedCategoryIds =
+            originalCategoryIds
+                .Except(editModel.CategoryIds);
+
+        if (removedCategoryIds.Any())
+        {
+            var removedProductCategries =
+                await _productCategoryMappingRepo
+                    .GetAll()
+                    .Where(pc =>
+                        removedCategoryIds.Contains(pc.CategoryId)
+                        && pc.ProductId == editModel.Id)
+                    .ToListAsync();
+
+            foreach (var pcMap in removedProductCategries)
+            {
+                await _productCategoryMappingRepo.Delete(pcMap);
+            }
+        }
+
+        var newCategories =
             editModel.CategoryIds
-                .Select(cId => new ProductCategoryMapping
-                {
-                    ProductId  = editModel.Id,
-                    CategoryId = cId
-                })
-                .ToList();
+                .Except(originalCategoryIds);
 
-        updatedProduct.ProductCategories = productCategories;
+        if (newCategories.Any())
+        {
+            var productCategories =
+                editModel.CategoryIds
+                    .Select(cId => new ProductCategoryMapping
+                    {
+                        ProductId  = editModel.Id,
+                        CategoryId = cId
+                    })
+                    .ToList();
+
+            updatedProduct.ProductCategories = productCategories;
+        }
 
         if (updatedProduct is null)
         {

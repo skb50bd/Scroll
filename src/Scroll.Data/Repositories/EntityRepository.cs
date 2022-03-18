@@ -4,20 +4,54 @@ using Scroll.Library.Models.Entities;
 
 namespace Scroll.Service.Data;
 
-public class Repository<T> : IRepository<T> where T : Entity
+public class Repository<T> : IRepository<T> where T : class
 {
-    private readonly ScrollDbContext _dbContext;
+    protected readonly ScrollDbContext _dbContext;
 
     public Repository(ScrollDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public async Task<T?> Get(int id) =>
-        await _dbContext.Set<T>().FindAsync(id);
-
     public IQueryable<T> GetAll() =>
         _dbContext.Set<T>();
+
+    public async Task<bool> Delete(T item)
+    {
+        _dbContext.Set<T>().Remove(item);
+
+        var numOfRowsAffected =
+            await _dbContext.SaveChangesAsync();
+
+        return numOfRowsAffected > 0;
+    }
+
+    public async Task<T> Add(T item)
+    {
+        await _dbContext.AddAsync(item);
+
+        await _dbContext.SaveChangesAsync();
+
+        return item;
+    }
+
+    public async Task<T> Update(T item)
+    {
+        _dbContext.Update(item);
+
+        await _dbContext.SaveChangesAsync();
+
+        return item;
+    }
+}
+
+public class EntityRepository<T> : Repository<T>, IEntityRepository<T> where T : Entity
+{
+    public EntityRepository(ScrollDbContext dbContext)
+        : base(dbContext) { }
+
+    public async Task<T?> Get(int id) =>
+        await _dbContext.Set<T>().FindAsync(id);
 
     public async Task<T> Upsert(T item)
     {

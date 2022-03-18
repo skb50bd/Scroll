@@ -12,11 +12,11 @@ namespace Scroll.Service.Services;
 
 public class CategoryService : ICategoryService
 {
-    private readonly IRepository<Category> _repo;
+    private readonly IEntityRepository<Category> _repo;
     private readonly IMapper _mapper;
 
     public CategoryService(
-        IRepository<Category> repo,
+        IEntityRepository<Category> repo,
         IMapper mapper)
     {
         _repo   = repo;

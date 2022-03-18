@@ -29,8 +29,9 @@ public static class DatabaseConfigurator
                 config.GetConnectionString("BlobStorage")));
 
         services.AddScoped<IImageRepository, ImageRepository>();
-        services.AddScoped<IRepository<Product>, Repository<Product>>();
-        services.AddScoped<IRepository<Category>, Repository<Category>>();
+        services.AddScoped<IEntityRepository<Product>, EntityRepository<Product>>();
+        services.AddScoped<IEntityRepository<Category>, EntityRepository<Category>>();
+        services.AddScoped<IRepository<ProductCategoryMapping>, Repository<ProductCategoryMapping>>();
 
         return services;
     }
