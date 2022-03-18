@@ -143,5 +143,113 @@ else
         </table>
     </div>
 
-    <partial name="_Pagination" for="@Model.Products" />
+    @*Pagination*@
+
+    var prevButton = Model.Products.HasPreviousPage ? "" : "disabled";
+    var nextButton = Model.Products.HasNextPage ? "" : "disabled";
+
+    <nav aria-label="pagination">
+        <ul class="pagination">
+
+            <li class="page-item @prevButton">
+                <a asp-route-pageSize="@Model.Products.PageSize"
+                   asp-route-pageIndex="0"
+                   asp-route-searchString="@Model.SearchString"
+                   asp-route-sortBy="@Model.SortBy"
+                   asp-route-categoryId="@Model.CategoryId"
+                   class="page-link">First</a>
+            </li>
+
+            <li class="page-item @prevButton">
+                <a asp-route-pageSize="@Model.Products.PageSize"
+                   asp-route-pageIndex="@(Model.Products.PageIndex - 1)"
+                   asp-route-searchString="@Model.SearchString"
+                   asp-route-sortBy="@Model.SortBy"
+                   asp-route-categoryId="@Model.CategoryId"
+                   area-label="Previous"
+                   class="page-link">
+                    <span aria-hidden="true">
+                        &laquo;
+                    </span>
+                </a>
+            </li>
+            @{
+                var i = Model.Products.PageIndex - 3;
+                while (i <= -1) { i++; }
+            }
+
+            @while (i < Model.Products.PageIndex)
+            {
+                <li class="page-item">
+                    <a asp-route-pageSize="@Model.Products.PageSize"
+                       asp-route-pageIndex="@i"
+                       asp-route-searchString="@Model.SearchString"
+                       asp-route-sortBy="@Model.SortBy"
+                       asp-route-categoryId="@Model.CategoryId"
+                       class="page-link">
+                        @(i + 1)
+                    </a>
+                </li>
+                i++;
+            }
+
+            <li class="page-item active" aria-current="page">
+                <a asp-route-pageSize="@Model.Products.PageSize"
+                   asp-route-pageIndex="@Model.Products.PageIndex"
+                   asp-route-searchString="@Model.SearchString"
+                   asp-route-sortBy="@Model.SortBy"
+                   asp-route-categoryId="@Model.CategoryId"
+                   class="page-link">
+                    @(Model.PageIndex + 1)
+                    <span class="visually-hidden">(current)</span>
+                </a>
+            </li>
+
+
+            @for (i = Model.PageIndex + 1; i <= Model.Products.LastPageIndex && i <= Model.PageIndex + 3; i++)
+            {
+                <li class="page-item">
+                    <a asp-page="./Index"
+                       asp-route-pageSize="@Model.Products.PageSize"
+                       asp-route-pageIndex="@i"
+                       asp-route-searchString="@Model.SearchString"
+                       asp-route-sortBy="@Model.SortBy"
+                       asp-route-categoryId="@Model.CategoryId"
+                       class="page-link">
+                        @(i + 1)
+                    </a>
+                </li>
+            }
+
+            <li class="page-item @nextButton">
+                <a asp-page="./Index"
+                   asp-route-pageSize="@Model.Products.PageSize"
+                   asp-route-pageIndex="@(Model.PageIndex + 1)"
+                   asp-route-searchString="@Model.SearchString"
+                   asp-route-sortBy="@Model.SortBy"
+                   asp-route-categoryId="@Model.CategoryId"
+                   area-label="Next"
+                   class="page-link">
+                   <span aria-hidden="true">
+                       &raquo;
+                    </span>
+               </a>
+            </li>
+
+            <li class="page-item @nextButton">
+                <a asp-page="./Index"
+                   asp-route-pageSize="@Model.Products.PageSize"
+                   asp-route-pageIndex="@Model.Products.LastPageIndex"
+                   asp-route-searchString="@Model.SearchString"
+                   asp-route-sortBy="@Model.SortBy"
+                   asp-route-categoryId="@Model.CategoryId"
+                   class="page-link">Last</a>
+            </li>
+        </ul>
+    </nav>
+
+    <p class="text-center">
+        Showing @Model.Products.Count of total @Model.Products.TotalCount results
+    </p>
+
 }
