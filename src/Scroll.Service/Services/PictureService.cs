@@ -18,7 +18,11 @@ public class PictureService : IPictureService
         _processor = processor;
     }
 
-    public async Task<string> Add(string name, byte[] data)
+    public async Task<string> Add(
+        string name,
+        byte[] data,
+        int resizeToWidth = 1024,
+        int resizeToHeight = 1024)
     {
         var tempFilePath = Path.GetTempFileName();
 
@@ -31,7 +35,10 @@ public class PictureService : IPictureService
             await _processor.ConvertToWebP(tempImageInfo);
 
         var resizedImageInfo =
-            await _processor.ResizeImage(convertedFile);
+            await _processor.ResizeImage(
+                    convertedFile,
+                    resizeToWidth,
+                    resizeToHeight);
 
         // Tests show compression save no space
         // after webp conversion

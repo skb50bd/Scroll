@@ -6,7 +6,7 @@ namespace Scroll.Library.Utils;
 public static class StringExtensions
 {
     public static string ToSpaced(this string str) =>
-            str.Humanize();
+        str.Humanize();
     public static string ToSpaced(this Enum input) =>
         input.Humanize(LetterCasing.Title);
 
@@ -27,13 +27,9 @@ public static class StringExtensions
             .Replace("http://", "")
             .TrimEnd('/');
 
-    public static string Glimpse(this string str, int length)
-    {
-        if (str.Length <= length)
-        {
-            return str;
-        }
+    public static string Glimpse(this string str, int length) =>
+        str.Truncate(length, "...");
 
-        return $"{str[..length].TrimEnd()}...";
-    }
+    public static string ToUrlString(this string str) =>
+        str.Kebaberize();
 }

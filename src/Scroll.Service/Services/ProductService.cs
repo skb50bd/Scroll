@@ -150,11 +150,11 @@ public class ProductService : IProductService
         {
             var removedProductCategries =
                 await _productCategoryMappingRepo
-                    .GetAll()
-                    .Where(pc =>
-                        removedCategoryIds.Contains(pc.CategoryId)
-                        && pc.ProductId == editModel.Id)
-                    .ToListAsync();
+                        .GetAll()
+                        .Where(pc =>
+                            removedCategoryIds.Contains(pc.CategoryId)
+                            && pc.ProductId == editModel.Id)
+                        .ToListAsync();
 
             foreach (var pcMap in removedProductCategries)
             {
