@@ -1,6 +1,7 @@
 using Scroll.Library.Models.Mappers;
 using Scroll.Service.DependencyInjection;
 using Scroll.Web;
+using Scroll.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ if (builder.Environment.IsDevelopment())
     mvcBuilder.AddRazorRuntimeCompilation();
 }
 
+builder.Services.AddTransient<PictureUploadService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.ConfigureServices(builder.Configuration);

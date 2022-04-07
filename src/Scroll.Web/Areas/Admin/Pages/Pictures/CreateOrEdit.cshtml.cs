@@ -3,36 +3,28 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Scroll.Library.Utils;
 using Scroll.Service.Services;
 using System.ComponentModel.DataAnnotations;
+using Scroll.Web.Services;
 
 namespace Scroll.Web.Areas.Admin.Pages.Pictures;
 
 public class CreateOrEditModel : PageModel
 {
-    private readonly IPictureService _pictureService;
+    private readonly PictureUploadService _pictureUploadService;
 
-    public CreateOrEditModel(IPictureService pictureService)
+    public CreateOrEditModel(
+        PictureUploadService pictureUploadService)
     {
-        _pictureService = pictureService;
+        _pictureUploadService = pictureUploadService;
     }
 
     [BindProperty]
-    public InputModel Input { get; set; } = new();
+    public PictureUploadModel Input { get; set; } = new();
 
     public IActionResult OnGet()
     {
         return Page();
     }
-
-    private readonly HashSet<string> Extensions =
-        new()
-        {
-            ".jpg",
-            ".jpeg",
-            ".gif",
-            ".png",
-            ".webp"
-        };
-
+    
     public async Task<IActionResult> OnPostAsync()
     {
         if (ModelState.IsValid is false)
@@ -40,52 +32,19 @@ public class CreateOrEditModel : PageModel
             return Page();
         }
 
-        if (Input.Picture?.Length > 0)
+        if (Input.HasFile is false)
         {
-            using var ms =
-                new MemoryStream();
+            return BadRequest("File is Empty");
+        }
 
-            var extension =
-                Path.GetExtension(Input.Picture.FileName);
-
-            if (Extensions.Contains(extension) is false)
-            {
-                return BadRequest(
-                    $"File with extension \"{extension}\" not supported.");
-            }
-
-            await Input.Picture.CopyToAsync(ms);
-
-            var fileName =
-                await _pictureService.Add(
-                    Input.Name!.ToUrlString(),
-                    ms.ToArray(),
-                    Input.Width,
-                    Input.Height);
-
+        try
+        {
+            await _pictureUploadService.UploadPicture(Input);
             return RedirectToPage("./Index");
         }
-        else
+        catch (Exception ex)
         {
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
-    }
-
-    public class InputModel
-    {
-        public IFormFile? Picture { get; set; }
-
-        [Required]
-        [MinLength(3)]
-        [MaxLength(100)]
-        public string? Name { get; set; }
-
-        [Range(8, 5000)]
-        [Display(Name = "Max Width")]
-        public int Width { get; set; } = 1024;
-
-        [Range(8, 5000)]
-        [Display(Name = "Max Height")]
-        public int Height { get; set; } = 1024;
     }
 }

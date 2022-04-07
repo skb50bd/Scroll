@@ -5,21 +5,23 @@
     ViewData["Title"] = "Products";
 }
 
-<div class="clearfix w-100">
-    <div class="display-4 mb-3 float-start" style="margin-bottom: 10rem;">
+<div class="row">
+    <div class="display-4 mb-3 col-6" style="margin-bottom: 10rem;">
         <a class="text-decoration-none text-black"
            asp-area="Admin"
            asp-page="/Products/Index">
             @ViewData["Title"]
         </a>
     </div>
-
-    <div class="float-end">
-        <a class="btn btn-outline-primary"
-           asp-page="./CreateOrEdit">
-            New
-        </a>
-    </div>
+    @if (Model?.Products?.Count is > 0)
+    {
+        <div class="col-6 my-auto">
+            <a class="btn btn-outline-primary float-end"
+               asp-page="./CreateOrEdit">
+                New
+            </a>
+        </div>
+    }
 </div>
 
 @if (Model?.Products?.Count is not > 0)

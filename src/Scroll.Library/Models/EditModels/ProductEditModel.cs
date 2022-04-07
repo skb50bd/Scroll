@@ -22,7 +22,6 @@ public record class ProductEditModel
     [DataType(DataType.Url)]
     public string? Link { get; set; }
 
-    [Required]
     [Display(Name = "Image Name")]
-    public string ImageName { get; set; } = string.Empty;
+    public string? ImageName { get; set; } = string.Empty;
 }

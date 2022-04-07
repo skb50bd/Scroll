@@ -39,4 +39,33 @@
                         }
                     })
             });
+        
+        const existingImageDiv = 
+            document.querySelector("#existing-image");
+        
+        const newImageDiv = 
+            document.querySelector("#new-image");
+        
+        const newImageNameInput = 
+            document.querySelector("#EditModel_Picture_Name");
+
+        const existingImageNameInput =
+            document.querySelector("#EditModel_Product_ImageName");
+
+        document
+            .querySelector('#use-existing-image-switch')
+            .addEventListener(
+                'click',
+                event => {
+                    if (event.target.checked) {
+                        existingImageDiv.removeAttribute('hidden');
+                        newImageDiv.setAttribute('hidden', 'hidden');
+                        newImageNameInput.value = 'no-image';
+                    }
+                    else {
+                        newImageDiv.removeAttribute('hidden');
+                        existingImageDiv.setAttribute('hidden', 'hidden');
+                        newImageNameInput.value = '';
+                    }
+                })
     });

@@ -6,75 +6,81 @@
     ViewData["Title"] = "Pictures";
 }
 
-<div class="display-4 mb-3" style="margin-bottom: 10rem;">
-    <a class="text-decoration-none text-black"
-        asp-area="Admin"
-        asp-page="/Pictures/Index">
-        @ViewData["Title"]
-    </a>
+
+<div class="row">
+    <div class="display-4 mb-3 col-6" style="margin-bottom: 10rem;">
+        <a class="text-decoration-none text-black"
+           asp-area="Admin"
+           asp-page="/Pictures/Index">
+            @ViewData["Title"]
+        </a>
+    </div>
+    @if (Model?.Pictures?.Count > 0)
+    {
+        <div class="col-6 my-auto">
+            <a class="btn btn-outline-primary float-end"
+               asp-page="./CreateOrEdit">
+                New
+            </a>
+        </div>
+    }
 </div>
 
 @if (Model?.Pictures?.Count is not > 0)
 {
-    <partial name="_LonelyHere" />
+    <partial name="_LonelyHere"/>
 }
 else
 {
-    <div class="clearfix w-100">
-        <a class="btn btn-outline-primary float-end"
-           asp-page="./CreateOrEdit">
-            New
-        </a>
-    </div>
     <table class="table table-hover table-striped mt-2">
         <thead class="table-dark">
-            <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Size</th>
-                <th scope="col">Content Type</th>
-                <th scope="col">Uploaded On</th>
-                <th scope="col"></th>
-            </tr>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Size</th>
+            <th scope="col">Content Type</th>
+            <th scope="col">Uploaded On</th>
+            <th scope="col"></th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var picture in Model.Pictures.Items)
-            {
-                var link = Url.Action("Get", "Picture", new { name = picture.Name });
+        @foreach (var picture in Model.Pictures.Items)
+        {
+            var link = Url.Action("Get", "Picture", new {name = picture.Name});
 
-                <tr>
-                    <th scope="row"
-                        class="hover-image"
-                        data-src="@link">
-                            @picture.Name
-                    </th>
+            <tr>
+                <th scope="row"
+                    class="hover-image"
+                    data-src="@link">
+                    @picture.Name
+                </th>
 
-                    <td>
-                        @picture.Size.Bytes().Humanize()
-                    </td>
+                <td>
+                    @picture.Size.Bytes().Humanize()
+                </td>
 
-                    <td>
-                        <code>
-                            @picture.ContentType
-                        </code>
-                    </td>
+                <td>
+                    <code>
+                        @picture.ContentType
+                    </code>
+                </td>
 
-                    <td data-bs-toggle="tooltip"
-                        data-bs-placement="left"
-                        title="@picture.UploadedOn?.ToString("ddd, d MMM yyyy, HH:mm z")">
-                            @picture.UploadedOn.Humanize()
-                    </td>
-                    <td>
-                        <a href="#delete"
-                           class="link-danger text-decoration-none js-delete-action"
-                           data-delete-url="@Url.Action("Delete", "Picture", new { name = picture.Name })"
-                           data-redirect-url="@Url.Page("./Index")">
-                            Delete
-                        </a>
-                    </td>
-                </tr>
-            }
+                <td data-bs-toggle="tooltip"
+                    data-bs-placement="left"
+                    title="@picture.UploadedOn?.ToString("ddd, d MMM yyyy, HH:mm z")">
+                    @picture.UploadedOn.Humanize()
+                </td>
+                <td>
+                    <a href="#delete"
+                       class="link-danger text-decoration-none js-delete-action"
+                       data-delete-url="@Url.Action("Delete", "Picture", new {name = picture.Name})"
+                       data-redirect-url="@Url.Page("./Index")">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+        }
         </tbody>
     </table>
 
-    <partial name="_Pagination" for="@Model.Pictures" />
+    <partial name="_Pagination" for="@Model.Pictures"/>
 }
