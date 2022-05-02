@@ -13,14 +13,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scroll.Library", "src\Scrol
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scroll.Data", "src\Scroll.Data\Scroll.Data.csproj", "{BC3B2497-B896-44EC-BA12-599564652D32}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scroll.Tests", "src\Scroll.Tests\Scroll.Tests.csproj", "{B317D770-A897-4E71-A9F8-2555DE32BF50}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1FE5EDF1-CF44-4900-9D09-BE747C868418}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scroll.Tests", "Scroll.Tests\Scroll.Tests.csproj", "{B317D770-A897-4E71-A9F8-2555DE32BF50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

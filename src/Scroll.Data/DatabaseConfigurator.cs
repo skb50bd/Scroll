@@ -21,6 +21,7 @@ public static class DatabaseConfigurator
 
         services
             .AddIdentity<AppUser, IdentityRole<int>>()
+            .AddDefaultTokenProviders()
             .AddEntityFrameworkStores<ScrollDbContext>();
 
         // Add the Blob Storage Connection

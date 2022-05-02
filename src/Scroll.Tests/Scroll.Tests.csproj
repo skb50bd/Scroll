@@ -21,7 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\src\Scroll.Library\Scroll.Library.csproj" />
+		<ProjectReference Include="..\Scroll.Library\Scroll.Library.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -35,7 +35,7 @@ public class PictureUploadService
             new MemoryStream();
 
         var extension =
-            Path.GetExtension(input.File.FileName);
+            Path.GetExtension(input.File!.FileName);
 
         if (_extensions.Contains(extension) is false)
         {
