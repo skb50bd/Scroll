@@ -1,5 +1,4 @@
-﻿using Azure.Storage.Blobs;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +15,7 @@ public static class DatabaseConfigurator
     {
         // Add the SQL Server DB Connection
         services.AddDbContext<ScrollDbContext>(opt =>
-            opt.UseSqlServer(
+            opt.UseNpgsql(
                 config.GetConnectionString("ScrollDb")));
 
         services
@@ -24,12 +23,7 @@ public static class DatabaseConfigurator
             .AddDefaultTokenProviders()
             .AddEntityFrameworkStores<ScrollDbContext>();
 
-        // Add the Blob Storage Connection
-        services.AddSingleton(x =>
-            new BlobServiceClient(
-                config.GetConnectionString("BlobStorage")));
-
-        services.AddScoped<IImageRepository, ImageRepository>();
+        services.AddScoped<IFileRepository, FileRepository>();
         services.AddScoped<IEntityRepository<Product>, EntityRepository<Product>>();
         services.AddScoped<IEntityRepository<Category>, EntityRepository<Category>>();
         services.AddScoped<IRepository<ProductCategoryMapping>, Repository<ProductCategoryMapping>>();

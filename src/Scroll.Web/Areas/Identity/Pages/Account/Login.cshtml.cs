@@ -73,8 +73,8 @@ public class LoginModel : PageModel
             var result =
                 await _signInManager
                     .PasswordSignInAsync(
-                        Input!.Username,
-                        Input.Password,
+                        Input!.Username!,
+                        Input!.Password!,
                         Input.RememberMe,
                         lockoutOnFailure: false);
 

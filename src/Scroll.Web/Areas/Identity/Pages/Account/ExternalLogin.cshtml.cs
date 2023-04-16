@@ -56,7 +56,7 @@ public class ExternalLoginModel : PageModel
 
     public IActionResult OnGet() => RedirectToPage("./Login");
 
-    public IActionResult OnPost(string provider, string returnUrl = null)
+    public IActionResult OnPost(string provider, string? returnUrl = null)
     {
         // Request a redirect to the external login provider.
         var redirectUrl =
@@ -203,7 +203,7 @@ public class ExternalLoginModel : PageModel
                             protocol: Request.Scheme);
 
                     await _emailSender.SendEmailAsync(
-                        Input.Email,
+                        Input.Email!,
                         "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");
 

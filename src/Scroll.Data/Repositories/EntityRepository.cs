@@ -19,29 +19,47 @@ public class Repository<T> : IRepository<T> where T : class
     public async Task<bool> Delete(T item)
     {
         _dbContext.Set<T>().Remove(item);
+        return await _dbContext.SaveChangesAsync() > 0;
+    }
 
-        var numOfRowsAffected =
-            await _dbContext.SaveChangesAsync();
-
-        return numOfRowsAffected > 0;
+    public async Task<bool> Delete(IEnumerable<T> items)
+    {
+        _dbContext.Set<T>().RemoveRange(items);
+        return await _dbContext.SaveChangesAsync() > 0;
     }
 
     public async Task<T> Add(T item)
     {
         await _dbContext.AddAsync(item);
-
         await _dbContext.SaveChangesAsync();
-
         return item;
+    }
+
+    public async Task<List<T>> Add(IEnumerable<T> items)
+    {
+        var itemList = items.ToList();
+        await _dbContext.AddRangeAsync(itemList);
+        await _dbContext.SaveChangesAsync();
+        return itemList;
     }
 
     public async Task<T> Update(T item)
     {
         _dbContext.Update(item);
-
         await _dbContext.SaveChangesAsync();
-
         return item;
+    }
+
+    public async Task<List<T>> Update(IEnumerable<T> items)
+    {
+        var itemList = items.ToList();
+        foreach (var item in itemList)
+        {
+            _dbContext.Update(item);
+        }
+        
+        await _dbContext.SaveChangesAsync();
+        return itemList;
     }
 }
 

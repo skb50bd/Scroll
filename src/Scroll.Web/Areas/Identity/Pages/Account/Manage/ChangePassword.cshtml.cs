@@ -88,8 +88,8 @@ public class ChangePasswordModel : PageModel
             await _userManager
                 .ChangePasswordAsync(
                     user,
-                    Input!.OldPassword,
-                    Input.NewPassword);
+                    Input!.OldPassword!,
+                    Input!.NewPassword!);
 
         if (changePasswordResult.Succeeded is false)
         {

@@ -91,7 +91,7 @@ public class LoginWith2faModel : PageModel
         var result =
             await _signInManager
                 .TwoFactorAuthenticatorSignInAsync(
-                    authenticatorCode,
+                    authenticatorCode!,
                     rememberMe,
                     Input.RememberMachine);
 

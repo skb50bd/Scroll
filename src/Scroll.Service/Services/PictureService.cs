@@ -1,17 +1,18 @@
 ﻿using Scroll.Data;
 using Scroll.Library.Models;
 using Scroll.Library.Models.DTOs;
+using Scroll.Library.Models.Entities;
 using Scroll.Service.Data;
 
 namespace Scroll.Service.Services;
 
 public class PictureService : IPictureService
 {
-    private readonly IImageRepository _repo;
+    private readonly IFileRepository _repo;
     private readonly IPictureProcessor _processor;
 
     public PictureService(
-        IImageRepository repo,
+        IFileRepository repo,
         IPictureProcessor processor)
     {
         _repo      = repo;
@@ -56,21 +57,24 @@ public class PictureService : IPictureService
 
         await _repo.Upload(
             filePath: resizedImageInfo.FullName,
-            fileName);
+            fileName: fileName,
+            contentType: "image/webp"
+        );
 
         return fileName;
     }
 
-    public Task<Picture?> Get(string name) =>
+    public Task<ScrollFile?> Get(string name) =>
         _repo.Download(name);
 
-    public Task<PagedList<PictureInfo>> Get(
-        int pageIndex = 0,
-        int pageSize = 10) =>
-            _repo.GetAll()
-                .ToPagedList(
-                    pageIndex,
-                    pageSize);
+    public Task<PagedList<ScrollFileInfo>> Get(
+            int pageIndex = 0,
+            int pageSize = 10) =>
+        _repo.GetAll()
+            .ToPagedList(
+                pageIndex,
+                pageSize
+            );
 
     public Task Delete(string name) =>
         _repo.Delete(name);

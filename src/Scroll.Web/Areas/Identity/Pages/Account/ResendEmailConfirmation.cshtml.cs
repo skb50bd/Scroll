@@ -47,7 +47,7 @@ public class ResendEmailConfirmationModel : PageModel
         }
 
         var user =
-            await _userManager.FindByEmailAsync(Input!.Email);
+            await _userManager.FindByEmailAsync(Input!.Email!);
 
         if (user is null)
         {
@@ -76,7 +76,7 @@ public class ResendEmailConfirmationModel : PageModel
                 protocol: Request.Scheme);
 
         await _emailSender.SendEmailAsync(
-            Input.Email,
+            Input.Email!,
             "Confirm your email",
             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");
 

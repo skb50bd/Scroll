@@ -107,7 +107,7 @@ public class RegisterModel : PageModel
         user.FullName = Input.FullName!;
 
         var result =
-            await _userManager.CreateAsync(user, Input.Password);
+            await _userManager.CreateAsync(user, Input!.Password!);
 
         if (result.Succeeded)
         {
@@ -133,7 +133,7 @@ public class RegisterModel : PageModel
 
             await _emailSender
                 .SendEmailAsync(
-                    Input.Email,
+                    Input.Email!,
                     "Confirm your email",
                     $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");
 

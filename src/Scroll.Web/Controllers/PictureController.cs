@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Scroll.Library.Models;
 using Scroll.Library.Models.DTOs;
+using Scroll.Library.Models.Entities;
 using Scroll.Service.Services;
 
 namespace Scroll.Web.Controllers;
@@ -18,7 +19,7 @@ public class PictureController : ControllerBase
     }
 
     [HttpGet("List")]
-    public Task<PagedList<PictureInfo>> GetAll(
+    public Task<PagedList<ScrollFileInfo>> GetAll(
         int pageIndex = 0,
         int pageSize = 10) =>
             _pictureService.Get(pageIndex, pageSize);
@@ -35,7 +36,7 @@ public class PictureController : ControllerBase
         }
 
         return File(
-                picture.Stream,
+                picture.Content,
                 picture.ContentType,
                 picture.Name);
     }

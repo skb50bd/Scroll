@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Scroll.Library.Models;
 using Scroll.Library.Models.DTOs;
+using Scroll.Library.Models.Entities;
 using Scroll.Service.Services;
 
 namespace Scroll.Web.Areas.Admin.Pages.Pictures;
@@ -15,7 +16,7 @@ public class IndexModel : PageModel
         _pictureService = pictureService;
     }
 
-    public PagedList<PictureInfo> Pictures { get; set; } = new();
+    public PagedList<ScrollFileInfo> Pictures { get; set; } = new();
 
     public async Task<IActionResult> OnGetAsync(
         int pageIndex = 0,

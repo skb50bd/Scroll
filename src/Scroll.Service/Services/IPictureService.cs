@@ -1,5 +1,6 @@
 ﻿using Scroll.Library.Models;
 using Scroll.Library.Models.DTOs;
+using Scroll.Library.Models.Entities;
 
 namespace Scroll.Service.Services;
 
@@ -15,9 +16,9 @@ public interface IPictureService
 
     Task DeleteFilesWithoutReference();
 
-    Task<PagedList<PictureInfo>> Get(int pageIndex = 0, int pageSize = 10);
+    Task<PagedList<ScrollFileInfo>> Get(int pageIndex = 0, int pageSize = 10);
 
-    Task<Picture?> Get(string name);
+    Task<ScrollFile?> Get(string name);
 
     Task<bool> Exists(string name);
 }

@@ -68,7 +68,7 @@ public class ResetPasswordModel : PageModel
         }
 
         var user =
-            await _userManager.FindByNameAsync(Input!.Username);
+            await _userManager.FindByNameAsync(Input!.Username!);
 
         if (user is null)
         {
@@ -80,8 +80,8 @@ public class ResetPasswordModel : PageModel
             await _userManager
                 .ResetPasswordAsync(
                     user,
-                    Input.Code,
-                    Input.Password);
+                    Input.Code!,
+                    Input.Password!);
 
         if (result.Succeeded)
         {

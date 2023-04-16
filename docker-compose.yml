@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  db:
+    container_name: scroll-pg
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: scrolladmin
+      POSTGRES_PASSWORD: scrolladmin
+      POSTGRES_DB: scroll1
+    ports:
+      - "5432:5432"
+  pgadmin:
+    container_name: scroll-pg-admin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: info@shakib.io
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - "5050:80"
+  scroll-web:
+    container_name: scroll-web
+    image: scroll-web-img
+    build:
+      context: ./src/Scroll.Web
+      dockerfile: Dockerfile 
+    ports: 
+      - "8080:80"
+    depends_on: 
+      - db    
+    volumes:
+      - type: bind 
+        source: /Users/shakibharis/ScrollStorage
+        target: /app/files

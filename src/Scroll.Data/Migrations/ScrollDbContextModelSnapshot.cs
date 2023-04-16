@@ -2,8 +2,8 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Scroll.Data;
 
 #nullable disable
@@ -17,30 +17,30 @@ namespace Scroll.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.3")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("ProductVersion", "8.0.0-preview.3.23174.2")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConcurrencyStamp")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("Name")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.HasKey("Id");
 
@@ -51,20 +51,20 @@ namespace Scroll.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("ClaimValue")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -75,20 +75,20 @@ namespace Scroll.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("ClaimValue")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -99,18 +99,18 @@ namespace Scroll.Data.Migrations
                 {
                     b.Property<string>("ProviderKey")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("ProviderKey", "LoginProvider");
 
@@ -123,10 +123,10 @@ namespace Scroll.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("RoleId", "UserId");
 
@@ -136,19 +136,19 @@ namespace Scroll.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("Name")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("Value")
                         .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
+                        .HasColumnType("character varying(1024)");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
@@ -159,72 +159,72 @@ namespace Scroll.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("character varying(150)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("NormalizedUserName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("SecurityStamp")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -244,19 +244,19 @@ namespace Scroll.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -314,10 +314,10 @@ namespace Scroll.Data.Migrations
             modelBuilder.Entity("Scroll.Library.Models.Entities.Favorite", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "ProductId");
 
@@ -330,43 +330,42 @@ namespace Scroll.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTimeOffset>("AddedOn")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetimeoffset")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("ClickCount")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(5000)
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("character varying(5000)");
 
                     b.Property<int>("FavoriteCount")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ImageName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Link")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 6)
-                        .HasColumnType("decimal(18,6)");
+                        .HasColumnType("decimal(18, 6)");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -386,7 +385,7 @@ namespace Scroll.Data.Migrations
                         new
                         {
                             Id = 1,
-                            AddedOn = new DateTimeOffset(new DateTime(2022, 3, 12, 12, 38, 24, 480, DateTimeKind.Unspecified).AddTicks(2652), new TimeSpan(0, 6, 0, 0, 0)),
+                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 0, 37, 54, 868, DateTimeKind.Unspecified).AddTicks(3890), new TimeSpan(0, 6, 0, 0, 0)),
                             ClickCount = 10,
                             Description = "If you need to get even with someone you love, the impossible to open frustration box is just what you need.",
                             FavoriteCount = 0,
@@ -398,7 +397,7 @@ namespace Scroll.Data.Migrations
                         new
                         {
                             Id = 2,
-                            AddedOn = new DateTimeOffset(new DateTime(2022, 3, 12, 12, 38, 24, 481, DateTimeKind.Unspecified).AddTicks(1891), new TimeSpan(0, 6, 0, 0, 0)),
+                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 0, 37, 54, 870, DateTimeKind.Unspecified).AddTicks(3560), new TimeSpan(0, 6, 0, 0, 0)),
                             ClickCount = 3,
                             Description = "Nothing will embarrass your poor unsuspecting victim quite like receiving one of these prank mail packages at their place or work.",
                             FavoriteCount = 0,
@@ -410,7 +409,7 @@ namespace Scroll.Data.Migrations
                         new
                         {
                             Id = 3,
-                            AddedOn = new DateTimeOffset(new DateTime(2022, 3, 12, 12, 38, 24, 481, DateTimeKind.Unspecified).AddTicks(2036), new TimeSpan(0, 6, 0, 0, 0)),
+                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 0, 37, 54, 870, DateTimeKind.Unspecified).AddTicks(3660), new TimeSpan(0, 6, 0, 0, 0)),
                             ClickCount = 69,
                             Description = "Ensure your buddy has nightmares for years to come by sending him 1500 live ladybugs.",
                             FavoriteCount = 0,
@@ -422,7 +421,7 @@ namespace Scroll.Data.Migrations
                         new
                         {
                             Id = 4,
-                            AddedOn = new DateTimeOffset(new DateTime(2022, 3, 12, 12, 38, 24, 481, DateTimeKind.Unspecified).AddTicks(2046), new TimeSpan(0, 6, 0, 0, 0)),
+                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 0, 37, 54, 870, DateTimeKind.Unspecified).AddTicks(3680), new TimeSpan(0, 6, 0, 0, 0)),
                             ClickCount = 3,
                             Description = "Gamers rejoice! Ensure no good game slips under your nose by playing everything on the 100 Video Games Bucket List poster.",
                             FavoriteCount = 0,
@@ -434,7 +433,7 @@ namespace Scroll.Data.Migrations
                         new
                         {
                             Id = 5,
-                            AddedOn = new DateTimeOffset(new DateTime(2022, 3, 12, 12, 38, 24, 481, DateTimeKind.Unspecified).AddTicks(2054), new TimeSpan(0, 6, 0, 0, 0)),
+                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 0, 37, 54, 870, DateTimeKind.Unspecified).AddTicks(3690), new TimeSpan(0, 6, 0, 0, 0)),
                             ClickCount = 1,
                             Description = "For both streamers and gamers, this backlit LED is the perfect way to give a customized gift to any gamer.",
                             FavoriteCount = 0,
@@ -446,7 +445,7 @@ namespace Scroll.Data.Migrations
                         new
                         {
                             Id = 6,
-                            AddedOn = new DateTimeOffset(new DateTime(2022, 3, 12, 12, 38, 24, 481, DateTimeKind.Unspecified).AddTicks(2061), new TimeSpan(0, 6, 0, 0, 0)),
+                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 0, 37, 54, 870, DateTimeKind.Unspecified).AddTicks(3700), new TimeSpan(0, 6, 0, 0, 0)),
                             ClickCount = 4,
                             Description = "After an intense gaming session getting pwned by kids half your age, you need a way to relax and calm your nerves.",
                             FavoriteCount = 0,
@@ -458,7 +457,7 @@ namespace Scroll.Data.Migrations
                         new
                         {
                             Id = 7,
-                            AddedOn = new DateTimeOffset(new DateTime(2022, 3, 12, 12, 38, 24, 481, DateTimeKind.Unspecified).AddTicks(2067), new TimeSpan(0, 6, 0, 0, 0)),
+                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 0, 37, 54, 870, DateTimeKind.Unspecified).AddTicks(3720), new TimeSpan(0, 6, 0, 0, 0)),
                             ClickCount = 420,
                             Description = "Take the rainbow with a photography prism.",
                             FavoriteCount = 0,
@@ -472,10 +471,10 @@ namespace Scroll.Data.Migrations
             modelBuilder.Entity("Scroll.Library.Models.Entities.ProductCategoryMapping", b =>
                 {
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("ProductId", "CategoryId");
 
@@ -544,6 +543,65 @@ namespace Scroll.Data.Migrations
                             ProductId = 7,
                             CategoryId = 7
                         });
+                });
+
+            modelBuilder.Entity("Scroll.Library.Models.Entities.ScrollFileInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("AddedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("character varying(21)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("UIX_ScrollFile_Name");
+
+                    b.ToTable("ScrollFiles", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("ScrollFileInfo");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Scroll.Library.Models.Entities.ScrollFile", b =>
+                {
+                    b.HasBaseType("Scroll.Library.Models.Entities.ScrollFileInfo");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.HasDiscriminator().HasValue("ScrollFile");
                 });
 
             modelBuilder.Entity("Scroll.Library.Models.Entities.Favorite", b =>

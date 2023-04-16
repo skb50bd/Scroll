@@ -36,7 +36,7 @@ public class LoginWithRecoveryCodeModel : PageModel
         public string? RecoveryCode { get; set; }
     }
 
-    public async Task<IActionResult> OnGetAsync(string returnUrl = null)
+    public async Task<IActionResult> OnGetAsync(string? returnUrl = null)
     {
         // Ensure the user has gone through the username & password screen first
         var user =
@@ -75,7 +75,7 @@ public class LoginWithRecoveryCodeModel : PageModel
 
         var result =
             await _signInManager
-                .TwoFactorRecoveryCodeSignInAsync(recoveryCode);
+                .TwoFactorRecoveryCodeSignInAsync(recoveryCode!);
 
         await _userManager.GetUserIdAsync(user);
 
