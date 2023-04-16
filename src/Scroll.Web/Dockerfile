@@ -1,9 +1,9 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0.0-preview.3-alpine3.17-arm64v8 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0-preview-alpine AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0.0-preview.3-alpine3.17-arm64v8 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-preview-alpine AS build
 WORKDIR /src
 COPY ["src/Scroll.Web/Scroll.Web.csproj", "src/Scroll.Web/"]
 COPY ["src/Scroll.Service/Scroll.Service.csproj", "src/Scroll.Service/"]

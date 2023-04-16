@@ -7,7 +7,7 @@ public static class WebServicesConfiguration
     public static IServiceCollection ConfigureWebAppServices(
         this IServiceCollection services)
     {
-        services.AddTransient<PictureUploadService>();
+        // services.AddScoped<PictureUploadService>();
         return services;
     }
 }

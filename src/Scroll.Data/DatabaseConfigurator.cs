@@ -23,6 +23,8 @@ public static class DatabaseConfigurator
             .AddDefaultTokenProviders()
             .AddEntityFrameworkStores<ScrollDbContext>();
 
+        services.AddScoped<IRepository<ScrollFileInfo>, EntityRepository<ScrollFileInfo>>();
+        services.AddScoped<IRepository<ScrollFile>, EntityRepository<ScrollFile>>();
         services.AddScoped<IFileRepository, FileRepository>();
         services.AddScoped<IEntityRepository<Product>, EntityRepository<Product>>();
         services.AddScoped<IEntityRepository<Category>, EntityRepository<Category>>();

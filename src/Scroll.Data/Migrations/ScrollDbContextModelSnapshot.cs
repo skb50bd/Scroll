@@ -385,7 +385,7 @@ namespace Scroll.Data.Migrations
                         new
                         {
                             Id = 1,
-                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 0, 37, 54, 868, DateTimeKind.Unspecified).AddTicks(3890), new TimeSpan(0, 6, 0, 0, 0)),
+                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 1, 52, 44, 920, DateTimeKind.Unspecified).AddTicks(4080), new TimeSpan(0, 6, 0, 0, 0)),
                             ClickCount = 10,
                             Description = "If you need to get even with someone you love, the impossible to open frustration box is just what you need.",
                             FavoriteCount = 0,
@@ -397,7 +397,7 @@ namespace Scroll.Data.Migrations
                         new
                         {
                             Id = 2,
-                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 0, 37, 54, 870, DateTimeKind.Unspecified).AddTicks(3560), new TimeSpan(0, 6, 0, 0, 0)),
+                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 1, 52, 44, 922, DateTimeKind.Unspecified).AddTicks(2700), new TimeSpan(0, 6, 0, 0, 0)),
                             ClickCount = 3,
                             Description = "Nothing will embarrass your poor unsuspecting victim quite like receiving one of these prank mail packages at their place or work.",
                             FavoriteCount = 0,
@@ -409,7 +409,7 @@ namespace Scroll.Data.Migrations
                         new
                         {
                             Id = 3,
-                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 0, 37, 54, 870, DateTimeKind.Unspecified).AddTicks(3660), new TimeSpan(0, 6, 0, 0, 0)),
+                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 1, 52, 44, 922, DateTimeKind.Unspecified).AddTicks(2800), new TimeSpan(0, 6, 0, 0, 0)),
                             ClickCount = 69,
                             Description = "Ensure your buddy has nightmares for years to come by sending him 1500 live ladybugs.",
                             FavoriteCount = 0,
@@ -421,7 +421,7 @@ namespace Scroll.Data.Migrations
                         new
                         {
                             Id = 4,
-                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 0, 37, 54, 870, DateTimeKind.Unspecified).AddTicks(3680), new TimeSpan(0, 6, 0, 0, 0)),
+                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 1, 52, 44, 922, DateTimeKind.Unspecified).AddTicks(2810), new TimeSpan(0, 6, 0, 0, 0)),
                             ClickCount = 3,
                             Description = "Gamers rejoice! Ensure no good game slips under your nose by playing everything on the 100 Video Games Bucket List poster.",
                             FavoriteCount = 0,
@@ -433,7 +433,7 @@ namespace Scroll.Data.Migrations
                         new
                         {
                             Id = 5,
-                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 0, 37, 54, 870, DateTimeKind.Unspecified).AddTicks(3690), new TimeSpan(0, 6, 0, 0, 0)),
+                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 1, 52, 44, 922, DateTimeKind.Unspecified).AddTicks(2830), new TimeSpan(0, 6, 0, 0, 0)),
                             ClickCount = 1,
                             Description = "For both streamers and gamers, this backlit LED is the perfect way to give a customized gift to any gamer.",
                             FavoriteCount = 0,
@@ -445,7 +445,7 @@ namespace Scroll.Data.Migrations
                         new
                         {
                             Id = 6,
-                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 0, 37, 54, 870, DateTimeKind.Unspecified).AddTicks(3700), new TimeSpan(0, 6, 0, 0, 0)),
+                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 1, 52, 44, 922, DateTimeKind.Unspecified).AddTicks(2840), new TimeSpan(0, 6, 0, 0, 0)),
                             ClickCount = 4,
                             Description = "After an intense gaming session getting pwned by kids half your age, you need a way to relax and calm your nerves.",
                             FavoriteCount = 0,
@@ -457,7 +457,7 @@ namespace Scroll.Data.Migrations
                         new
                         {
                             Id = 7,
-                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 0, 37, 54, 870, DateTimeKind.Unspecified).AddTicks(3720), new TimeSpan(0, 6, 0, 0, 0)),
+                            AddedOn = new DateTimeOffset(new DateTime(2023, 4, 17, 1, 52, 44, 922, DateTimeKind.Unspecified).AddTicks(2850), new TimeSpan(0, 6, 0, 0, 0)),
                             ClickCount = 420,
                             Description = "Take the rainbow with a photography prism.",
                             FavoriteCount = 0,
@@ -568,11 +568,6 @@ namespace Scroll.Data.Migrations
                         .HasColumnType("character varying(21)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("Path")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");

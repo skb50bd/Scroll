@@ -29,7 +29,3 @@ services:
       - "8080:80"
     depends_on: 
       - db    
-    volumes:
-      - type: bind 
-        source: /Users/shakibharis/ScrollStorage
-        target: /app/files

@@ -6,47 +6,47 @@ namespace Scroll.Service.Data;
 
 public class Repository<T> : IRepository<T> where T : class
 {
-    protected readonly ScrollDbContext _dbContext;
+    protected readonly ScrollDbContext DbContext;
 
     public Repository(ScrollDbContext dbContext)
     {
-        _dbContext = dbContext;
+        DbContext = dbContext;
     }
 
     public IQueryable<T> GetAll() =>
-        _dbContext.Set<T>();
+        DbContext.Set<T>();
 
     public async Task<bool> Delete(T item)
     {
-        _dbContext.Set<T>().Remove(item);
-        return await _dbContext.SaveChangesAsync() > 0;
+        DbContext.Set<T>().Remove(item);
+        return await DbContext.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> Delete(IEnumerable<T> items)
     {
-        _dbContext.Set<T>().RemoveRange(items);
-        return await _dbContext.SaveChangesAsync() > 0;
+        DbContext.Set<T>().RemoveRange(items);
+        return await DbContext.SaveChangesAsync() > 0;
     }
 
     public async Task<T> Add(T item)
     {
-        await _dbContext.AddAsync(item);
-        await _dbContext.SaveChangesAsync();
+        await DbContext.AddAsync(item);
+        await DbContext.SaveChangesAsync();
         return item;
     }
 
     public async Task<List<T>> Add(IEnumerable<T> items)
     {
         var itemList = items.ToList();
-        await _dbContext.AddRangeAsync(itemList);
-        await _dbContext.SaveChangesAsync();
+        await DbContext.AddRangeAsync(itemList);
+        await DbContext.SaveChangesAsync();
         return itemList;
     }
 
     public async Task<T> Update(T item)
     {
-        _dbContext.Update(item);
-        await _dbContext.SaveChangesAsync();
+        DbContext.Update(item);
+        await DbContext.SaveChangesAsync();
         return item;
     }
 
@@ -55,10 +55,10 @@ public class Repository<T> : IRepository<T> where T : class
         var itemList = items.ToList();
         foreach (var item in itemList)
         {
-            _dbContext.Update(item);
+            DbContext.Update(item);
         }
         
-        await _dbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync();
         return itemList;
     }
 }
@@ -69,20 +69,20 @@ public class EntityRepository<T> : Repository<T>, IEntityRepository<T> where T :
         : base(dbContext) { }
 
     public async Task<T?> Get(int id) =>
-        await _dbContext.Set<T>().FindAsync(id);
+        await DbContext.Set<T>().FindAsync(id);
 
     public async Task<T> Upsert(T item)
     {
         if (item.Id is 0)
         {
-            await _dbContext.AddAsync(item);
+            await DbContext.AddAsync(item);
         }
         else
         {
-            _dbContext.Update(item);
+            DbContext.Update(item);
         }
 
-        await _dbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync();
 
         return item;
     }
@@ -96,16 +96,16 @@ public class EntityRepository<T> : Repository<T>, IEntityRepository<T> where T :
             return false;
         }
 
-        _dbContext.Remove(item);
+        DbContext.Remove(item);
 
         var numOfRowsAffected =
-            await _dbContext.SaveChangesAsync();
+            await DbContext.SaveChangesAsync();
 
         return numOfRowsAffected > 0;
     }
 
     public Task<bool> Exists(int id) =>
-        _dbContext
+        DbContext
             .Set<T>()
             .AnyAsync(p => p.Id == id);
 }

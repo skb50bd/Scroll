@@ -23,10 +23,6 @@ public class ScrollFileInfoMap : IEntityTypeConfiguration<ScrollFileInfo>
         builder
             .Property(sf => sf.Name)
             .HasMaxLength(200);
-
-        builder
-            .Property(sf => sf.Path)
-            .HasMaxLength(200);
         
         builder
             .Property(sf => sf.AddedOn)
