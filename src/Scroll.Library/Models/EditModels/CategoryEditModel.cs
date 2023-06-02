@@ -4,7 +4,7 @@ namespace Scroll.Library.Models.EditModels;
 
 public record class CategoryEditModel
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required]
     [StringLength(100, MinimumLength = 3)]

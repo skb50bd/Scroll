@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Scroll.Library.Models.Entities;
-using Scroll.Service.Data;
 
 namespace Scroll.Data.Mappers;
 

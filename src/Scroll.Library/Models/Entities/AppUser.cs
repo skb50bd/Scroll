@@ -2,7 +2,7 @@
 
 namespace Scroll.Library.Models.Entities;
 
-public class AppUser : IdentityUser<int>
+public class AppUser : IdentityUser<Guid>
 {
     public string FullName { get; set; } = string.Empty;
 }

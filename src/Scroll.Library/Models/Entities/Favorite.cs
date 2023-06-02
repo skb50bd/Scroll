@@ -1,9 +1,9 @@
 ﻿namespace Scroll.Library.Models.Entities;
 
-public class Favorite
+public sealed class Favorite
 {
-    public int UserId { get; set; }
-    public virtual AppUser? User { get; set; }
-    public int ProductId { get; set; }
-    public virtual Product? Product { get; set; }
+    public Guid UserId { get; set; }
+    public AppUser? User { get; set; }
+    public Guid ProductId { get; set; }
+    public Product? Product { get; set; }
 }

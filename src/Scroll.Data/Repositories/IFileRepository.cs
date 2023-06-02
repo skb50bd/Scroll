@@ -1,7 +1,6 @@
-﻿using Scroll.Library.Models.DTOs;
-using Scroll.Library.Models.Entities;
+﻿using Scroll.Library.Models.Entities;
 
-namespace Scroll.Service.Data;
+namespace Scroll.Data.Repositories;
 
 public interface IFileRepository
 {

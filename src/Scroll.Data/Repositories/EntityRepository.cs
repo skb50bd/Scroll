@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Scroll.Data;
 using Scroll.Library.Models.Entities;
 
-namespace Scroll.Service.Data;
+namespace Scroll.Data.Repositories;
 
-public class Repository<T> : IRepository<T> where T : class
+public class Repository<T> : IRepository<T> where T : Entity
 {
     protected readonly ScrollDbContext DbContext;
 
@@ -57,7 +56,7 @@ public class Repository<T> : IRepository<T> where T : class
         {
             DbContext.Update(item);
         }
-        
+
         await DbContext.SaveChangesAsync();
         return itemList;
     }
@@ -68,12 +67,12 @@ public class EntityRepository<T> : Repository<T>, IEntityRepository<T> where T :
     public EntityRepository(ScrollDbContext dbContext)
         : base(dbContext) { }
 
-    public async Task<T?> Get(int id) =>
+    public async Task<T?> Get(Guid id) =>
         await DbContext.Set<T>().FindAsync(id);
 
     public async Task<T> Upsert(T item)
     {
-        if (item.Id is 0)
+        if (item.Id == default)
         {
             await DbContext.AddAsync(item);
         }
@@ -87,7 +86,7 @@ public class EntityRepository<T> : Repository<T>, IEntityRepository<T> where T :
         return item;
     }
 
-    public async Task<bool> Delete(int id)
+    public async Task<bool> Delete(Guid id)
     {
         var item = await Get(id);
 
@@ -104,7 +103,7 @@ public class EntityRepository<T> : Repository<T>, IEntityRepository<T> where T :
         return numOfRowsAffected > 0;
     }
 
-    public Task<bool> Exists(int id) =>
+    public Task<bool> Exists(Guid id) =>
         DbContext
             .Set<T>()
             .AnyAsync(p => p.Id == id);

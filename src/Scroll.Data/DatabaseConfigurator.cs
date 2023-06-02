@@ -2,10 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Scroll.Data;
+using Scroll.Data.Repositories;
 using Scroll.Library.Models.Entities;
 
-namespace Scroll.Service.Data;
+namespace Scroll.Data;
 
 public static class DatabaseConfigurator
 {

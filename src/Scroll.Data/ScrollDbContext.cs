@@ -6,7 +6,7 @@ using Scroll.Library.Models.Entities;
 
 namespace Scroll.Data;
 
-public class ScrollDbContext : IdentityDbContext<AppUser, IdentityRole<int>, int>
+public class ScrollDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
 {
     public ScrollDbContext(
         DbContextOptions<ScrollDbContext> options)

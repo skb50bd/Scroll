@@ -1,6 +1,6 @@
 namespace Scroll.Library.Models.Entities;
 
-public class Product : Entity
+public sealed class Product : Entity
 {
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
@@ -9,8 +9,8 @@ public class Product : Entity
     public Uri? Link { get; set; }
     public string ImageName { get; set; } = string.Empty;
     public int ClickCount { get; set; }
-    public virtual List<Favorite> Favorites { get; set; } = new();
+    public List<Favorite> Favorites { get; set; } = new();
     public int FavoriteCount { get; set; }
-    public virtual List<ProductCategoryMapping> ProductCategories { get; set; } = new();
-    public virtual List<Category> Categories { get; set; } = new();
+    public List<ProductCategoryMapping> ProductCategories { get; set; } = new();
+    public List<Category> Categories { get; set; } = new();
 }

@@ -12,6 +12,10 @@ namespace Scroll.Tests
 {
     public class MappingTests
     {
+        private static Guid Id1 = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        private static Guid Id2 = Guid.Parse("00000000-0000-0000-0000-000000000002");
+        private static Guid Id3 = Guid.Parse("00000000-0000-0000-0000-000000000003");
+        
         public readonly MapperConfiguration _mappingConfig;
 
         public readonly IMapper _mapper;
@@ -36,14 +40,14 @@ namespace Scroll.Tests
             var entity =
                 new Category
                 {
-                    Id = 1,
+                    Id = Id1,
                     Name = "Food"
                 };
 
             var dto =
                 new CategoryDto
                 {
-                    Id = 1,
+                    Id = Id1,
                     Name = "Food"
                 };
 
@@ -58,14 +62,14 @@ namespace Scroll.Tests
             var entity =
                 new Category
                 {
-                    Id = 1,
+                    Id = Id1,
                     Name = "Food"
                 };
 
             var editModel =
                 new CategoryEditModel
                 {
-                    Id = 1,
+                    Id = Id1,
                     Name = "Food"
                 };
 
@@ -93,7 +97,7 @@ namespace Scroll.Tests
             var product =
                 new Product
                 {
-                    Id            = 1,
+                    Id            = Id1,
                     Title         = "Cheese Puffs",
                     Description   = "Cheese pufss is very nice chips",
                     Price         = 20m,
@@ -108,9 +112,9 @@ namespace Scroll.Tests
                     Favorites     = new(),
                     Categories    = new()
                                     {
-                                        new() { Id = 1, Name = "Food" },
-                                        new() { Id = 2, Name = "Snacks" },
-                                        new() { Id = 3, Name = "Unhealthy" }
+                                        new() { Id = Id1, Name = "Food" },
+                                        new() { Id = Id2, Name = "Snacks" },
+                                        new() { Id = Id3, Name = "Unhealthy" }
                                     }
                 };
 
@@ -144,7 +148,7 @@ namespace Scroll.Tests
             var editModel =
                 new ProductEditModel
                 {
-                    Id          = 1,
+                    Id          = Id1,
                     Title       = "CBL Munchee",
                     Description = "CBL Munchee Wafer Rolls",
                     Price       = 200m,
@@ -183,12 +187,12 @@ namespace Scroll.Tests
 
             // Simulate other updates on the entity
             entityModel.Favorites.Add(
-                new Favorite { UserId = 1, ProductId = 1 });
+                new Favorite { UserId = Id1, ProductId = Id1 });
 
             entityModel.FavoriteCount = 1;
             entityModel.ClickCount = 1;
             entityModel.Categories.Add(
-                new Category { Id = 1, Name = "Food" });
+                new Category { Id = Id1, Name = "Food" });
 
             var clonedEntity       = entityModel.Clone()!;
             clonedEntity.Title     = newEditModel.Title;

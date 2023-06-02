@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 
-namespace Scroll.Service.Data;
+namespace Scroll.Data;
 
 public class CurrentDateTimeValueGenerator : ValueGenerator<DateTimeOffset>
 {

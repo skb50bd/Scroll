@@ -4,7 +4,7 @@ namespace Scroll.Library.Models.EditModels;
 
 public record class ProductEditModel
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required]
     [StringLength(50, MinimumLength = 5)]
@@ -17,7 +17,7 @@ public record class ProductEditModel
     [DataType(DataType.Currency)]
     public decimal Price { get; set; }
 
-    public List<int>? CategoryIds { get; set; } = new();
+    public List<Guid>? CategoryIds { get; set; } = new();
 
     [DataType(DataType.Url)]
     public string? Link { get; set; }

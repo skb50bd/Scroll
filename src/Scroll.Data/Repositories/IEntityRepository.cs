@@ -1,6 +1,6 @@
 ﻿using Scroll.Library.Models.Entities;
 
-namespace Scroll.Service.Data;
+namespace Scroll.Data.Repositories;
 
 public interface IRepository<T> where T : class
 {
@@ -15,8 +15,8 @@ public interface IRepository<T> where T : class
 
 public interface IEntityRepository<T> : IRepository<T> where T : Entity
 {
-    Task<T?> Get(int id);
+    Task<T?> Get(Guid id);
     Task<T> Upsert(T item);
-    Task<bool> Delete(int id);
-    Task<bool> Exists(int id);
+    Task<bool> Delete(Guid id);
+    Task<bool> Exists(Guid id);
 }

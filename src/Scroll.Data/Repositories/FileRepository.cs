@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Scroll.Data;
 using Scroll.Library.Models.Entities;
 
-namespace Scroll.Service.Data;
+namespace Scroll.Data.Repositories;
 
 public class FileRepository : IFileRepository
 {
@@ -11,7 +10,7 @@ public class FileRepository : IFileRepository
     private readonly ScrollDbContext _dbContext;
 
     public FileRepository(
-        ILogger<FileRepository> logger, 
+        ILogger<FileRepository> logger,
         ScrollDbContext dbContext)
     {
         _logger    = logger;
@@ -33,7 +32,7 @@ public class FileRepository : IFileRepository
         await using var sourceFileStream = fileInfo.OpenRead();
         await Upload(sourceFileStream, fileInfo.Name, contentType);
     }
-    
+
     public async Task Upload(Stream fileStream, string fileName, string contentType)
     {
         await using var memoryStream = new MemoryStream();
@@ -44,12 +43,12 @@ public class FileRepository : IFileRepository
     public async Task Upload(string sourceFilePath, string fileName, string contentType)
     {
         await using var sourceFileStream = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read);
-        await Upload(fileName, fileName, contentType);
+        await Upload(sourceFileStream, fileName, contentType);
     }
 
     private async Task SaveFile(
-        string fileName, 
-        int fileSize, 
+        string fileName,
+        int fileSize,
         string contentType,
         byte[] content)
     {
@@ -65,7 +64,7 @@ public class FileRepository : IFileRepository
         _dbContext.Set<ScrollFile>().Add(scrollFile);
         await _dbContext.SaveChangesAsync();
     }
-    
+
     public async Task<ScrollFile?> Download(string fileName) =>
         await _dbContext
             .Set<ScrollFile>()
@@ -73,7 +72,7 @@ public class FileRepository : IFileRepository
 
     public async Task<bool> Exists(string fileName)
     {
-        var scrollFile = 
+        var scrollFile =
             await _dbContext
                 .Set<ScrollFileInfo>()
                 .FirstOrDefaultAsync(sf => sf.Name == fileName);
@@ -83,7 +82,7 @@ public class FileRepository : IFileRepository
 
     public async Task Delete(string fileName)
     {
-        var scrollFile = 
+        var scrollFile =
             await _dbContext
                 .Set<ScrollFileInfo>()
                 .FirstOrDefaultAsync(sf => sf.Name == fileName);
@@ -94,14 +93,14 @@ public class FileRepository : IFileRepository
                 "The file '{fileName}' was not found in the database.",
                 fileName
             );
-            
+
             return;
         }
 
         _dbContext.Remove(scrollFile);
         await _dbContext.SaveChangesAsync();
     }
-    
+
     public async Task DeleteFilesWithoutReference()
     {
         var referencedImageNames =

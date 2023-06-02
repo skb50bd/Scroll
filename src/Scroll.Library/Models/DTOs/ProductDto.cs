@@ -1,8 +1,8 @@
 ﻿namespace Scroll.Library.Models.DTOs;
 
-public record ProductDto
+public sealed record ProductDto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
@@ -11,6 +11,6 @@ public record ProductDto
     public string ImageName { get; set; } = string.Empty;
     public int ClickCount { get; set; }
     public int FavoriteCount { get; set; }
-    public virtual ComparableList<ProductCategoryMappingDto> ProductCategories {get;set;} = new();
-    public virtual ComparableList<CategoryDto> Categories { get; set; } = new();
+    public ComparableList<ProductCategoryMappingDto> ProductCategories {get;set;} = new();
+    public ComparableList<CategoryDto> Categories { get; set; } = new();
 }

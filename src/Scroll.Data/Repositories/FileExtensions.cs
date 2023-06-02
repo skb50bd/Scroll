@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.StaticFiles;
 
-namespace Scroll.Service.Data;
+namespace Scroll.Data.Repositories;
 
 public static class FileExtensions
 {

@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Scroll.Library.FakeData;
 using Scroll.Library.Models.Entities;
-using Scroll.Service.Data;
 
 namespace Scroll.Data.Mappers;
 
