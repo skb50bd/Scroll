@@ -5,7 +5,8 @@ public class FakeEmailSender
     public Task SendEmailAsync(
         string email,
         string subject,
-        string htmlMessage
+        string htmlMessage,
+        CancellationToken token
     )
     {
         return Task.CompletedTask;

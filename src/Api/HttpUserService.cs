@@ -34,7 +34,7 @@ public class HttpUserService(
     private readonly IHttpContextAccessor _httpCtxAccessor = httpCtxAccessor;
     private readonly SignInManager<User> _signInManager = signInManager;
 
-    public override async Task<UserDto?> GetCurrentUser()
+    public override async Task<UserDto?> GetCurrentUser(CancellationToken token)
     {
         var claims =
             _httpCtxAccessor
@@ -53,12 +53,12 @@ public class HttpUserService(
             return null;
         }
 
-        var user = await Repo.GetByEmail(userEmail);
+        var user = await Repo.GetByEmail(userEmail, token);
         return user.ToDto();
     }
 
-    public override Task<Result<UserDto>> Login(LoginModel model) =>
-        AuthenticateAndGetUser(model).MapAsync(async user =>
+    public override Task<Result<UserDto>> Login(LoginModel model, CancellationToken token) =>
+        AuthenticateAndGetUser(model, token).MapAsync(async user =>
         {
             await _signInManager
                 .SignInAsync(

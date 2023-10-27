@@ -10,7 +10,7 @@ namespace Scroll.Api;
 
 public static class WebServicesConfiguration
 {
-    public static WebApplicationBuilder ConfigureAppBuilder(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
     {
         var services = builder.Services;
         var configuration = builder.Configuration;

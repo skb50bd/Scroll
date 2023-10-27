@@ -15,7 +15,7 @@ public class PictureUploadService(IPictureService pictureService)
             ".webp"
         ];
 
-    public async Task<string> UploadPicture(PictureUploadModel input)
+    public async Task<string> UploadPicture(PictureUploadModel input, CancellationToken token)
     {
         if (input.HasFile is false)
         {
@@ -36,14 +36,16 @@ public class PictureUploadService(IPictureService pictureService)
                 $"File with extension \"{extension}\" not supported.");
         }
 
-        await input.File.CopyToAsync(ms);
+        await input.File.CopyToAsync(ms, token);
 
         var fileName =
             await _pictureService.Add(
                 input.Name!.ToUrlString(),
                 ms.ToArray(),
                 input.Width,
-                input.Height);
+                input.Height,
+                token
+            );
 
         return fileName;
     }
