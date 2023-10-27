@@ -79,5 +79,3 @@ networks:
 secrets:
   db_password:
     file: ./secrets/password.txt
-  appsettings.Production.json:
-    file: ./secrets/api-appsettings.json
