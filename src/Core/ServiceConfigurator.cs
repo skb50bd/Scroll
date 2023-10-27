@@ -1,10 +1,7 @@
 using FluentValidation;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Scroll.Core.ObjectMapping;
 using Scroll.Core.Services;
 using Scroll.Data;
-using Scroll.Domain.Entities;
 
 namespace Scroll.Core;
 

@@ -36,24 +36,15 @@ public class HttpUserService(
 
     public override async Task<UserDto?> GetCurrentUser(CancellationToken token)
     {
-        var claims =
-            _httpCtxAccessor
-                .HttpContext
-                ?.User
-                .Claims
-                .ToList();
-
-        var userEmail =
-            claims
-                ?.FirstOrDefault(c => c.Type ==  ClaimTypes.Email)
-                ?.Value;
-
-        if (userEmail is null)
+        if (_httpCtxAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)
+            is not string userIdStr
+        )
         {
             return null;
         }
 
-        var user = await Repo.GetByEmail(userEmail, token);
+        var userId = Guid.Parse(userIdStr);
+        var user = await Repo.GetById(userId, token);
         return user.ToDto();
     }
 

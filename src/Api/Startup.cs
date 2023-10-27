@@ -16,35 +16,35 @@ public static class WebServicesConfiguration
         var services = builder.Services;
         var configuration = builder.Configuration;
 
-        services.AddHttpContextAccessor();
-        services.AddControllers().AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-            options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-        });
+        services
+            .ConfigureServices()
+            .AddScoped<IUserService, HttpUserService>()
+            .AddScoped<PictureUploadService>()
+            .AddScoped<FakeEmailSender>()
+            .AddOptions()
+            .Configure<SiteSetting>(configuration.GetSection(SiteSetting.Key))
+            .AddEndpointsApiExplorer()
+            .AddSwaggerGen()
+            .AddHttpContextAccessor()
+            .AddApiVersioning(options =>
+            {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = ApiVersion.Default;
+            })
+            .AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            });
 
-        services.AddApiVersioning(options =>
-        {
-            options.AssumeDefaultVersionWhenUnspecified = true;
-            options.DefaultApiVersion = ApiVersion.Default;
-        });
-
-        services.ConfigureServices();
-        services.AddScoped<IUserService, HttpUserService>();
-        services.AddScoped<PictureUploadService>();
         services.AddAuthorizationBuilder()
             .AddPolicy("Admin", policy => policy.RequireClaim("IsAdmin", "True"));
+
         services.AddIdentityApiEndpoints<User>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders()
             .AddSignInManager<AppSignInManager>();
-
-        services.AddOptions();
-        services.Configure<SiteSetting>(configuration.GetSection(SiteSetting.Key));
-        services.AddScoped<FakeEmailSender>();
-
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
 
         return builder;
     }
@@ -61,7 +61,8 @@ public static class WebServicesConfiguration
 
         app.UseAuthorization();
         app.MapGroup("/account")
-            .MapIdentityApi<User>();
+            .MapIdentityApi<User>()
+            .WithDescription("Auth");
 
         app.MapControllers();
 
