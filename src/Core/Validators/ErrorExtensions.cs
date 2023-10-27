@@ -7,11 +7,12 @@ namespace Scroll.Core.Validators;
 
 public static class ErrorExtensions
 {
-    private const string UnprocessableEntityDesc = 
+    private const string UnprocessableEntityDesc =
         "https://www.rfc-editor.org/rfc/rfc4918#section-11.2";
 
     public static ValidationProblemDetails ToProblemDetails(
-        this ValidationException exception)
+        this ValidationException exception
+    )
     {
         var error = new ValidationProblemDetails
         {
@@ -19,20 +20,21 @@ public static class ErrorExtensions
             Status = StatusCodes.Status422UnprocessableEntity
         };
 
-        foreach (var validationFailure in exception.Errors)  
+        foreach (var validationFailure in exception.Errors)
         {
-            if (error.Errors.ContainsKey(validationFailure.PropertyName))
+            if (error.Errors.TryGetValue(validationFailure.PropertyName, out string[]? value))
             {
                 error.Errors[validationFailure.PropertyName] =
-                    error.Errors[validationFailure.PropertyName]
-                        .Concat(new[] { validationFailure.ErrorMessage })
-                        .ToArray();
+                    [
+                        .. value,
+                        .. new[] { validationFailure.ErrorMessage }
+                    ];
             }
             else
             {
                 error.Errors.Add(new(
-                    validationFailure.PropertyName, 
-                    new[] { validationFailure.ErrorMessage }
+                    validationFailure.PropertyName,
+                    [validationFailure.ErrorMessage]
                 ));
             }
         }
@@ -41,7 +43,8 @@ public static class ErrorExtensions
     }
 
     public static ValidationProblemDetails ToProblemDetails(
-        this IdentityException exception)
+        this IdentityException exception
+    )
     {
         var error = new ValidationProblemDetails
         {
@@ -49,20 +52,18 @@ public static class ErrorExtensions
             Status = StatusCodes.Status422UnprocessableEntity
         };
 
-        foreach (var identityError in exception.Errors)  
+        foreach (var identityError in exception.Errors)
         {
-            if (error.Errors.ContainsKey(identityError.Code))
+            if (error.Errors.TryGetValue(identityError.Code, out string[]? value))
             {
                 error.Errors[identityError.Code] =
-                    error.Errors[identityError.Code]
-                        .Concat(new[] { identityError.Description })
-                        .ToArray();
+                    [.. value, .. new[] { identityError.Description }];
             }
             else
             {
                 error.Errors.Add(new(
-                    identityError.Code, 
-                    new[] { identityError.Description }
+                    identityError.Code,
+                    [identityError.Description]
                 ));
             }
         }

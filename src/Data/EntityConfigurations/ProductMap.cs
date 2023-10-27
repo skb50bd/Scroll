@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Scroll.Domain.Entities;
-using Scroll.Domain.FakeData;
-
 namespace Scroll.Data.EntityConfigurations;
 
 public class ProductMap: IEntityTypeConfiguration<Product>
@@ -76,8 +74,5 @@ public class ProductMap: IEntityTypeConfiguration<Product>
         builder
             .HasIndex(p => new { p.FavoriteCount, p.ClickCount })
             .HasDatabaseName("IX_Product_Engagement");
-
-        builder
-            .HasData(FakeData.Products);
     }
 }

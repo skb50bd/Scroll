@@ -1,0 +1,151 @@
+@baseUrl = http://localhost:5082
+
+### Auth
+
+# @name register
+POST {{baseUrl}}/account/register
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "SuperSecure1!"
+}
+
+###
+# @name login
+POST {{baseUrl}}/account/login?useCookies=false&useSessionCookies=false
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "SuperSecure1!"
+}
+
+###
+
+@authToken = {{login.response.body.$.accessToken}}
+@refreshToken = {{login.response.body.$.refreshToken}}
+
+###
+# @name refresh
+POST {{baseUrl}}/account/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+###
+
+@authToken = {{login.response.body.$.accessToken}}
+@refreshToken = {{login.response.body.$.refreshToken}}
+
+###
+# @name info
+GET {{baseUrl}}/account/manage/info
+Authorization: Bearer {{authToken}}
+
+### Category
+
+GET {{baseUrl}}/categories
+
+###
+
+POST {{baseUrl}}/categories
+Content-Type: application/json
+
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa7",
+  "name": "Mixed Reality",
+  "description": "Mixed Reality is the ultimate goal of visual technologies"
+}
+
+###
+
+GET {{baseUrl}}/categories/3fa85f64-5717-4562-b3fc-2c963f66afa7
+
+###
+
+GET {{baseUrl}}/categories/mixed-reality
+
+###
+
+PUT {{baseUrl}}/categories/3fa85f64-5717-4562-b3fc-2c963f66afa7
+Content-Type: application/json
+
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa7",
+  "name": "Mixed Reality",
+  "description": "Mixed Reality is the ultimate goal of visual technologies. It is the pinnacle of the visual technology pyramid"
+}
+
+###
+
+DELETE {{baseUrl}}/categories/3fa85f64-5717-4562-b3fc-2c963f66afa7
+
+###
+
+### Product
+
+GET {{baseUrl}}/products
+
+###
+
+POST {{baseUrl}}/products
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "title": "Apple Vision Pro",
+  "description": "Apple Vision Pro is the state of the art in Virtual, Augmented and Mixed Reality",
+  "price": 3500.0,
+  "categoryIds": [
+    "3fa85f64-5717-4562-b3fc-2c963f66afa7"
+  ],
+  "link": "http://www.apple.com/visionpro",
+  "imageName": "apple-vision-pro.jpg"
+}
+
+###
+
+GET {{baseUrl}}/products/3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+###
+
+GET {{baseUrl}}/products/title/apple-vision-pro
+
+###
+
+PUT {{baseUrl}}/products/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Content-Type: application/json
+
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "title": "Apple Vision Pro",
+  "description": "Apple Vision Pro is the state of the art in Virtual, Augmented and Mixed Reality. Mic Drop!",
+  "price": 3500.0,
+  "link": "http://www.apple.com/visionpro",
+  "imageName": "apple-vision-pro.jpg"
+}
+
+###
+
+DELETE {{baseUrl}}/products/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name favorite
+POST {{baseUrl}}/products/favorite/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name undo-favorite
+POST {{baseUrl}}/products/undofavorite/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Authorization: Bearer {{authToken}}
+
+###
+
+

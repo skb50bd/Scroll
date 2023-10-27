@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Scroll.Domain.Entities;
-using Scroll.Domain.FakeData;
 
 namespace Scroll.Data.EntityConfigurations;
 
@@ -9,6 +8,8 @@ public class ProductCategoryMappingMap : IEntityTypeConfiguration<ProductCategor
 {
     public void Configure(EntityTypeBuilder<ProductCategoryMapping> builder)
     {
+        builder.Ignore(pcm => pcm.Id);
+
         builder
             .HasKey(pcm =>
                 new
@@ -26,8 +27,5 @@ public class ProductCategoryMappingMap : IEntityTypeConfiguration<ProductCategor
             .HasOne(pcm => pcm.Product)
             .WithMany(c => c.ProductCategories)
             .HasForeignKey(p => p.ProductId);
-
-        builder
-            .HasData(FakeData.ProductCategories);
     }
 }

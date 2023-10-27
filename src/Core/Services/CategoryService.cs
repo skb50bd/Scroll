@@ -15,42 +15,34 @@ using ValidationException = FluentValidation.ValidationException;
 
 namespace Scroll.Core.Services;
 
-public class CategoryService : ICategoryService
+public class CategoryService(
+    IRepository<Category> repo,
+    IValidator<CategoryEditModel> validator
+    ) : ICategoryService
 {
-    private readonly IRepository<Category> _repo;
-    private readonly IValidator<CategoryEditModel> _validator;
-    public CategoryService(
-        IRepository<Category> repo,
-        IValidator<CategoryEditModel> validator
-    )
-    {
-        _repo           = repo;
-        _validator      = validator;
-    }
+    public Task<CategoryDto?> Get(Guid id, CancellationToken token) =>
+        repo.GetById(id, token).ToDtoAsync();
 
-    public Task<CategoryDto?> Get(Guid id) =>
-        _repo.GetById(id).ToDtoAsync();
-
-    public Task<CategoryDto?> GetByName(string name) =>
-        _repo.Table
+    public Task<CategoryDto?> GetByName(string name, CancellationToken token) =>
+        repo.Table
             .Where(c => c.Name == name)
-            .FirstOrDefaultAsync()
+            .FirstOrDefaultAsync(token)
             .ToDtoAsync();
 
-    public Task<CategoryEditModel?> GetForEdit(Guid id) =>
-        _repo.GetById(id)
-            .ToEditModelAsync();
+    public Task<CategoryEditModel?> GetForEdit(Guid id, CancellationToken token) =>
+        repo.GetById(id, token).ToEditModelAsync();
 
     public IQueryable<CategoryDto> GetQueryable() =>
-        _repo.Table
-            .ProjectToDto();
+        repo.Table.ProjectToDto();
 
     public async Task<PagedList<CategoryDto>> GetPaged(
         int pageIndex = 0,
         int pageSize = 40,
-        string? filterString = null)
+        string? filterString = null,
+        CancellationToken token = default
+    )
     {
-        var query = _repo.Table;
+        var query = repo.Table;
 
         if (filterString.IsNotBlank())
         {
@@ -61,38 +53,37 @@ public class CategoryService : ICategoryService
 
         var categories =
             await query
-                    .OrderBy(c => c.Name)
-                    .ToPagedList(pageIndex, pageSize);
+                .OrderBy(c => c.Name)
+                .ToPagedList(pageIndex, pageSize, token);
 
         return categories.ProjectToDto();
     }
 
-    public async Task<Result<CategoryDto>> Insert(CategoryEditModel editModel)
+    public async Task<Result<CategoryDto>> Insert(
+        CategoryEditModel editModel,
+        CancellationToken token
+    )
     {
-        var validationResult = 
-            await _validator.ValidateAsync(editModel);
+        var validationResult =
+            await validator.ValidateAsync(editModel, token);
 
         if (validationResult.IsValid is false)
         {
             return new(new ValidationException(validationResult.Errors));
         }
-        
-        var category = editModel.ToEntity();
-        
-        if (category is null)
-        {
-            throw StandardErrors.Unreachable;
-        }
-        
-        await _repo.Add(category);
+
+        var category = editModel.ToEntity() ?? throw StandardErrors.Unreachable;
+        await repo.Add(category, token);
         return category.ToDto().RequireNotNull();
     }
 
     public async Task<Result<CategoryDto>> Update(
-        CategoryEditModel editModel)
+        CategoryEditModel editModel,
+        CancellationToken token
+    )
     {
-        var validationResult = 
-            await _validator.ValidateAsync(editModel);
+        var validationResult =
+            await validator.ValidateAsync(editModel, token);
 
         if (validationResult.IsValid is false)
         {
@@ -100,45 +91,42 @@ public class CategoryService : ICategoryService
         }
 
         var entity =
-            await _repo.GetById(editModel.Id);
-
-        if (entity is null)
-        {
-            throw new ArgumentException(
-                "Invalid Update Operation. Entity doesn't exist");
-        }
+            await repo.GetById(editModel.Id, token)
+            ?? throw new ArgumentException("Invalid Update Operation. Entity doesn't exist");
 
         editModel.ToEntity(entity);
         entity.RequireNotNull();
-        
-        await _repo.Update(entity);
+
+        await repo.Update(entity, token);
         return entity.ToDto().RequireNotNull();
     }
 
-    public Task Delete(Guid id) => _repo.Delete(id);
-    public Task<bool> Exists(Guid id) => _repo.Exists(id);
+    public Task Delete(Guid id, CancellationToken token) => repo.Delete(id, token);
+    public Task<bool> Exists(Guid id, CancellationToken token) => repo.Exists(id, token);
 
     public async Task<PagedList<ProductDto>> GetProductsInCategory(
         Guid categoryId,
         int pageIndex = 0,
-        int pageSize = 40)
+        int pageSize = 40,
+        CancellationToken token = default
+    )
     {
         var productsInCategory =
-            await _repo.Table
+            await repo.Table
                 .Where(c => c.Id == categoryId)
                 .SelectMany(c => c.Products)
-                .ToPagedList(pageIndex, pageSize);
+                .ToPagedList(pageIndex, pageSize, token);
 
         return productsInCategory.ProjectToDto();
     }
 
-    public async Task<int> GetProductCountInCategory(Guid categoryId)
+    public async Task<int> GetProductCountInCategory(Guid categoryId, CancellationToken token)
     {
         var productCount =
-            await _repo.Table
+            await repo.Table
                 .Where(c => c.Id == categoryId)
                 .SelectMany(c => c.Products)
-                .CountAsync();
+                .CountAsync(token);
 
         return productCount;
     }

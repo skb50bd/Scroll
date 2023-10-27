@@ -10,7 +10,9 @@ public static class ResultExtensions
     public static async Task<TResult> MatchAsync<TSuccess, TResult>(
         this Task<Result<TSuccess>> inputTask,
         Func<TSuccess, TResult> success,
-        Func<Exception, TResult> fail)
+        Func<Exception, TResult> fail,
+        CancellationToken cancellationToken = default
+    )
     {
         var input = await inputTask;
         return input.Match(success, fail);
@@ -20,7 +22,9 @@ public static class ResultExtensions
     public static async Task<ActionResult<T>> MatchAsync<T>(
         this Task<Result<T>> inputTask,
         Func<T, ActionResult<T>> success,
-        Func<Exception, ActionResult<T>> fail)
+        Func<Exception, ActionResult<T>> fail,
+        CancellationToken cancellationToken = default
+    )
     {
         var input = await inputTask;
         return input.Match(success, fail);

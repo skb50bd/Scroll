@@ -24,4 +24,32 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
         base.OnModelCreating(builder);
     }
+
+    public override Task<int> SaveChangesAsync(
+        bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken
+    )
+    {
+        ConvertDateTimeOffsetToUtc();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void ConvertDateTimeOffsetToUtc()
+    {
+        var changedEntries =
+            ChangeTracker
+                .Entries()
+                .Where(e => e.State is EntityState.Added or EntityState.Modified);
+
+        foreach (var entry in changedEntries)
+        {
+            foreach (var property in entry.Properties)
+            {
+                if (property.CurrentValue is DateTimeOffset dateTimeOffset)
+                {
+                    property.CurrentValue = dateTimeOffset.ToUniversalTime();
+                }
+            }
+        }
+    }
 }

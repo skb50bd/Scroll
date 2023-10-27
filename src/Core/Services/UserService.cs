@@ -18,19 +18,19 @@ namespace Scroll.Core.Services;
 
 public abstract class UserService : IUserService
 {
-    protected readonly IUserRepository Repo; 
+    protected readonly IUserRepository Repo;
     private readonly IConfiguration _config;
     private readonly UserManager<User> _userManager;
     private readonly IUserStore<User> _userStore;
     private readonly IValidator<UserRegistrationModel> _registrationModelValidator;
     private readonly IValidator<LoginModel> _loginModelValidator;
-    
+
     protected UserService(
         IUserRepository repo,
-        IConfiguration config, 
+        IConfiguration config,
         IUserStore<User> userStore,
-        UserManager<User> userManager, 
-        IValidator<LoginModel> loginModelValidator, 
+        UserManager<User> userManager,
+        IValidator<LoginModel> loginModelValidator,
         IValidator<UserRegistrationModel> registrationModelValidator
     )
     {
@@ -41,18 +41,18 @@ public abstract class UserService : IUserService
         _loginModelValidator        = loginModelValidator;
         _registrationModelValidator = registrationModelValidator;
     }
-    
-    public abstract Task<UserDto?> GetCurrentUser();
 
-    public Task<UserDto?> GetByEmail(string email) =>
-        Repo.GetByEmail(email).ToDtoAsync();
+    public abstract Task<UserDto?> GetCurrentUser(CancellationToken token);
 
-    public Task<UserDto?> GetByUserName(string userName) =>
-        Repo.GetByUserName(userName).ToDtoAsync();
+    public Task<UserDto?> GetByEmail(string email, CancellationToken token) =>
+        Repo.GetByEmail(email, token).ToDtoAsync();
 
-    public async Task<Result<UserDto>> Register(UserRegistrationModel model)
+    public Task<UserDto?> GetByUserName(string userName, CancellationToken token) =>
+        Repo.GetByUserName(userName, token).ToDtoAsync();
+
+    public async Task<Result<UserDto>> Register(UserRegistrationModel model, CancellationToken token)
     {
-        var validationResult = await _registrationModelValidator.ValidateAsync(model);
+        var validationResult = await _registrationModelValidator.ValidateAsync(model, token);
 
         if (validationResult.IsValid is false)
         {
@@ -64,11 +64,11 @@ public abstract class UserService : IUserService
             FullName = model.FullName
         };
 
-        await _userStore.SetUserNameAsync(user, model.UserName, CancellationToken.None);
-        await _userStore.SetNormalizedUserNameAsync(user, model.UserName, CancellationToken.None);
-        await ((IUserEmailStore<User>)_userStore).SetEmailAsync(user, model.Email, CancellationToken.None);
-        
-        var identityResult = 
+        await _userStore.SetUserNameAsync(user, model.UserName, token);
+        await _userStore.SetNormalizedUserNameAsync(user, model.UserName, token);
+        await ((IUserEmailStore<User>)_userStore).SetEmailAsync(user, model.Email, token);
+
+        var identityResult =
             await _userManager.CreateAsync(user, model.Password);
 
         if (identityResult.Succeeded is false)
@@ -79,27 +79,28 @@ public abstract class UserService : IUserService
         return user.ToDto();
     }
 
-    public virtual Task<Result<UserDto>> Login(LoginModel _) => throw new NotImplementedException();
+    public virtual Task<Result<UserDto>> Login(LoginModel _, CancellationToken token) =>
+        throw new NotImplementedException();
 
-    protected async Task<Result<User>> AuthenticateAndGetUser(LoginModel login)
+    protected async Task<Result<User>> AuthenticateAndGetUser(LoginModel login, CancellationToken token)
     {
         var validationResult =
-            await _loginModelValidator.ValidateAsync(login);
+            await _loginModelValidator.ValidateAsync(login, token);
 
         if (validationResult.IsValid is false)
         {
             return new(new ValidationException(validationResult.Errors));
         }
-        
-        var user = 
-            await Repo.GetByUserName(login.UserName);
+
+        var user =
+            await Repo.GetByUserName(login.UserName, token);
 
         if (user is null)
         {
             return new(StandardErrors.InvalidCredentials);
         }
-        
-        var passwordMatches = 
+
+        var passwordMatches =
             await _userManager.CheckPasswordAsync(user, login.Password);
 
         if (passwordMatches is false)
@@ -110,8 +111,8 @@ public abstract class UserService : IUserService
         return user;
     }
 
-    public Task<Result<JwtSecurityToken>> CreateAccessToken(LoginModel login) =>
-        AuthenticateAndGetUser(login).MatchAsync(
+    public Task<Result<JwtSecurityToken>> CreateAccessToken(LoginModel login, CancellationToken token) =>
+        AuthenticateAndGetUser(login, token).MatchAsync(
             user =>
             {
                 var jwtIssuer = _config["Jwt:Issuer"];
@@ -148,6 +149,7 @@ public abstract class UserService : IUserService
 
                 return token.RequireNotNull();
             },
-            exn => new Result<JwtSecurityToken>(exn)
+            exn => new Result<JwtSecurityToken>(exn),
+            token
         );
 }

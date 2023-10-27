@@ -12,8 +12,8 @@ using Scroll.Data;
 namespace Scroll.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231025055430_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20231027191520_Added IsAdmin Flag")]
+    partial class AddedIsAdminFlag
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -190,50 +190,6 @@ namespace Scroll.Data.Migrations
                         .HasDatabaseName("IX_Category_Name");
 
                     b.ToTable("Category");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                            Description = "This is a toy category. Toys are nice, aren't they?",
-                            Name = "Toy"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000002"),
-                            Description = "This is a food category. Food is tasty.",
-                            Name = "Food"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000003"),
-                            Description = "These are products for geeks. If you are a geek, you're gonna love these.",
-                            Name = "Geek"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000004"),
-                            Description = "These products will improve your lifestyle. And will help you enjoy a better life.",
-                            Name = "Lifestyle"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000005"),
-                            Description = "You’re a funny guy, but if you really want to ramp up the LOLs at your next party, you need one of these hilarious and downright evil prank gifts.",
-                            Name = "Pranks"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000006"),
-                            Description = "Level up your gift giving powers and find the perfect gift for gamers in this hand curated list. Whether you're looking for something for console gamer, the PC gamer, the old school gaming type who loves everything in 8-bit pixelation or the youngster who loves virtual reality and microtransactions, this collection of gifts features all of the best sellers from this year.",
-                            Name = "Gamer"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000007"),
-                            Description = "Capture the heart of your photographer friend with one of these delightful gifts for photographers. Professionals and shutterbugs who enjoy it as a hobby alike will light up brighter than a flash when they unwrap something fun or functional from this list of great gift ideas.",
-                            Name = "Photography"
-                        });
                 });
 
             modelBuilder.Entity("Scroll.Domain.Entities.Favorite", b =>
@@ -306,92 +262,6 @@ namespace Scroll.Data.Migrations
                         .HasDatabaseName("IX_Product_Engagement");
 
                     b.ToTable("Product");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                            AddedOn = new DateTimeOffset(new DateTime(2023, 10, 25, 11, 54, 29, 680, DateTimeKind.Unspecified).AddTicks(2940), new TimeSpan(0, 6, 0, 0, 0)),
-                            ClickCount = 10,
-                            Description = "If you need to get even with someone you love, the impossible to open frustration box is just what you need.",
-                            FavoriteCount = 0,
-                            ImageName = "abc-xyz.webp",
-                            Link = "https://mynextdig.com/1",
-                            Price = 17.99m,
-                            Title = "The Impossible To Open Frustration Box"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000002"),
-                            AddedOn = new DateTimeOffset(new DateTime(2023, 10, 25, 11, 54, 29, 702, DateTimeKind.Unspecified).AddTicks(140), new TimeSpan(0, 6, 0, 0, 0)),
-                            ClickCount = 3,
-                            Description = "Nothing will embarrass your poor unsuspecting victim quite like receiving one of these prank mail packages at their place or work.",
-                            FavoriteCount = 0,
-                            ImageName = "abc-xyz.webp",
-                            Link = "https://mynextdig.com/2",
-                            Price = 11.86m,
-                            Title = "Prank Mail Packages"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000003"),
-                            AddedOn = new DateTimeOffset(new DateTime(2023, 10, 25, 11, 54, 29, 702, DateTimeKind.Unspecified).AddTicks(230), new TimeSpan(0, 6, 0, 0, 0)),
-                            ClickCount = 69,
-                            Description = "Ensure your buddy has nightmares for years to come by sending him 1500 live ladybugs.",
-                            FavoriteCount = 0,
-                            ImageName = "abc-xyz.webp",
-                            Link = "https://mynextdig.com/3",
-                            Price = 30.96m,
-                            Title = "1500 Live Ladybugs"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000004"),
-                            AddedOn = new DateTimeOffset(new DateTime(2023, 10, 25, 11, 54, 29, 702, DateTimeKind.Unspecified).AddTicks(240), new TimeSpan(0, 6, 0, 0, 0)),
-                            ClickCount = 3,
-                            Description = "Gamers rejoice! Ensure no good game slips under your nose by playing everything on the 100 Video Games Bucket List poster.",
-                            FavoriteCount = 0,
-                            ImageName = "abc-xyz.webp",
-                            Link = "https://mynextdig.com/4",
-                            Price = 17.47m,
-                            Title = "100 Must Play Video Games Scratch Off Poster"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000005"),
-                            AddedOn = new DateTimeOffset(new DateTime(2023, 10, 25, 11, 54, 29, 702, DateTimeKind.Unspecified).AddTicks(250), new TimeSpan(0, 6, 0, 0, 0)),
-                            ClickCount = 1,
-                            Description = "For both streamers and gamers, this backlit LED is the perfect way to give a customized gift to any gamer.",
-                            FavoriteCount = 0,
-                            ImageName = "abc-xyz.webp",
-                            Link = "https://mynextdig.com/5",
-                            Price = 58.49m,
-                            Title = "Personalized Gamertag Backlit LED"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000006"),
-                            AddedOn = new DateTimeOffset(new DateTime(2023, 10, 25, 11, 54, 29, 702, DateTimeKind.Unspecified).AddTicks(250), new TimeSpan(0, 6, 0, 0, 0)),
-                            ClickCount = 4,
-                            Description = "After an intense gaming session getting pwned by kids half your age, you need a way to relax and calm your nerves.",
-                            FavoriteCount = 0,
-                            ImageName = "abc-xyz.webp",
-                            Link = "https://mynextdig.com/6",
-                            Price = 7.96m,
-                            Title = "Video Game Rage Candle"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000007"),
-                            AddedOn = new DateTimeOffset(new DateTime(2023, 10, 25, 11, 54, 29, 702, DateTimeKind.Unspecified).AddTicks(260), new TimeSpan(0, 6, 0, 0, 0)),
-                            ClickCount = 420,
-                            Description = "Take the rainbow with a photography prism.",
-                            FavoriteCount = 0,
-                            ImageName = "abc-xyz.webp",
-                            Link = "https://mynextdig.com/7",
-                            Price = 16.49m,
-                            Title = "Photography Prism"
-                        });
                 });
 
             modelBuilder.Entity("Scroll.Domain.Entities.ProductCategoryMapping", b =>
@@ -402,88 +272,11 @@ namespace Scroll.Data.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
                     b.HasKey("ProductId", "CategoryId");
 
                     b.HasIndex("CategoryId");
 
                     b.ToTable("ProductCategoryMapping");
-
-                    b.HasData(
-                        new
-                        {
-                            ProductId = new Guid("00000000-0000-0000-0000-000000000001"),
-                            CategoryId = new Guid("00000000-0000-0000-0000-000000000001"),
-                            Id = new Guid("00000000-0000-0000-0000-000000000000")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("00000000-0000-0000-0000-000000000001"),
-                            CategoryId = new Guid("00000000-0000-0000-0000-000000000002"),
-                            Id = new Guid("00000000-0000-0000-0000-000000000000")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("00000000-0000-0000-0000-000000000001"),
-                            CategoryId = new Guid("00000000-0000-0000-0000-000000000003"),
-                            Id = new Guid("00000000-0000-0000-0000-000000000000")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("00000000-0000-0000-0000-000000000002"),
-                            CategoryId = new Guid("00000000-0000-0000-0000-000000000002"),
-                            Id = new Guid("00000000-0000-0000-0000-000000000000")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("00000000-0000-0000-0000-000000000002"),
-                            CategoryId = new Guid("00000000-0000-0000-0000-000000000003"),
-                            Id = new Guid("00000000-0000-0000-0000-000000000000")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("00000000-0000-0000-0000-000000000003"),
-                            CategoryId = new Guid("00000000-0000-0000-0000-000000000003"),
-                            Id = new Guid("00000000-0000-0000-0000-000000000000")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("00000000-0000-0000-0000-000000000004"),
-                            CategoryId = new Guid("00000000-0000-0000-0000-000000000004"),
-                            Id = new Guid("00000000-0000-0000-0000-000000000000")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("00000000-0000-0000-0000-000000000005"),
-                            CategoryId = new Guid("00000000-0000-0000-0000-000000000001"),
-                            Id = new Guid("00000000-0000-0000-0000-000000000000")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("00000000-0000-0000-0000-000000000005"),
-                            CategoryId = new Guid("00000000-0000-0000-0000-000000000002"),
-                            Id = new Guid("00000000-0000-0000-0000-000000000000")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("00000000-0000-0000-0000-000000000006"),
-                            CategoryId = new Guid("00000000-0000-0000-0000-000000000007"),
-                            Id = new Guid("00000000-0000-0000-0000-000000000000")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("00000000-0000-0000-0000-000000000007"),
-                            CategoryId = new Guid("00000000-0000-0000-0000-000000000002"),
-                            Id = new Guid("00000000-0000-0000-0000-000000000000")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("00000000-0000-0000-0000-000000000007"),
-                            CategoryId = new Guid("00000000-0000-0000-0000-000000000007"),
-                            Id = new Guid("00000000-0000-0000-0000-000000000000")
-                        });
                 });
 
             modelBuilder.Entity("Scroll.Domain.Entities.ScrollFileInfo", b =>
@@ -553,6 +346,9 @@ namespace Scroll.Data.Migrations
                     b.Property<string>("FullName")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset>("JoinedOn")
                         .HasColumnType("timestamp with time zone");

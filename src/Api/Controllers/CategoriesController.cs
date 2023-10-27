@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Scroll.Core.Extensions;
 using Scroll.Core.Services;
@@ -55,6 +56,7 @@ public class CategoriesController(
         return Ok(category);
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpPost]
     public Task<ActionResult<CategoryDto>> Post(CategoryEditModel model, CancellationToken token) =>
         categoryService
@@ -69,6 +71,7 @@ public class CategoriesController(
                 token
             );
 
+    [Authorize(Policy = "Admin")]
     [HttpPut("{id:guid}")]
     public async Task<ActionResult<CategoryDto>> Put(Guid id, CategoryEditModel model, CancellationToken token)
     {
@@ -89,6 +92,7 @@ public class CategoriesController(
             );
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken token)
     {

@@ -4,16 +4,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Scroll.Core.Services;
 
-public class PictureProcessor : IPictureProcessor
+public class PictureProcessor(ILogger<PictureProcessor> logger) : IPictureProcessor
 {
-    private readonly ILogger<PictureProcessor> _logger;
-
-    public PictureProcessor(
-        ILogger<PictureProcessor> logger)
-    {
-        _logger = logger;
-    }
-
     public FileInfo CompressImage(FileInfo fileInfo)
     {
         var originalSize = fileInfo.Length;
@@ -30,8 +22,8 @@ public class PictureProcessor : IPictureProcessor
 
         var optimizedSize = fileInfo.Length;
 
-        _logger.LogDebug(
-            "Compression Saved {OptimizedSize} bytes", 
+        logger.LogDebug(
+            "Compression Saved {OptimizedSize} bytes",
             originalSize - optimizedSize
         );
 
@@ -41,7 +33,9 @@ public class PictureProcessor : IPictureProcessor
     public async Task<FileInfo> ResizeImage(
         FileInfo fileInfo,
         int widthRequest = 1024,
-        int heightRequest = 1024)
+        int heightRequest = 1024,
+        CancellationToken token = default
+    )
     {
         using var image =
             new MagickImage(fileInfo);
@@ -69,14 +63,14 @@ public class PictureProcessor : IPictureProcessor
 
         image.Resize(size);
 
-        await image.WriteAsync(fileInfo);
+        await image.WriteAsync(fileInfo, token);
 
         fileInfo.Refresh();
 
         var resizedSize =
             fileInfo.Length;
 
-        _logger.LogDebug(
+        logger.LogDebug(
             "Resize Saved {OriginalSize} bytes",
             originalSize - resizedSize
         );
@@ -84,7 +78,7 @@ public class PictureProcessor : IPictureProcessor
         return fileInfo;
     }
 
-    public async Task<FileInfo> ConvertToWebP(FileInfo fileInfo)
+    public async Task<FileInfo> ConvertToWebP(FileInfo fileInfo, CancellationToken token)
     {
         var originalExt =
             Path.GetExtension(fileInfo.Extension)
@@ -113,10 +107,10 @@ public class PictureProcessor : IPictureProcessor
         var newFileInfo =
             new FileInfo(newFileName);
 
-        await image.WriteAsync(newFileInfo, defines);
+        await image.WriteAsync(newFileInfo, defines, token);
 
-        _logger.LogDebug(
-            "WebP Conversion Saved {FileInfoLength} bytes", 
+        logger.LogDebug(
+            "WebP Conversion Saved {FileInfoLength} bytes",
             fileInfo.Length - newFileInfo.Length
         );
 

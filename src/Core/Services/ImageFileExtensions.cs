@@ -3,19 +3,24 @@
 public static class ImageFileExtensions
 {
     public async static Task<FileInfo> ToTempFile(
-        this byte[] bytes)
+        this byte[] bytes,
+        CancellationToken token
+    )
     {
         var tempFilePath =
             Path.GetTempFileName();
 
         await File.WriteAllBytesAsync(
             path: tempFilePath,
-            bytes: bytes);
+            bytes: bytes,
+            cancellationToken: token
+        );
 
         return new FileInfo(tempFilePath);
     }
 
     public static Task<byte[]> GetBytes(
-        this FileInfo fileInfo) =>
-            File.ReadAllBytesAsync(fileInfo.FullName);
+        this FileInfo fileInfo,
+        CancellationToken token
+    ) => File.ReadAllBytesAsync(fileInfo.FullName, token);
 }

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Scroll.Api.Services;
 using Scroll.Core;
@@ -31,9 +32,12 @@ public static class WebServicesConfiguration
         services.ConfigureServices();
         services.AddScoped<IUserService, HttpUserService>();
         services.AddScoped<PictureUploadService>();
-        services.AddAuthorization();
+        services.AddAuthorizationBuilder()
+            .AddPolicy("Admin", policy => policy.RequireClaim("IsAdmin", "True"));
         services.AddIdentityApiEndpoints<User>()
-            .AddEntityFrameworkStores<AppDbContext>();
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders()
+            .AddSignInManager<AppSignInManager>();
 
         services.AddOptions();
         services.Configure<SiteSetting>(configuration.GetSection(SiteSetting.Key));

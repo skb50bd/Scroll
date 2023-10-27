@@ -14,18 +14,12 @@ public static class ServiceConfigurator
         this IServiceCollection services)
     {
         services.AddValidatorsFromAssemblyContaining(typeof(ServiceConfigurator));
-
         services.ConfigureDataAccess();
-        
-        services.AddIdentity<User, IdentityRole<Guid>>()
-            .AddEntityFrameworkStores<AppDbContext>()
-            .AddDefaultTokenProviders();
-        
         services.AddScoped<IPictureProcessor, PictureProcessor>();
         services.AddScoped<IPictureService, PictureService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
-        
+
         return services;
     }
 }

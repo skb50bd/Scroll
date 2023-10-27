@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Scroll.Domain.Entities;
-using Scroll.Domain.FakeData;
 
 namespace Scroll.Data.EntityConfigurations;
 
@@ -34,8 +33,5 @@ public class CategoryMap: IEntityTypeConfiguration<Category>
             .HasIndex(c => c.Name)
             .IsUnique()
             .HasDatabaseName("IX_Category_Name");
-
-        builder
-            .HasData(FakeData.Categories);
     }
 }

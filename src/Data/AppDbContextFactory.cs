@@ -11,7 +11,7 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
             "Host=localhost;" +
             "Port=5432;" +
             "Database=scroll1;" +
-            "Username=yourUser;" +
+            "Username=postgres;" +
             "Password=yourPassword";
 
         var builder = new DbContextOptionsBuilder<AppDbContext>();

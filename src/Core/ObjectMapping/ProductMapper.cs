@@ -18,15 +18,15 @@ public static partial class ProductMapper
         {
             return default;
         }
-        
+
         var dto = entity.ToEditModel().RequireNotNull();
         dto.CategoryIds = CategoriesToCategoryIds(entity.Categories);
         return dto;
     }
-    
+
     [MapperIgnoreTarget(nameof(ProductEditModel.CategoryIds))]
     private static partial ProductEditModel? ToEditModel(this Product? entity);
-    
+
     private static List<Guid>? CategoriesToCategoryIds(this List<Category>? categories) =>
         categories
             ?.Select(c => c.Id)
@@ -38,7 +38,7 @@ public static partial class ProductMapper
     [MapperIgnoreTarget(nameof(Product.Favorites))]
     [MapperIgnoreTarget(nameof(Product.Categories))]
     public static partial Product? ToEntity(this ProductEditModel? editModel);
-    
+
     [MapperIgnoreTarget(nameof(Product.AddedOn))]
     [MapperIgnoreTarget(nameof(Product.ClickCount))]
     [MapperIgnoreTarget(nameof(Product.FavoriteCount))]
@@ -51,25 +51,25 @@ public static partial class ProductMapper
         var srcObject = await source;
         return ToDto(srcObject);
     }
-    
+
     public static async Task<ProductDto?> ToDtoAsync(this Task<Product?> source)
     {
         var srcObject = await source;
         return ToDto(srcObject);
     }
-    
+
     public static async Task<ProductEditModel?> ToEditModelAsync(this ValueTask<Product?> source)
     {
         var srcObject = await source;
         return MapToEditModel(srcObject);
-    }    
-    
+    }
+
     public static async Task<ProductEditModel?> ToEditModelAsync(this Task<Product?> source)
     {
         var srcObject = await source;
         return MapToEditModel(srcObject);
     }
-    
+
     public static partial PagedList<ProductDto> ProjectToDto(this PagedList<Product> source);
 }
 

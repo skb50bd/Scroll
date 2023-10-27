@@ -7,15 +7,27 @@ namespace Scroll.Core.Services;
 
 public interface ICategoryService
 {
-    Task Delete(Guid id);
-    Task<bool> Exists(Guid id);
-    Task<CategoryDto?> Get(Guid id);
-    Task<CategoryDto?> GetByName(string name);
-    Task<CategoryEditModel?> GetForEdit(Guid id);
-    Task<PagedList<CategoryDto>> GetPaged(int pageIndex = 0, int pageSize = 40, string? filterString = null);
+    Task Delete(Guid id, CancellationToken token);
+    Task<bool> Exists(Guid id, CancellationToken token);
+    Task<CategoryDto?> Get(Guid id, CancellationToken token);
+    Task<CategoryDto?> GetByName(string name, CancellationToken token);
+    Task<CategoryEditModel?> GetForEdit(Guid id, CancellationToken token);
+    Task<PagedList<CategoryDto>> GetPaged(
+        int pageIndex = 0,
+        int pageSize = 40,
+        string? filterString = null,
+        CancellationToken token = default
+    );
+
     IQueryable<CategoryDto> GetQueryable();
-    Task<int> GetProductCountInCategory(Guid categoryId);
-    Task<PagedList<ProductDto>> GetProductsInCategory(Guid categoryId, int pageIndex = 0, int pageSize = 40);
-    Task<Result<CategoryDto>> Insert(CategoryEditModel editModel);
-    Task<Result<CategoryDto>> Update(CategoryEditModel editModel);
+    Task<int> GetProductCountInCategory(Guid categoryId, CancellationToken token);
+    Task<PagedList<ProductDto>> GetProductsInCategory(
+        Guid categoryId,
+        int pageIndex = 0,
+        int pageSize = 40,
+        CancellationToken token = default
+    );
+
+    Task<Result<CategoryDto>> Insert(CategoryEditModel editModel, CancellationToken token);
+    Task<Result<CategoryDto>> Update(CategoryEditModel editModel, CancellationToken token);
 }

@@ -10,5 +10,5 @@ public class ScrollFileInfo : BaseEntity
 
 public class ScrollFile : ScrollFileInfo
 {
-    public byte[] Content { get; set; } = Array.Empty<byte>();
+    public byte[] Content { get; set; } = [];
 }

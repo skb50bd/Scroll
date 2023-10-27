@@ -4,6 +4,6 @@ public sealed class Category : BaseEntity
 {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public List<ProductCategoryMapping> ProductCategories { get; set; } = new();
-    public List<Product> Products { get; set; } = new();
+    public List<ProductCategoryMapping> ProductCategories { get; set; } = [];
+    public List<Product> Products { get; set; } = [];
 }

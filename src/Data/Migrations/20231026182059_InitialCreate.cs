@@ -4,8 +4,6 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Scroll.Data.Migrations
 {
     /// <inheritdoc />
@@ -258,53 +256,6 @@ namespace Scroll.Data.Migrations
                         principalTable: "Product",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Category",
-                columns: new[] { "Id", "Description", "Name" },
-                values: new object[,]
-                {
-                    { new Guid("00000000-0000-0000-0000-000000000001"), "This is a toy category. Toys are nice, aren't they?", "Toy" },
-                    { new Guid("00000000-0000-0000-0000-000000000002"), "This is a food category. Food is tasty.", "Food" },
-                    { new Guid("00000000-0000-0000-0000-000000000003"), "These are products for geeks. If you are a geek, you're gonna love these.", "Geek" },
-                    { new Guid("00000000-0000-0000-0000-000000000004"), "These products will improve your lifestyle. And will help you enjoy a better life.", "Lifestyle" },
-                    { new Guid("00000000-0000-0000-0000-000000000005"), "You’re a funny guy, but if you really want to ramp up the LOLs at your next party, you need one of these hilarious and downright evil prank gifts.", "Pranks" },
-                    { new Guid("00000000-0000-0000-0000-000000000006"), "Level up your gift giving powers and find the perfect gift for gamers in this hand curated list. Whether you're looking for something for console gamer, the PC gamer, the old school gaming type who loves everything in 8-bit pixelation or the youngster who loves virtual reality and microtransactions, this collection of gifts features all of the best sellers from this year.", "Gamer" },
-                    { new Guid("00000000-0000-0000-0000-000000000007"), "Capture the heart of your photographer friend with one of these delightful gifts for photographers. Professionals and shutterbugs who enjoy it as a hobby alike will light up brighter than a flash when they unwrap something fun or functional from this list of great gift ideas.", "Photography" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Product",
-                columns: new[] { "Id", "AddedOn", "ClickCount", "Description", "FavoriteCount", "ImageName", "Link", "Price", "Title" },
-                values: new object[,]
-                {
-                    { new Guid("00000000-0000-0000-0000-000000000001"), new DateTimeOffset(new DateTime(2023, 10, 25, 11, 54, 29, 680, DateTimeKind.Unspecified).AddTicks(2940), new TimeSpan(0, 6, 0, 0, 0)), 10, "If you need to get even with someone you love, the impossible to open frustration box is just what you need.", 0, "abc-xyz.webp", "https://mynextdig.com/1", 17.99m, "The Impossible To Open Frustration Box" },
-                    { new Guid("00000000-0000-0000-0000-000000000002"), new DateTimeOffset(new DateTime(2023, 10, 25, 11, 54, 29, 702, DateTimeKind.Unspecified).AddTicks(140), new TimeSpan(0, 6, 0, 0, 0)), 3, "Nothing will embarrass your poor unsuspecting victim quite like receiving one of these prank mail packages at their place or work.", 0, "abc-xyz.webp", "https://mynextdig.com/2", 11.86m, "Prank Mail Packages" },
-                    { new Guid("00000000-0000-0000-0000-000000000003"), new DateTimeOffset(new DateTime(2023, 10, 25, 11, 54, 29, 702, DateTimeKind.Unspecified).AddTicks(230), new TimeSpan(0, 6, 0, 0, 0)), 69, "Ensure your buddy has nightmares for years to come by sending him 1500 live ladybugs.", 0, "abc-xyz.webp", "https://mynextdig.com/3", 30.96m, "1500 Live Ladybugs" },
-                    { new Guid("00000000-0000-0000-0000-000000000004"), new DateTimeOffset(new DateTime(2023, 10, 25, 11, 54, 29, 702, DateTimeKind.Unspecified).AddTicks(240), new TimeSpan(0, 6, 0, 0, 0)), 3, "Gamers rejoice! Ensure no good game slips under your nose by playing everything on the 100 Video Games Bucket List poster.", 0, "abc-xyz.webp", "https://mynextdig.com/4", 17.47m, "100 Must Play Video Games Scratch Off Poster" },
-                    { new Guid("00000000-0000-0000-0000-000000000005"), new DateTimeOffset(new DateTime(2023, 10, 25, 11, 54, 29, 702, DateTimeKind.Unspecified).AddTicks(250), new TimeSpan(0, 6, 0, 0, 0)), 1, "For both streamers and gamers, this backlit LED is the perfect way to give a customized gift to any gamer.", 0, "abc-xyz.webp", "https://mynextdig.com/5", 58.49m, "Personalized Gamertag Backlit LED" },
-                    { new Guid("00000000-0000-0000-0000-000000000006"), new DateTimeOffset(new DateTime(2023, 10, 25, 11, 54, 29, 702, DateTimeKind.Unspecified).AddTicks(250), new TimeSpan(0, 6, 0, 0, 0)), 4, "After an intense gaming session getting pwned by kids half your age, you need a way to relax and calm your nerves.", 0, "abc-xyz.webp", "https://mynextdig.com/6", 7.96m, "Video Game Rage Candle" },
-                    { new Guid("00000000-0000-0000-0000-000000000007"), new DateTimeOffset(new DateTime(2023, 10, 25, 11, 54, 29, 702, DateTimeKind.Unspecified).AddTicks(260), new TimeSpan(0, 6, 0, 0, 0)), 420, "Take the rainbow with a photography prism.", 0, "abc-xyz.webp", "https://mynextdig.com/7", 16.49m, "Photography Prism" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProductCategoryMapping",
-                columns: new[] { "CategoryId", "ProductId", "Id" },
-                values: new object[,]
-                {
-                    { new Guid("00000000-0000-0000-0000-000000000001"), new Guid("00000000-0000-0000-0000-000000000001"), new Guid("00000000-0000-0000-0000-000000000000") },
-                    { new Guid("00000000-0000-0000-0000-000000000002"), new Guid("00000000-0000-0000-0000-000000000001"), new Guid("00000000-0000-0000-0000-000000000000") },
-                    { new Guid("00000000-0000-0000-0000-000000000003"), new Guid("00000000-0000-0000-0000-000000000001"), new Guid("00000000-0000-0000-0000-000000000000") },
-                    { new Guid("00000000-0000-0000-0000-000000000002"), new Guid("00000000-0000-0000-0000-000000000002"), new Guid("00000000-0000-0000-0000-000000000000") },
-                    { new Guid("00000000-0000-0000-0000-000000000003"), new Guid("00000000-0000-0000-0000-000000000002"), new Guid("00000000-0000-0000-0000-000000000000") },
-                    { new Guid("00000000-0000-0000-0000-000000000003"), new Guid("00000000-0000-0000-0000-000000000003"), new Guid("00000000-0000-0000-0000-000000000000") },
-                    { new Guid("00000000-0000-0000-0000-000000000004"), new Guid("00000000-0000-0000-0000-000000000004"), new Guid("00000000-0000-0000-0000-000000000000") },
-                    { new Guid("00000000-0000-0000-0000-000000000001"), new Guid("00000000-0000-0000-0000-000000000005"), new Guid("00000000-0000-0000-0000-000000000000") },
-                    { new Guid("00000000-0000-0000-0000-000000000002"), new Guid("00000000-0000-0000-0000-000000000005"), new Guid("00000000-0000-0000-0000-000000000000") },
-                    { new Guid("00000000-0000-0000-0000-000000000007"), new Guid("00000000-0000-0000-0000-000000000006"), new Guid("00000000-0000-0000-0000-000000000000") },
-                    { new Guid("00000000-0000-0000-0000-000000000002"), new Guid("00000000-0000-0000-0000-000000000007"), new Guid("00000000-0000-0000-0000-000000000000") },
-                    { new Guid("00000000-0000-0000-0000-000000000007"), new Guid("00000000-0000-0000-0000-000000000007"), new Guid("00000000-0000-0000-0000-000000000000") }
                 });
 
             migrationBuilder.CreateIndex(

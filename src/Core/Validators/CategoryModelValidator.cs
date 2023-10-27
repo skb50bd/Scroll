@@ -14,7 +14,7 @@ public class CategoryModelValidator : AbstractValidator<CategoryEditModel>
             .NotEmpty().WithMessage("Name is required")
             .MinimumLength(3).WithMessage("Name must be at least 3 characters long")
             .MaximumLength(100).WithMessage("Name cannot be longer than 100 characters");
-        
+
         RuleFor(_ => _.Description)
             .NotEmpty().WithMessage("Description is required")
             .MinimumLength(10).WithMessage("Description must be at least 10 characters long")

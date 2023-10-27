@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using LanguageExt.Common;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scroll.Core.Extensions;
 using Scroll.Core.ObjectMapping;
@@ -9,52 +8,39 @@ using Scroll.Data.Repositories;
 using Scroll.Domain;
 using Scroll.Domain.DTOs;
 using Scroll.Domain.Entities;
+using Scroll.Domain.Exceptions;
 using Scroll.Domain.InputModels;
 using Scroll.Domain.Utils;
 using static Scroll.Core.Services.ProductSortOrder;
 
 namespace Scroll.Core.Services;
 
-public class ProductService : IProductService
-{
-    private readonly IRepository<Product> _productRepo;
-    private readonly UserManager<User> _userManager;
-    private readonly IRepository<ProductCategoryMapping> _productCategoryMappingRepo;
-    private readonly IValidator<ProductEditModel> _productValidator;
-
-    public ProductService(
+public class ProductService(
         IRepository<Product> productRepo,
-        UserManager<User> userManager,
-        IRepository<ProductCategoryMapping> productCategoryMappingRepo, 
+        IRepository<ProductCategoryMapping> productCategoryMappingRepo,
         IValidator<ProductEditModel> productValidator
-    )
-    {
-        _productRepo                = productRepo;
-        _productCategoryMappingRepo = productCategoryMappingRepo;
-        _productValidator           = productValidator;
-        _userManager                = userManager;
-    }
-
-    public Task<ProductDto?> Get(Guid id) =>
-        _productRepo
+    ) : IProductService
+{
+    public Task<ProductDto?> Get(Guid id, CancellationToken token) =>
+        productRepo
             .Table
             .Include(p => p.Categories)
-            .FirstOrDefaultAsync(p => p.Id == id)
+            .FirstOrDefaultAsync(p => p.Id == id, token)
             .ToDtoAsync();
 
-    public Task<ProductDto?> GetByTitle(string title) =>
-        _productRepo
+    public Task<ProductDto?> GetByTitle(string title, CancellationToken token) =>
+        productRepo
             .Table
             .Include(p => p.Categories)
             .Where(p => p.Title == title)
-            .FirstOrDefaultAsync()
+            .FirstOrDefaultAsync(token)
             .ToDtoAsync();
 
-    public Task<ProductEditModel?> GetForEdit(Guid id) =>
-        _productRepo
+    public Task<ProductEditModel?> GetForEdit(Guid id, CancellationToken token) =>
+        productRepo
             .Table
             .Include(p => p.ProductCategories)
-            .FirstOrDefaultAsync(p => p.Id == id)
+            .FirstOrDefaultAsync(p => p.Id == id, token)
             .ToEditModelAsync();
 
     public async Task<PagedList<ProductDto>> GetPaged(
@@ -62,10 +48,12 @@ public class ProductService : IProductService
         int pageSize = 40,
         string? searchString = null,
         ProductSortOrder sortBy = IdDesc,
-        Guid? categoryId = null)
+        Guid? categoryId = null,
+        CancellationToken token = default
+    )
     {
         var query =
-            _productRepo.Table;
+            productRepo.Table;
 
         if (categoryId != default)
         {
@@ -100,15 +88,15 @@ public class ProductService : IProductService
         var products =
             await query
                 .Include(p => p.Categories)
-                .ToPagedList(pageIndex, pageSize);
+                .ToPagedList(pageIndex, pageSize, token);
 
         return products.ProjectToDto();
     }
 
-    public async Task<Result<ProductDto>> Insert(ProductEditModel editModel)
+    public async Task<Result<ProductDto>> Insert(ProductEditModel editModel, CancellationToken token)
     {
-        var validationResult = 
-            await _productValidator.ValidateAsync(editModel);
+        var validationResult =
+            await productValidator.ValidateAsync(editModel, token);
 
         if (validationResult.IsValid is false)
         {
@@ -116,7 +104,7 @@ public class ProductService : IProductService
         }
 
         var entity = editModel.ToEntity().RequireNotNull();
-        editModel.CategoryIds ??= new();
+        editModel.CategoryIds ??= [];
 
         var productCategories =
             editModel.CategoryIds
@@ -129,59 +117,56 @@ public class ProductService : IProductService
 
         entity.ProductCategories = productCategories;
 
-        await _productRepo.Add(entity);
+        await productRepo.Add(entity, token);
         return entity.ToDto().RequireNotNull();
     }
 
-    public async Task<Result<ProductDto>> Update(ProductEditModel editModel)
+    public async Task<Result<ProductDto>> Update(ProductEditModel editModel, CancellationToken token)
     {
-        var validationResult = 
-            await _productValidator.ValidateAsync(editModel);
+        var validationResult =
+            await productValidator.ValidateAsync(editModel, token);
 
         if (validationResult.IsValid is false)
         {
             return new(new ValidationException(validationResult.Errors));
         }
-        
+
         var originalProduct =
-            await _productRepo.Table
-                    .Include(p => p.ProductCategories)
-                    .FirstOrDefaultAsync(p => p.Id == editModel.Id);
+            await productRepo.Table
+                .Include(p => p.ProductCategories)
+                .FirstOrDefaultAsync(p => p.Id == editModel.Id, token);
 
         if (originalProduct is null)
         {
-            return new(new ArgumentException(
-                    "Invalid Update Operation. Entity doesn't exist"
-                )
-            );
+            return new(new ArgumentException("Invalid Update Operation. Entity doesn't exist"));
         }
 
         editModel.ToEntity(originalProduct);
-        
+
         var originalCategoryIds =
             originalProduct.ProductCategories
                 .Select(pc => pc.CategoryId)
                 .ToHashSet();
 
-        editModel.CategoryIds ??= new();
+        editModel.CategoryIds ??= [];
 
         var removedCategoryIds =
             originalCategoryIds
                 .Except(editModel.CategoryIds)
                 .ToHashSet();
 
-        if (removedCategoryIds.Any())
+        if (removedCategoryIds.Count is not 0)
         {
             var removedProductCategories =
-                await _productCategoryMappingRepo.Table
+                await productCategoryMappingRepo.Table
                         .Where(pc =>
                             removedCategoryIds.Contains(pc.CategoryId)
                             && pc.ProductId == editModel.Id)
-                        .ToListAsync();
+                        .ToListAsync(token);
 
             foreach (var pcMap in removedProductCategories)
             {
-                await _productCategoryMappingRepo.Delete(pcMap);
+                await productCategoryMappingRepo.Delete(pcMap, token);
             }
         }
 
@@ -209,18 +194,18 @@ public class ProductService : IProductService
                 $"{nameof(originalProduct)} is null");
         }
 
-        await _productRepo.Update(originalProduct);
+        await productRepo.Update(originalProduct, token);
         return originalProduct.ToDto().RequireNotNull();
     }
 
-    public Task Delete(Guid id) => _productRepo.Delete(id);
+    public Task Delete(Guid id, CancellationToken token) => productRepo.Delete(id, token);
 
-    public Task<bool> Exists(Guid id) => _productRepo.Exists(id);
+    public Task<bool> Exists(Guid id, CancellationToken token) => productRepo.Exists(id, token);
 
-    public async Task<Result<int?>> IncrementClickedCount(Guid productId)
+    public async Task<Result<int?>> IncrementClickedCount(Guid productId, CancellationToken token)
     {
         var product =
-            await _productRepo.GetById(productId);
+            await productRepo.GetById(productId, token);
 
         if (product is null)
         {
@@ -229,47 +214,79 @@ public class ProductService : IProductService
 
         product.ClickCount++;
 
-        await _productRepo.Update(product);
+        await productRepo.Update(product, token);
 
         return product.ClickCount;
     }
 
     public async Task<Result<int>> NewProductFavorite(
+        Guid userId,
         Guid productId,
-        string userName)
+        CancellationToken token
+    )
     {
-        if (string.IsNullOrEmpty(userName))
-        {
-            return new(new Exception("Username is null or empty"));
-        }
-        
         var product =
-            await _productRepo.GetById(productId);
+            await productRepo.GetById(productId, token);
 
         if (product is null)
         {
-            return new(new Exception($"Product {productId} doesn't exist"));
+            return new(new ProductNotFound(productId));
         }
 
-        var user =
-            await _userManager.FindByNameAsync(userName);
-
-        if (user is null)
+        if (await ProductIsLikedByUser(productId, userId, token))
         {
-            return new(new Exception($"User {userName} doesn't exist"));
+            return new(new DuplicateFavorite(userId, productId));
         }
 
         var favorite =
             new Favorite
             {
-                UserId    = user.Id,
+                UserId    = userId,
                 ProductId = product.Id
             };
 
         product.Favorites.Add(favorite);
         product.FavoriteCount++;
 
-        await _productRepo.Update(product);
+        await productRepo.Update(product, token);
         return product.FavoriteCount;
     }
+
+    public async Task<Result<int>> UndoProductFavorite(
+        Guid userId,
+        Guid productId,
+        CancellationToken token
+    )
+    {
+        var product =
+            await productRepo.GetById(productId, token);
+
+        if (product is null)
+        {
+            return new(new Exception($"Product {productId} doesn't exist"));
+        }
+
+        var maybeFavorite =
+            await productRepo.Table
+                .Where(p => p.Id == productId)
+                .SelectMany(p => p.Favorites)
+                .FirstOrDefaultAsync(f => f.UserId == userId, token);
+
+        if (maybeFavorite is null)
+        {
+            return new(new FavoriteNotFound(userId, productId));
+        }
+
+        product.Favorites.Remove(maybeFavorite);
+        product.FavoriteCount--;
+
+        await productRepo.Update(product, token);
+        return product.FavoriteCount;
+    }
+
+    public Task<bool> ProductIsLikedByUser(Guid productId, Guid userId, CancellationToken token) =>
+        productRepo.Table
+            .Where(p => p.Id == productId)
+            .SelectMany(p => p.Favorites)
+            .AnyAsync(f => f.UserId == userId, token);
 }

@@ -9,15 +9,17 @@ public interface IPictureService
         string name,
         byte[] data,
         int resizeToWidth = 1024,
-        int resizeToHeight = 1024);
+        int resizeToHeight = 1024,
+        CancellationToken token = default
+    );
 
-    Task Delete(string name);
+    Task Delete(string name, CancellationToken token);
 
-    Task DeleteFilesWithoutReference();
+    Task DeleteFilesWithoutReference(CancellationToken token);
 
-    Task<PagedList<ScrollFileInfo>> Get(int pageIndex = 0, int pageSize = 10);
+    Task<PagedList<ScrollFileInfo>> Get(int pageIndex = 0, int pageSize = 10, CancellationToken token = default);
 
-    Task<ScrollFile?> Get(string name);
+    Task<ScrollFile?> Get(string name, CancellationToken token);
 
-    Task<bool> Exists(string name);
+    Task<bool> Exists(string name, CancellationToken token);
 }

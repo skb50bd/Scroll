@@ -10,8 +10,8 @@ services:
     environment:
       - MINIO_ROOT_USER=yourUser
       - MINIO_ROOT_PASSWORD=yourPassword
-    ports:
-      - "9000:9000"
+    expose:
+      - 9000
     command: server /data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
@@ -24,11 +24,20 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_USER: yourUser
-      POSTGRES_PASSWORD: yourPassword
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
       POSTGRES_DB: scroll1
+    user: postgres
+    secrets:
+      - db_password
+    expose:
+      - 5432
     ports:
-      - "5432:5432"
+      - 5432:5432
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
@@ -38,16 +47,24 @@ services:
     build:
       context: .
       dockerfile: ./src/Api/Dockerfile
-    container_name: api
+      target: development
+    image: scroll-api:latest
+    container_name: scroll-api
     ports:
-      - "8080:8080"
-    environment:
-      - ConnectionStrings__ScrollDb=Host=db;Port=5432;Database=scroll1;Username=yourUser;Password=yourPassword
+      - 8080:80
     depends_on:
-      - db
-      - minio
-    networks:
-      - scroll-net
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+    environment:
+      ConnectionStrings__ScrollDb: Host=db;Port=5432;Database=scroll1;Username=yourUser;Password=yourPassword
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:80'
 
 volumes:
   pgdata:
@@ -58,3 +75,9 @@ volumes:
 networks:
   scroll-net:
     driver: bridge
+
+secrets:
+  db_password:
+    file: ./secrets/password.txt
+  appsettings.Production.json:
+    file: ./secrets/api-appsettings.json

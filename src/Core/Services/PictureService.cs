@@ -5,40 +5,33 @@ using Scroll.Domain.Entities;
 
 namespace Scroll.Core.Services;
 
-public class PictureService : IPictureService
+public class PictureService(IFileRepository repo, IPictureProcessor processor) : IPictureService
 {
-    private readonly IFileRepository _repo;
-    private readonly IPictureProcessor _processor;
-
-    public PictureService(
-        IFileRepository repo,
-        IPictureProcessor processor)
-    {
-        _repo      = repo;
-        _processor = processor;
-    }
-
     public async Task<string> Add(
         string name,
         byte[] data,
         int resizeToWidth = 1024,
-        int resizeToHeight = 1024)
+        int resizeToHeight = 1024,
+        CancellationToken token = default
+    )
     {
         var tempFilePath = Path.GetTempFileName();
 
-        await File.WriteAllBytesAsync(tempFilePath, data);
+        await File.WriteAllBytesAsync(tempFilePath, data, token);
 
         var tempImageInfo =
-            await data.ToTempFile();
+            await data.ToTempFile(token);
 
         var convertedFile =
-            await _processor.ConvertToWebP(tempImageInfo);
+            await processor.ConvertToWebP(tempImageInfo, token);
 
         var resizedImageInfo =
-            await _processor.ResizeImage(
-                    convertedFile,
-                    resizeToWidth,
-                    resizeToHeight);
+            await processor.ResizeImage(
+                convertedFile,
+                resizeToWidth,
+                resizeToHeight,
+                token
+            );
 
         // Tests show compression save no space
         // after webp conversion
@@ -54,33 +47,32 @@ public class PictureService : IPictureService
         var fileName =
             nameWithoutExt + extension;
 
-        await _repo.Upload(
+        await repo.Upload(
             filePath: resizedImageInfo.FullName,
             fileName: fileName,
-            contentType: "image/webp"
+            contentType: "image/webp",
+            cancellationToken: token
         );
 
         return fileName;
     }
 
-    public Task<ScrollFile?> Get(string name) =>
-        _repo.Download(name);
+    public Task<ScrollFile?> Get(string name, CancellationToken token) =>
+        repo.Download(name, token);
 
     public Task<PagedList<ScrollFileInfo>> Get(
-            int pageIndex = 0,
-            int pageSize = 10) =>
-        _repo.GetAll()
-            .ToPagedList(
-                pageIndex,
-                pageSize
-            );
+                int pageIndex = 0,
+                int pageSize = 10,
+                CancellationToken token = default
+            ) =>
+        repo.GetAll().ToPagedList(pageIndex, pageSize, token);
 
-    public Task Delete(string name) =>
-        _repo.Delete(name);
+    public Task Delete(string name, CancellationToken token) =>
+        repo.Delete(name, token);
 
-    public Task<bool> Exists(string name) =>
-        _repo.Exists(name);
+    public Task<bool> Exists(string name, CancellationToken token) =>
+        repo.Exists(name, token);
 
-    public Task DeleteFilesWithoutReference() =>
-        _repo.DeleteFilesWithoutReference();
+    public Task DeleteFilesWithoutReference(CancellationToken token) =>
+        repo.DeleteFilesWithoutReference(token);
 }

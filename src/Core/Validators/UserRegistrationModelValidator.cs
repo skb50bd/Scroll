@@ -14,9 +14,9 @@ public class UserRegistrationModelValidator : AbstractValidator<UserRegistration
             .EmailAddress().WithMessage("A valid email address is required")
             .MustAsync(async (email, ctx) =>
             {
-                var emailAlreadyExists = 
+                var emailAlreadyExists =
                     await repo.Table.AnyAsync(_ => _.Email == email, ctx);
-                
+
                 return emailAlreadyExists is false;
             }).WithMessage("Email already exists");
 
@@ -35,7 +35,7 @@ public class UserRegistrationModelValidator : AbstractValidator<UserRegistration
             .MustAsync(async (username, ctx) =>
             {
                 var usernameExists =
-                    await repo.Table.AnyAsync(_ => _.UserName == username);
+                    await repo.Table.AnyAsync(_ => _.UserName == username, ctx);
 
                 return usernameExists is false;
             })

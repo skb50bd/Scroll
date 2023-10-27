@@ -9,8 +9,8 @@ public sealed class Product : BaseEntity
     public Uri? Link { get; set; }
     public string ImageName { get; set; } = string.Empty;
     public int ClickCount { get; set; }
-    public List<Favorite> Favorites { get; set; } = new();
+    public List<Favorite> Favorites { get; set; } = [];
     public int FavoriteCount { get; set; }
-    public List<ProductCategoryMapping> ProductCategories { get; set; } = new();
-    public List<Category> Categories { get; set; } = new();
+    public List<ProductCategoryMapping> ProductCategories { get; set; } = [];
+    public List<Category> Categories { get; set; } = [];
 }

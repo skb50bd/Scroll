@@ -61,6 +61,7 @@ public class ProductsController(
         return Ok(product);
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpPost]
     public Task<ActionResult<ProductDto>> Post(ProductEditModel product, CancellationToken token) =>
         productService.Insert(product, token)
@@ -74,6 +75,7 @@ public class ProductsController(
                 token
             );
 
+    [Authorize(Policy = "Admin")]
     [HttpPut("{id:guid}")]
     public async Task<ActionResult<ProductDto>> Put(Guid id, ProductEditModel product, CancellationToken token)
     {
@@ -95,6 +97,7 @@ public class ProductsController(
             );
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken token)
     {
@@ -106,27 +109,55 @@ public class ProductsController(
     [HttpPost("Favorite/{productId:guid}")]
     public async Task<ActionResult<int>> Favorite(Guid productId, CancellationToken token)
     {
-        var userName = User.FindFirstValue(ClaimTypes.Name);
-        if (string.IsNullOrWhiteSpace(userName))
+        var maybeUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (maybeUserId is null)
         {
             return Unauthorized();
         }
 
+        var userId = Guid.Parse(maybeUserId);
         return await productService
-            .NewProductFavorite(productId, userName, token)
+            .NewProductFavorite(
+                userId    : userId,
+                productId : productId,
+                token     : token
+            )
             .MatchAsync(
                 _ => NoContent(),
-                exn => BadRequest(exn.Message),
+                exn => exn switch
+                {
+                    DuplicateFavorite ex => Conflict(ex.Message),
+                    _                    => BadRequest(exn.Message)
+                },
                 token
             );
     }
 
-    [HttpPost("Click/{productId:guid}")]
-    public Task<ActionResult<int?>> Click(Guid productId, CancellationToken token) =>
-        productService.IncrementClickedCount(productId, token)
+    [Authorize]
+    [HttpPost("UndoFavorite/{productId:guid}")]
+    public async Task<ActionResult<int>> UndoFavorite(Guid productId, CancellationToken token)
+    {
+        var maybeUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (maybeUserId is null)
+        {
+            return Unauthorized();
+        }
+
+        var userId = Guid.Parse(maybeUserId);
+        return await productService
+            .UndoProductFavorite(
+                userId    : userId,
+                productId : productId,
+                token     : token
+            )
             .MatchAsync(
                 _ => NoContent(),
-                exn => BadRequest(exn.Message),
+                exn => exn switch
+                {
+                    FavoriteNotFound ex  => NotFound(ex.Message),
+                    _                    => BadRequest(exn.Message)
+                },
                 token
             );
+    }
 }
