@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Scroll.Domain;
 using Scroll.Domain.Entities;
 
 namespace Scroll.Data.EntityConfigurations;
@@ -10,6 +11,12 @@ public class CategoryMap: IEntityTypeConfiguration<Category>
     {
         builder
             .HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+            .HasConversion(
+                v => v.Value,
+                v => new CategoryId(v)
+            );
 
         builder
             .Property(c => c.Name)

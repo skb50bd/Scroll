@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Scroll.Domain;
 using Scroll.Domain.Entities;
 
 namespace Scroll.Data.Repositories.EFCore;
@@ -7,11 +8,43 @@ namespace Scroll.Data.Repositories.EFCore;
 public class UserRepository(
         AppDbContext dbCtx,
         ILogger<UserRepository> logger
-    ) : Repository<User>(dbCtx, logger), IUserRepository
+    ) : Repository<Guid, User>(dbCtx, logger), IUserRepository
 {
     public Task<User?> GetByEmail(string email, CancellationToken cancellationToken) =>
         Table.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
 
     public Task<User?> GetByUserName(string userName, CancellationToken cancellationToken) =>
         Table.FirstOrDefaultAsync(u => u.UserName == userName, cancellationToken);
+}
+
+public class ProductRepository(AppDbContext dbCtx, ILogger<ProductRepository> logger)
+    : Repository<ProductId, Product>(dbCtx, logger), IProductRepository
+{
+    public async Task RemoveCategoriesFromProduct(
+        ProductId productId,
+        ISet<CategoryId> categories,
+        CancellationToken token
+    )
+    {
+        var product =
+            await Table
+                .Include(p => p.ProductCategories)
+                .FirstOrDefaultAsync(p => p.Id == productId, token);
+
+        if (product is null)
+        {
+            logger.LogError(
+                "Product with id {Id} not found to remove categories",
+                productId
+            );
+            return;
+        }
+
+        foreach (var map in product.ProductCategories.Where(pc => categories.Contains(pc.CategoryId)))
+        {
+            product.ProductCategories.Remove(map);
+        }
+
+        await SaveChanges(token);
+    }
 }

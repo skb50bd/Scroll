@@ -1,20 +1,19 @@
+using Bogus.DataSets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Scroll.Domain.Entities;
 
 namespace Scroll.Data.Repositories.EFCore;
 
-public class Repository<T>(
+public class Repository<TKey, T>(
         AppDbContext dbCtx,
-        ILogger<Repository<T>> logger
-    ) : IRepository<T> where T: class, IBaseEntity
+        ILogger<Repository<TKey, T>> logger
+    ) : IRepository<TKey, T> where TKey : IEquatable<TKey>, IComparable<TKey> where T : class, IEntity<TKey>
 {
-    private ILogger<Repository<T>> _logger = logger;
-    protected AppDbContext DbCtx = dbCtx;
-    protected DbSet<T> Set => DbCtx.Set<T>();
+    protected DbSet<T> Set => dbCtx.Set<T>();
     public IQueryable<T> Table => Set;
 
-    public virtual ValueTask<T?> GetById(Guid id, CancellationToken token) =>
+    public virtual ValueTask<T?> GetById(TKey id, CancellationToken token) =>
         Set.FindAsync(id, token);
 
     public virtual Task<List<T>> GetAll(CancellationToken token) =>
@@ -43,12 +42,12 @@ public class Repository<T>(
     public Task Update(IEnumerable<T> items, CancellationToken token) => SaveChanges(token);
     public void UpdateNoSave(IEnumerable<T> items) {}
 
-    public async Task Delete(Guid id, CancellationToken token)
+    public async Task Delete(TKey id, CancellationToken token)
     {
         var item = await Set.FindAsync(id, token);
         if (item is null)
         {
-            _logger.LogError(
+            logger.LogError(
                 "Item with id {Id} not found to delete",
                 id
             );
@@ -74,6 +73,13 @@ public class Repository<T>(
     }
 
     public void DeleteNoSave(IEnumerable<T> items) =>  Set.RemoveRange(items);
-    public Task<bool> Exists(Guid id, CancellationToken token) => Set.AnyAsync(i => i.Id == id, token);
-    public Task SaveChanges(CancellationToken token) => DbCtx.SaveChangesAsync(token);
+
+    public async Task<bool> Exists(TKey id, CancellationToken token)
+    {
+        // TODO: Fix this to use AnyAsync
+        var item = await Set.FindAsync(id, token);
+        return item is not null;
+    }
+
+    public Task SaveChanges(CancellationToken token) => dbCtx.SaveChangesAsync(token);
 }

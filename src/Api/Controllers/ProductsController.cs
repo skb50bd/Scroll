@@ -40,7 +40,7 @@ public class ProductsController(
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ProductDto?>> Get(Guid id, CancellationToken token)
     {
-        var product = await productService.Get(id, token);
+        var product = await productService.Get(new(id), token);
         if (product is null)
         {
             return NotFound();
@@ -81,7 +81,7 @@ public class ProductsController(
     {
         if (id != product.Id)
         {
-            return NotFound();
+            return Conflict("Route id and model id do not match.");
         }
 
         return await productService
@@ -101,7 +101,7 @@ public class ProductsController(
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken token)
     {
-        await productService.Delete(id, token);
+        await productService.Delete(new(id), token);
         return NoContent();
     }
 
@@ -119,7 +119,7 @@ public class ProductsController(
         return await productService
             .NewProductFavorite(
                 userId    : userId,
-                productId : productId,
+                productId : new(productId),
                 token     : token
             )
             .MatchAsync(
@@ -147,7 +147,7 @@ public class ProductsController(
         return await productService
             .UndoProductFavorite(
                 userId    : userId,
-                productId : productId,
+                productId : new(productId),
                 token     : token
             )
             .MatchAsync(

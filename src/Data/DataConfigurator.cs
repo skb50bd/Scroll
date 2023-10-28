@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Scroll.Data.Repositories;
 using Scroll.Data.Repositories.EFCore;
+using Scroll.Domain;
 using Scroll.Domain.Entities;
 
 namespace Scroll.Data;
@@ -15,8 +16,9 @@ public static class DataConfigurator
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql("name=ConnectionStrings:ScrollDb"));
 
-        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IFileRepository, FileRepository>();
         return services;
     }
@@ -57,7 +59,7 @@ public static class DataConfigurator
             await userManager.CreateAsync(user, urm.Password);
         }
 
-        var productRepository = services.GetRequiredService<IRepository<Product>>();
+        var productRepository = services.GetRequiredService<IRepository<ProductId, Product>>();
         if (await productRepository.Table.AnyAsync(token) is false)
         {
             var products = FakeData.GenerateProducts(100);

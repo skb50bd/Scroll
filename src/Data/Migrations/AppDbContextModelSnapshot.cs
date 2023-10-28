@@ -167,7 +167,6 @@ namespace Scroll.Data.Migrations
             modelBuilder.Entity("Scroll.Domain.Entities.Category", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Description")
@@ -197,9 +196,6 @@ namespace Scroll.Data.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
                     b.HasKey("UserId", "ProductId");
 
                     b.HasIndex("ProductId");
@@ -210,7 +206,6 @@ namespace Scroll.Data.Migrations
             modelBuilder.Entity("Scroll.Domain.Entities.Product", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("AddedOn")
@@ -279,7 +274,6 @@ namespace Scroll.Data.Migrations
             modelBuilder.Entity("Scroll.Domain.Entities.ScrollFileInfo", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("AddedOn")

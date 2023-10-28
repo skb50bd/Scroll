@@ -2,8 +2,8 @@
 
 public record ProductCategoryMappingDto
 {
-    public Guid ProductId { get; set; }
+    public ProductId ProductId { get; set; }
     public ProductDto? Product { get; set; }
-    public Guid CategoryId { get; set; }
+    public CategoryId CategoryId { get; set; }
     public CategoryDto? Category { get; set; }
 }

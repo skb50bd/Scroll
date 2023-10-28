@@ -7,11 +7,11 @@ namespace Scroll.Core.Services;
 
 public interface ICategoryService
 {
-    Task Delete(Guid id, CancellationToken token);
-    Task<bool> Exists(Guid id, CancellationToken token);
-    Task<CategoryDto?> Get(Guid id, CancellationToken token);
+    Task Delete(CategoryId id, CancellationToken token);
+    Task<bool> Exists(CategoryId id, CancellationToken token);
+    Task<CategoryDto?> Get(CategoryId id, CancellationToken token);
     Task<CategoryDto?> GetByName(string name, CancellationToken token);
-    Task<CategoryEditModel?> GetForEdit(Guid id, CancellationToken token);
+    Task<CategoryEditModel?> GetForEdit(CategoryId id, CancellationToken token);
     Task<PagedList<CategoryDto>> GetPaged(
         int pageIndex = 0,
         int pageSize = 40,
@@ -20,9 +20,9 @@ public interface ICategoryService
     );
 
     IQueryable<CategoryDto> GetQueryable();
-    Task<int> GetProductCountInCategory(Guid categoryId, CancellationToken token);
+    Task<int> GetProductCountInCategory(CategoryId categoryId, CancellationToken token);
     Task<PagedList<ProductDto>> GetProductsInCategory(
-        Guid categoryId,
+        CategoryId categoryId,
         int pageIndex = 0,
         int pageSize = 40,
         CancellationToken token = default

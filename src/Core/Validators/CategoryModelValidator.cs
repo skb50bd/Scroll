@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Scroll.Data.Repositories;
+using Scroll.Domain;
 using Scroll.Domain.Entities;
 using Scroll.Domain.InputModels;
 
@@ -8,7 +9,7 @@ namespace Scroll.Core.Validators;
 
 public class CategoryModelValidator : AbstractValidator<CategoryEditModel>
 {
-    public CategoryModelValidator(IRepository<Category> repository)
+    public CategoryModelValidator(IRepository<CategoryId, Category> repository)
     {
         RuleFor(_ => _.Name)
             .NotEmpty().WithMessage("Name is required")
@@ -25,7 +26,7 @@ public class CategoryModelValidator : AbstractValidator<CategoryEditModel>
             {
                 var nameAlreadyExists =
                     await repository.Table.AnyAsync(
-                        _ => _.Name == category.Name && _.Id != category.Id,
+                        _ => _.Name == category.Name && _.Id != new CategoryId(category.Id),
                         ctx
                     );
 

@@ -8,8 +8,6 @@ public class ProductCategoryMappingMap : IEntityTypeConfiguration<ProductCategor
 {
     public void Configure(EntityTypeBuilder<ProductCategoryMapping> builder)
     {
-        builder.Ignore(pcm => pcm.Id);
-
         builder
             .HasKey(pcm =>
                 new

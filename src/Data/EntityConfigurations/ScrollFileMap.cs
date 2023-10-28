@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Scroll.Domain;
 using Scroll.Domain.Entities;
 
 namespace Scroll.Data.EntityConfigurations;
@@ -15,14 +16,21 @@ public class ScrollFileInfoMap : IEntityTypeConfiguration<ScrollFileInfo>
             .HasDiscriminator()
             .HasValue<ScrollFileInfo>(nameof(ScrollFileInfo))
             .HasValue<ScrollFile>(nameof(ScrollFile));
-        
+
         builder
             .HasKey(sf => sf.Id);
 
         builder
+            .Property(sf => sf.Id)
+            .HasConversion(
+                v => v.Value,
+                v => new FileId(v)
+            );
+
+        builder
             .Property(sf => sf.Name)
             .HasMaxLength(200);
-        
+
         builder
             .Property(sf => sf.AddedOn)
             .ValueGeneratedOnAdd()

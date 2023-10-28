@@ -35,7 +35,7 @@ public class CategoriesController(
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<CategoryDto?>> Get(Guid id, CancellationToken token)
     {
-        var category = await categoryService.Get(id, token);
+        var category = await categoryService.Get(new(id), token);
         if (category is null)
         {
             return NotFound();
@@ -77,7 +77,7 @@ public class CategoriesController(
     {
         if (id != model.Id)
         {
-            return NotFound();
+            return Conflict("Route id and model id do not match.");
         }
 
         return await categoryService.Update(model, token)
@@ -96,7 +96,7 @@ public class CategoriesController(
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken token)
     {
-        await categoryService.Delete(id, token);
+        await categoryService.Delete(new(id), token);
         return NoContent();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Scroll.Domain;
 using Scroll.Domain.Entities;
 
 namespace Scroll.Data.EntityConfigurations;
@@ -10,6 +11,12 @@ public class FavoriteMap: IEntityTypeConfiguration<Favorite>
     {
         builder
             .HasKey(x => new { x.UserId, x.ProductId });
+
+        builder.Property(x => x.ProductId)
+            .HasConversion(
+                v => v.Value,
+                v => new ProductId(v)
+            );
 
         builder
             .HasOne(f => f.User)

@@ -52,6 +52,7 @@ GET {{baseUrl}}/categories
 ###
 
 POST {{baseUrl}}/categories
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {

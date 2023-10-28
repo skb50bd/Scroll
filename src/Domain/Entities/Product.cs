@@ -1,7 +1,8 @@
 namespace Scroll.Domain.Entities;
 
-public sealed class Product : BaseEntity
+public sealed class Product : IEntity<ProductId>
 {
+    public ProductId Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }

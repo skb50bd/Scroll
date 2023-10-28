@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Scroll.Data.Repositories;
+using Scroll.Domain;
 using Scroll.Domain.Entities;
 using Scroll.Domain.InputModels;
 
@@ -8,7 +9,7 @@ namespace Scroll.Core.Validators;
 
 public class ProductModelValidator : AbstractValidator<ProductEditModel>
 {
-    public ProductModelValidator(IRepository<Product> repository)
+    public ProductModelValidator(IRepository<ProductId, Product> repository)
     {
         RuleFor(_ => _.Title)
             .NotEmpty().WithMessage("Title is required")
@@ -35,7 +36,7 @@ public class ProductModelValidator : AbstractValidator<ProductEditModel>
             {
                 var titleAlreadyExists =
                     await repository.Table.AnyAsync(
-                        _ => _.Title == product.Title && _.Id != product.Id,
+                        _ => _.Title == product.Title && _.Id != new ProductId(product.Id),
                         ctx
                     );
 

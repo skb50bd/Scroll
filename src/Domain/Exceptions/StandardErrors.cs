@@ -16,22 +16,22 @@ public class IdentityException(IEnumerable<IdentityError> errors) : Exception
     public List<IdentityError> Errors { get; private set; } = errors.ToList();
 }
 
-public class DuplicateFavorite(Guid userId, Guid productId)
+public class DuplicateFavorite(Guid userId, ProductId productId)
     : Exception($"User {userId} already favorited product {productId}")
 {
     public Guid UserId { get; private init; } = userId;
-    public Guid ProductId { get; private init; } = productId;
+    public ProductId ProductId { get; private init; } = productId;
 }
 
-public class FavoriteNotFound(Guid userId, Guid productId)
+public class FavoriteNotFound(Guid userId, ProductId productId)
     : Exception($"User {userId} has not favorited product {productId}")
 {
     public Guid UserId { get; private init; } = userId;
-    public Guid ProductId { get; private init; } = productId;
+    public ProductId ProductId { get; private init; } = productId;
 }
 
-public class ProductNotFound(Guid productId)
+public class ProductNotFound(ProductId productId)
     : Exception($"Product {productId} not found")
 {
-    public Guid ProductId { get; private init; } = productId;
+    public ProductId ProductId { get; private init; } = productId;
 }

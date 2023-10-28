@@ -27,7 +27,7 @@ public static partial class ProductMapper
     [MapperIgnoreTarget(nameof(ProductEditModel.CategoryIds))]
     private static partial ProductEditModel? ToEditModel(this Product? entity);
 
-    private static List<Guid>? CategoriesToCategoryIds(this List<Category>? categories) =>
+    private static List<CategoryId>? CategoriesToCategoryIds(this List<Category>? categories) =>
         categories
             ?.Select(c => c.Id)
             .ToList();

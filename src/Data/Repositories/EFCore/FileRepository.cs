@@ -82,6 +82,7 @@ public class FileRepository(
     {
         var scrollFile = new ScrollFile
         {
+            Id          = Domain.FileId.New(),
             Name        = fileName,
             ContentType = contentType,
             Size        = fileSize,

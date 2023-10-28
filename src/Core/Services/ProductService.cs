@@ -16,12 +16,11 @@ using static Scroll.Core.Services.ProductSortOrder;
 namespace Scroll.Core.Services;
 
 public class ProductService(
-        IRepository<Product> productRepo,
-        IRepository<ProductCategoryMapping> productCategoryMappingRepo,
+        IProductRepository productRepo,
         IValidator<ProductEditModel> productValidator
     ) : IProductService
 {
-    public Task<ProductDto?> Get(Guid id, CancellationToken token) =>
+    public Task<ProductDto?> Get(ProductId id, CancellationToken token) =>
         productRepo
             .Table
             .Include(p => p.Categories)
@@ -36,7 +35,7 @@ public class ProductService(
             .FirstOrDefaultAsync(token)
             .ToDtoAsync();
 
-    public Task<ProductEditModel?> GetForEdit(Guid id, CancellationToken token) =>
+    public Task<ProductEditModel?> GetForEdit(ProductId id, CancellationToken token) =>
         productRepo
             .Table
             .Include(p => p.ProductCategories)
@@ -48,7 +47,7 @@ public class ProductService(
         int pageSize = 40,
         string? searchString = null,
         ProductSortOrder sortBy = IdDesc,
-        Guid? categoryId = null,
+        CategoryId? categoryId = null,
         CancellationToken token = default
     )
     {
@@ -110,7 +109,7 @@ public class ProductService(
             editModel.CategoryIds
                 .Select(cId => new ProductCategoryMapping
                 {
-                    ProductId  = editModel.Id,
+                    ProductId  = new(editModel.Id),
                     CategoryId = cId
                 })
                 .ToList();
@@ -131,14 +130,16 @@ public class ProductService(
             return new(new ValidationException(validationResult.Errors));
         }
 
+        var productId = new ProductId(editModel.Id);
+
         var originalProduct =
             await productRepo.Table
                 .Include(p => p.ProductCategories)
-                .FirstOrDefaultAsync(p => p.Id == editModel.Id, token);
+                .FirstOrDefaultAsync(p => p.Id == productId, token);
 
         if (originalProduct is null)
         {
-            return new(new ArgumentException("Invalid Update Operation. Entity doesn't exist"));
+            return new(new ProductNotFound(productId));
         }
 
         editModel.ToEntity(originalProduct);
@@ -155,20 +156,11 @@ public class ProductService(
                 .Except(editModel.CategoryIds)
                 .ToHashSet();
 
-        if (removedCategoryIds.Count is not 0)
-        {
-            var removedProductCategories =
-                await productCategoryMappingRepo.Table
-                        .Where(pc =>
-                            removedCategoryIds.Contains(pc.CategoryId)
-                            && pc.ProductId == editModel.Id)
-                        .ToListAsync(token);
-
-            foreach (var pcMap in removedProductCategories)
-            {
-                await productCategoryMappingRepo.Delete(pcMap, token);
-            }
-        }
+        await productRepo.RemoveCategoriesFromProduct(
+            productId,
+            removedCategoryIds,
+            token
+        );
 
         var newCategories =
             editModel.CategoryIds
@@ -180,7 +172,7 @@ public class ProductService(
                 editModel.CategoryIds
                     .Select(cId => new ProductCategoryMapping
                     {
-                        ProductId  = editModel.Id,
+                        ProductId  = productId,
                         CategoryId = cId
                     })
                     .ToList();
@@ -198,30 +190,28 @@ public class ProductService(
         return originalProduct.ToDto().RequireNotNull();
     }
 
-    public Task Delete(Guid id, CancellationToken token) => productRepo.Delete(id, token);
+    public Task Delete(ProductId id, CancellationToken token) => productRepo.Delete(id, token);
 
-    public Task<bool> Exists(Guid id, CancellationToken token) => productRepo.Exists(id, token);
+    public Task<bool> Exists(ProductId id, CancellationToken token) => productRepo.Exists(id, token);
 
-    public async Task<Result<int?>> IncrementClickedCount(Guid productId, CancellationToken token)
+    public async Task<Result<int?>> IncrementClickedCount(ProductId productId, CancellationToken token)
     {
         var product =
             await productRepo.GetById(productId, token);
 
         if (product is null)
         {
-            return new(new Exception($"Product {productId} doesn't exist"));
+            return new(new ProductNotFound(productId));
         }
 
         product.ClickCount++;
-
         await productRepo.Update(product, token);
-
         return product.ClickCount;
     }
 
     public async Task<Result<int>> NewProductFavorite(
         Guid userId,
-        Guid productId,
+        ProductId productId,
         CancellationToken token
     )
     {
@@ -233,7 +223,7 @@ public class ProductService(
             return new(new ProductNotFound(productId));
         }
 
-        if (await ProductIsLikedByUser(productId, userId, token))
+        if (await ProductIsLikedByUser(userId, productId, token))
         {
             return new(new DuplicateFavorite(userId, productId));
         }
@@ -254,7 +244,7 @@ public class ProductService(
 
     public async Task<Result<int>> UndoProductFavorite(
         Guid userId,
-        Guid productId,
+        ProductId productId,
         CancellationToken token
     )
     {
@@ -263,7 +253,7 @@ public class ProductService(
 
         if (product is null)
         {
-            return new(new Exception($"Product {productId} doesn't exist"));
+            return new(new ProductNotFound(productId));
         }
 
         var maybeFavorite =
@@ -284,7 +274,7 @@ public class ProductService(
         return product.FavoriteCount;
     }
 
-    public Task<bool> ProductIsLikedByUser(Guid productId, Guid userId, CancellationToken token) =>
+    public Task<bool> ProductIsLikedByUser(Guid userId, ProductId productId, CancellationToken token) =>
         productRepo.Table
             .Where(p => p.Id == productId)
             .SelectMany(p => p.Favorites)

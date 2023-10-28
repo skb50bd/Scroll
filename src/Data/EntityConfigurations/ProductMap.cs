@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Scroll.Domain;
 using Scroll.Domain.Entities;
 namespace Scroll.Data.EntityConfigurations;
 
@@ -9,6 +10,12 @@ public class ProductMap: IEntityTypeConfiguration<Product>
     {
         builder
             .HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+            .HasConversion(
+                v => v.Value,
+                v => new ProductId(v)
+            );
 
         builder
             .Property(p => p.Title)

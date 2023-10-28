@@ -12,8 +12,8 @@ using Scroll.Data;
 namespace Scroll.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231027191520_Added IsAdmin Flag")]
-    partial class AddedIsAdminFlag
+    [Migration("20231028052654_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -170,7 +170,6 @@ namespace Scroll.Data.Migrations
             modelBuilder.Entity("Scroll.Domain.Entities.Category", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Description")
@@ -200,9 +199,6 @@ namespace Scroll.Data.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
                     b.HasKey("UserId", "ProductId");
 
                     b.HasIndex("ProductId");
@@ -213,7 +209,6 @@ namespace Scroll.Data.Migrations
             modelBuilder.Entity("Scroll.Domain.Entities.Product", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("AddedOn")
@@ -282,7 +277,6 @@ namespace Scroll.Data.Migrations
             modelBuilder.Entity("Scroll.Domain.Entities.ScrollFileInfo", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("AddedOn")

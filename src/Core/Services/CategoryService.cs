@@ -16,11 +16,11 @@ using ValidationException = FluentValidation.ValidationException;
 namespace Scroll.Core.Services;
 
 public class CategoryService(
-    IRepository<Category> repo,
+    IRepository<CategoryId, Category> repo,
     IValidator<CategoryEditModel> validator
     ) : ICategoryService
 {
-    public Task<CategoryDto?> Get(Guid id, CancellationToken token) =>
+    public Task<CategoryDto?> Get(CategoryId id, CancellationToken token) =>
         repo.GetById(id, token).ToDtoAsync();
 
     public Task<CategoryDto?> GetByName(string name, CancellationToken token) =>
@@ -29,7 +29,7 @@ public class CategoryService(
             .FirstOrDefaultAsync(token)
             .ToDtoAsync();
 
-    public Task<CategoryEditModel?> GetForEdit(Guid id, CancellationToken token) =>
+    public Task<CategoryEditModel?> GetForEdit(CategoryId id, CancellationToken token) =>
         repo.GetById(id, token).ToEditModelAsync();
 
     public IQueryable<CategoryDto> GetQueryable() =>
@@ -91,7 +91,7 @@ public class CategoryService(
         }
 
         var entity =
-            await repo.GetById(editModel.Id, token)
+            await repo.GetById(new(editModel.Id), token)
             ?? throw new ArgumentException("Invalid Update Operation. Entity doesn't exist");
 
         editModel.ToEntity(entity);
@@ -101,11 +101,11 @@ public class CategoryService(
         return entity.ToDto().RequireNotNull();
     }
 
-    public Task Delete(Guid id, CancellationToken token) => repo.Delete(id, token);
-    public Task<bool> Exists(Guid id, CancellationToken token) => repo.Exists(id, token);
+    public Task Delete(CategoryId id, CancellationToken token) => repo.Delete(id, token);
+    public Task<bool> Exists(CategoryId id, CancellationToken token) => repo.Exists(id, token);
 
     public async Task<PagedList<ProductDto>> GetProductsInCategory(
-        Guid categoryId,
+        CategoryId categoryId,
         int pageIndex = 0,
         int pageSize = 40,
         CancellationToken token = default
@@ -120,7 +120,7 @@ public class CategoryService(
         return productsInCategory.ProjectToDto();
     }
 
-    public async Task<int> GetProductCountInCategory(Guid categoryId, CancellationToken token)
+    public async Task<int> GetProductCountInCategory(CategoryId categoryId, CancellationToken token)
     {
         var productCount =
             await repo.Table
