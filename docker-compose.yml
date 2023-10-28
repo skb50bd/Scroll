@@ -57,12 +57,14 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+    networks:
+      - scroll-net
     develop:
       watch:
         - action: rebuild
           path: .
     environment:
-      ConnectionStrings__ScrollDb: Host=db;Port=5432;Database=scroll1;Username=yourUser;Password=yourPassword
+      ConnectionStrings__ScrollDb: "Host=db;Port=5432;Database=scroll1;Username=postgres;Password=yourPassword"
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:80'
 
