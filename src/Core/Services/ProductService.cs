@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
+using LanguageExt;
 using LanguageExt.Common;
+using LanguageExt.UnsafeValueAccess;
 using Microsoft.EntityFrameworkCore;
 using Scroll.Core.Extensions;
 using Scroll.Core.ObjectMapping;
@@ -20,14 +22,14 @@ public class ProductService(
         IValidator<ProductEditModel> productValidator
     ) : IProductService
 {
-    public Task<ProductDto?> Get(ProductId id, CancellationToken token) =>
+    public Task<Option<ProductDto>> Get(ProductId id, CancellationToken token) =>
         productRepo
             .Table
             .Include(p => p.Categories)
             .FirstOrDefaultAsync(p => p.Id == id, token)
             .ToDtoAsync();
 
-    public Task<ProductDto?> GetByTitle(string title, CancellationToken token) =>
+    public Task<Option<ProductDto>> GetByTitle(string title, CancellationToken token) =>
         productRepo
             .Table
             .Include(p => p.Categories)
@@ -35,7 +37,7 @@ public class ProductService(
             .FirstOrDefaultAsync(token)
             .ToDtoAsync();
 
-    public Task<ProductEditModel?> GetForEdit(ProductId id, CancellationToken token) =>
+    public Task<Option<ProductEditModel>> GetForEdit(ProductId id, CancellationToken token) =>
         productRepo
             .Table
             .Include(p => p.ProductCategories)
@@ -194,19 +196,19 @@ public class ProductService(
 
     public Task<bool> Exists(ProductId id, CancellationToken token) => productRepo.Exists(id, token);
 
-    public async Task<Result<int?>> IncrementClickedCount(ProductId productId, CancellationToken token)
+    public async Task<Result<Option<int>>> IncrementClickedCount(ProductId productId, CancellationToken token)
     {
-        var product =
+        var maybeProduct =
             await productRepo.GetById(productId, token);
 
-        if (product is null)
+        if (maybeProduct.IsNone)
         {
             return new(new ProductNotFound(productId));
         }
 
-        product.ClickCount++;
+        var product = maybeProduct.ValueUnsafe();
         await productRepo.Update(product, token);
-        return product.ClickCount;
+        return new(product.ClickCount);
     }
 
     public async Task<Result<int>> NewProductFavorite(
@@ -215,10 +217,10 @@ public class ProductService(
         CancellationToken token
     )
     {
-        var product =
+        var maybeProduct =
             await productRepo.GetById(productId, token);
 
-        if (product is null)
+        if (maybeProduct.IsNone)
         {
             return new(new ProductNotFound(productId));
         }
@@ -227,6 +229,8 @@ public class ProductService(
         {
             return new(new DuplicateFavorite(userId, productId));
         }
+
+        var product = maybeProduct.ValueUnsafe();
 
         var favorite =
             new Favorite
@@ -248,10 +252,10 @@ public class ProductService(
         CancellationToken token
     )
     {
-        var product =
+        var maybeProduct =
             await productRepo.GetById(productId, token);
 
-        if (product is null)
+        if (maybeProduct.IsNone)
         {
             return new(new ProductNotFound(productId));
         }
@@ -267,6 +271,7 @@ public class ProductService(
             return new(new FavoriteNotFound(userId, productId));
         }
 
+        var product = maybeProduct.ValueUnsafe();
         product.Favorites.Remove(maybeFavorite);
         product.FavoriteCount--;
 

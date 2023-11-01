@@ -1,3 +1,4 @@
+using LanguageExt;
 using Scroll.Domain.Entities;
 
 namespace Scroll.Data.Repositories;
@@ -5,7 +6,7 @@ namespace Scroll.Data.Repositories;
 public interface IRepository<TKey, T> where TKey : IEquatable<TKey>, IComparable<TKey> where T : class, IEntity<TKey>
 {
     IQueryable<T> Table { get; }
-    ValueTask<T?> GetById(TKey id, CancellationToken token);
+    ValueTask<Option<T>> GetById(TKey id, CancellationToken token);
     Task<List<T>> GetAll(CancellationToken token);
     Task Add(T item, CancellationToken token);
     ValueTask AddNoSave(T item, CancellationToken token);

@@ -35,3 +35,9 @@ public class ProductNotFound(ProductId productId)
 {
     public ProductId ProductId { get; private init; } = productId;
 }
+
+public class CategoryNotFound(CategoryId categoryId)
+    : Exception($"Category {categoryId} not found")
+{
+    public CategoryId CategoryId { get; private init; } = categoryId;
+}

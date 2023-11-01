@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LanguageExt;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Scroll.Domain.Entities;
 
@@ -94,7 +95,7 @@ public class FileRepository(
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<ScrollFile?> Download(
+    public async Task<Option<ScrollFile>> Download(
             string fileName,
             CancellationToken cancellationToken
         ) =>

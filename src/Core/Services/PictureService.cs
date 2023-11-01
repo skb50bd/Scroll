@@ -1,4 +1,5 @@
-﻿using Scroll.Data;
+﻿using LanguageExt;
+using Scroll.Data;
 using Scroll.Data.Repositories;
 using Scroll.Domain;
 using Scroll.Domain.Entities;
@@ -57,7 +58,7 @@ public class PictureService(IFileRepository repo, IPictureProcessor processor) :
         return fileName;
     }
 
-    public Task<ScrollFile?> Get(string name, CancellationToken token) =>
+    public Task<Option<ScrollFile>> Get(string name, CancellationToken token) =>
         repo.Download(name, token);
 
     public Task<PagedList<ScrollFileInfo>> Get(

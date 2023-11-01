@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Scroll.Api.Services;
@@ -22,7 +23,7 @@ public static class WebServicesConfiguration
             .AddScoped<PictureUploadService>()
             .AddScoped<FakeEmailSender>()
             .AddOptions()
-            .Configure<SiteSetting>(configuration.GetSection(SiteSetting.Key))
+                .Configure<SiteSetting>(configuration.GetSection(SiteSetting.Key))
             .AddEndpointsApiExplorer()
             .AddSwaggerGen()
             .AddHttpContextAccessor()
@@ -32,16 +33,21 @@ public static class WebServicesConfiguration
                 options.DefaultApiVersion = ApiVersion.Default;
             })
             .AddControllers()
-            .AddJsonOptions(options =>
+            .AddJsonOptions(o =>
             {
-                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            });
-
-        services.AddAuthorizationBuilder()
-            .AddPolicy("Admin", policy => policy.RequireClaim("IsAdmin", "True"));
-
-        services.AddIdentityApiEndpoints<User>()
+                o.JsonSerializerOptions.ReferenceHandler       = ReferenceHandler.IgnoreCycles;
+                o.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            }).Services
+            .AddDataProtection()
+                .PersistKeysToDbContext<AppDbContext>()
+                .Services
+            .AddAuthorizationBuilder()
+                .AddPolicy(
+                    "Admin",
+                    policy => policy.RequireClaim("IsAdmin", "True")
+                )
+                .Services
+            .AddIdentityApiEndpoints<User>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders()
             .AddSignInManager<AppSignInManager>();
@@ -62,7 +68,8 @@ public static class WebServicesConfiguration
         app.UseAuthorization();
         app.MapGroup("/account")
             .MapIdentityApi<User>()
-            .WithDescription("Auth");
+            .WithDisplayName("Account")
+            .WithDescription("Account management endpoints");
 
         app.MapControllers();
 

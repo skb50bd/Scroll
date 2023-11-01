@@ -18,18 +18,19 @@ public class PagedList
 
 public class PagedList<T> : PagedList
 {
-    public IList<T> Items { get; set; }
+    public List<T> Items { get; set; }
 
     public PagedList()
     {
-        Items = new List<T>();
+        Items = [];
     }
 
     public PagedList(
-        IList<T> items,
+        List<T> items,
         int pageSize,
         int pageIndex,
-        int totalCount)
+        int totalCount
+    )
     {
         Items      = items;
         PageSize   = pageSize;
@@ -49,5 +50,6 @@ public class PagedList<T> : PagedList
                     .ToList(),
                 pageSize,
                 pageIndex,
-                source.Count);
+                source.Count
+            );
 }

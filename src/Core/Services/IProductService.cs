@@ -1,4 +1,5 @@
-﻿using LanguageExt.Common;
+﻿using LanguageExt;
+using LanguageExt.Common;
 using Scroll.Domain;
 using Scroll.Domain.DTOs;
 using Scroll.Domain.InputModels;
@@ -21,9 +22,9 @@ public interface IProductService
 {
     Task Delete(ProductId id, CancellationToken token);
     Task<bool> Exists(ProductId id, CancellationToken token);
-    Task<ProductDto?> Get(ProductId id, CancellationToken token);
-    Task<ProductDto?> GetByTitle(string title, CancellationToken token);
-    Task<ProductEditModel?> GetForEdit(ProductId id, CancellationToken token);
+    Task<Option<ProductDto>> Get(ProductId id, CancellationToken token);
+    Task<Option<ProductDto>> GetByTitle(string title, CancellationToken token);
+    Task<Option<ProductEditModel>> GetForEdit(ProductId id, CancellationToken token);
 
     Task<PagedList<ProductDto>> GetPaged(
         int pageIndex = 0,
@@ -34,7 +35,7 @@ public interface IProductService
         CancellationToken token = default
     );
 
-    Task<Result<int?>> IncrementClickedCount(ProductId productId, CancellationToken token);
+    Task<Result<Option<int>>> IncrementClickedCount(ProductId productId, CancellationToken token);
     Task<Result<ProductDto>> Insert(ProductEditModel editModel, CancellationToken token);
     Task<Result<int>> NewProductFavorite(Guid userId, ProductId productId, CancellationToken token);
     Task<Result<int>> UndoProductFavorite(Guid userId, ProductId productId, CancellationToken token);

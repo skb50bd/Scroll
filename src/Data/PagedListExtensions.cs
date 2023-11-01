@@ -9,24 +9,25 @@ public static class PagedListExtensions
         this IQueryable<T> source,
         int pageIndex,
         int pageSize,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken
     )
     {
         var totalCount =
-            await source.CountAsync();
+            await source.CountAsync(cancellationToken);
 
         var items =
             await source
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
         var pagedList =
             new PagedList<T>(
                 items,
                 pageSize,
                 pageIndex,
-                totalCount);
+                totalCount
+            );
 
         return pagedList;
     }

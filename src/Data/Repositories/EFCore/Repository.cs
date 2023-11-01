@@ -1,4 +1,5 @@
 using Bogus.DataSets;
+using LanguageExt;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Scroll.Domain.Entities;
@@ -13,8 +14,8 @@ public class Repository<TKey, T>(
     protected DbSet<T> Set => dbCtx.Set<T>();
     public IQueryable<T> Table => Set;
 
-    public virtual ValueTask<T?> GetById(TKey id, CancellationToken token) =>
-        Set.FindAsync(id, token);
+    public virtual async ValueTask<Option<T>> GetById(TKey id, CancellationToken token) =>
+        await Set.FindAsync(id, token);
 
     public virtual Task<List<T>> GetAll(CancellationToken token) =>
         Table.ToListAsync(token);

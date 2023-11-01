@@ -1,3 +1,4 @@
+using LanguageExt;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Scroll.Domain;
@@ -10,11 +11,11 @@ public class UserRepository(
         ILogger<UserRepository> logger
     ) : Repository<Guid, User>(dbCtx, logger), IUserRepository
 {
-    public Task<User?> GetByEmail(string email, CancellationToken cancellationToken) =>
-        Table.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+    public async Task<Option<User>> GetByEmail(string email, CancellationToken cancellationToken) =>
+        await Table.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
 
-    public Task<User?> GetByUserName(string userName, CancellationToken cancellationToken) =>
-        Table.FirstOrDefaultAsync(u => u.UserName == userName, cancellationToken);
+    public async Task<Option<User>> GetByUserName(string userName, CancellationToken cancellationToken) =>
+        await Table.FirstOrDefaultAsync(u => u.UserName == userName, cancellationToken);
 }
 
 public class ProductRepository(AppDbContext dbCtx, ILogger<ProductRepository> logger)

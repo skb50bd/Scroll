@@ -1,4 +1,5 @@
-﻿using LanguageExt.Common;
+﻿using LanguageExt;
+using LanguageExt.Common;
 using Scroll.Domain;
 using Scroll.Domain.DTOs;
 using Scroll.Domain.InputModels;
@@ -9,9 +10,9 @@ public interface ICategoryService
 {
     Task Delete(CategoryId id, CancellationToken token);
     Task<bool> Exists(CategoryId id, CancellationToken token);
-    Task<CategoryDto?> Get(CategoryId id, CancellationToken token);
-    Task<CategoryDto?> GetByName(string name, CancellationToken token);
-    Task<CategoryEditModel?> GetForEdit(CategoryId id, CancellationToken token);
+    ValueTask<Option<CategoryDto>> Get(CategoryId id, CancellationToken token);
+    ValueTask<Option<CategoryDto>> GetByName(string name, CancellationToken token);
+    ValueTask<Option<CategoryEditModel>> GetForEdit(CategoryId id, CancellationToken token);
     Task<PagedList<CategoryDto>> GetPaged(
         int pageIndex = 0,
         int pageSize = 40,

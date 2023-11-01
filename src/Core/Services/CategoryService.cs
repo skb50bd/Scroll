@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
+using LanguageExt;
 using LanguageExt.Common;
+using LanguageExt.UnsafeValueAccess;
 using Microsoft.EntityFrameworkCore;
 using Scroll.Core.Extensions;
 using Scroll.Core.ObjectMapping;
@@ -20,16 +22,20 @@ public class CategoryService(
     IValidator<CategoryEditModel> validator
     ) : ICategoryService
 {
-    public Task<CategoryDto?> Get(CategoryId id, CancellationToken token) =>
+    public ValueTask<Option<CategoryDto>> Get(CategoryId id, CancellationToken token) =>
         repo.GetById(id, token).ToDtoAsync();
 
-    public Task<CategoryDto?> GetByName(string name, CancellationToken token) =>
-        repo.Table
-            .Where(c => c.Name == name)
-            .FirstOrDefaultAsync(token)
-            .ToDtoAsync();
+    public async ValueTask<Option<CategoryDto>> GetByName(string name, CancellationToken token)
+    {
+        var category =
+            await repo.Table
+                .Where(c => c.Name == name)
+                .FirstOrDefaultAsync(token);
 
-    public Task<CategoryEditModel?> GetForEdit(CategoryId id, CancellationToken token) =>
+        return category.ToDto();
+    }
+
+    public ValueTask<Option<CategoryEditModel>> GetForEdit(CategoryId id, CancellationToken token) =>
         repo.GetById(id, token).ToEditModelAsync();
 
     public IQueryable<CategoryDto> GetQueryable() =>
@@ -90,13 +96,16 @@ public class CategoryService(
             return new(new ValidationException(validationResult.Errors));
         }
 
-        var entity =
-            await repo.GetById(new(editModel.Id), token)
-            ?? throw new ArgumentException("Invalid Update Operation. Entity doesn't exist");
+        var maybeEntity =
+            await repo.GetById(new(editModel.Id), token);
 
+        if (maybeEntity.IsNone)
+        {
+            return new(new CategoryNotFound(new(editModel.Id)));
+        }
+
+        var entity = maybeEntity.ValueUnsafe();
         editModel.ToEntity(entity);
-        entity.RequireNotNull();
-
         await repo.Update(entity, token);
         return entity.ToDto().RequireNotNull();
     }

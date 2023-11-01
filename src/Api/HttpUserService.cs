@@ -1,9 +1,7 @@
 using System.Security.Claims;
 using FluentValidation;
-using LanguageExt.Common;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using LanguageExt;
 using Microsoft.AspNetCore.Identity;
-using Scroll.Core.Extensions;
 using Scroll.Core.ObjectMapping;
 using Scroll.Core.Services;
 using Scroll.Data.Repositories;
@@ -20,8 +18,7 @@ public class HttpUserService(
         IUserStore<User> userStore,
         IValidator<LoginModel> loginModelValidator,
         IValidator<UserRegistrationModel> registrationModelValidator,
-        IHttpContextAccessor httpCtxAccessor,
-        SignInManager<User> signInManager
+        IHttpContextAccessor httpCtxAccessor
     ) : UserService(
         repo,
         config,
@@ -31,33 +28,17 @@ public class HttpUserService(
         registrationModelValidator
     ), IUserService
 {
-    private readonly IHttpContextAccessor _httpCtxAccessor = httpCtxAccessor;
-    private readonly SignInManager<User> _signInManager = signInManager;
-
-    public override async Task<UserDto?> GetCurrentUser(CancellationToken token)
+    public override async Task<Option<UserDto>> GetCurrentUser(CancellationToken token)
     {
-        if (_httpCtxAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)
+        if (httpCtxAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)
             is not string userIdStr
         )
         {
-            return null;
+            return Option<UserDto>.None;
         }
 
         var userId = Guid.Parse(userIdStr);
         var user = await Repo.GetById(userId, token);
         return user.ToDto();
     }
-
-    public override Task<Result<UserDto>> Login(LoginModel model, CancellationToken token) =>
-        AuthenticateAndGetUser(model, token).MapAsync(async user =>
-        {
-            await _signInManager
-                .SignInAsync(
-                    user,
-                    false,
-                    CookieAuthenticationDefaults.AuthenticationScheme
-                );
-
-            return user.ToDto();
-        });
 }

@@ -33,43 +33,34 @@ public class CategoriesController(
             );
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<CategoryDto?>> Get(Guid id, CancellationToken token)
-    {
-        var category = await categoryService.Get(new(id), token);
-        if (category is null)
-        {
-            return NotFound();
-        }
-
-        return Ok(category);
-    }
+    public ValueTask<ActionResult<CategoryDto>> Get(Guid id, CancellationToken token) =>
+        categoryService.Get(new(id), token)
+            .MatchActionResult(
+                dto => Ok(dto),
+                ()  => NotFound()
+            );
 
     [HttpGet("{name}")]
-    public async Task<ActionResult<CategoryDto?>> GetByName(string name, CancellationToken token)
-    {
-        var category = await categoryService.GetByName(name, token);
-        if (category is null)
-        {
-            return NotFound();
-        }
-
-        return Ok(category);
-    }
+    public ValueTask<ActionResult<CategoryDto>> GetByName(string name, CancellationToken token) =>
+        categoryService.GetByName(name, token)
+            .MatchActionResult(
+                dto => Ok(dto),
+                () =>  NotFound()
+            );
 
     [Authorize(Policy = "Admin")]
     [HttpPost]
     public Task<ActionResult<CategoryDto>> Post(CategoryEditModel model, CancellationToken token) =>
         categoryService
             .Insert(model, token)
-            .MatchAsync(
-                dto => CreatedAtAction(nameof(Get), new { id = dto.Id }, dto),
+            .MatchActionResult(
+                dto => CreatedAtAction(nameof(Get), new { id = dto.Id }, dto), 
                 exn => exn switch
                 {
                     ValidationException ex => UnprocessableEntity(ex.ToProblemDetails()),
                     _ => throw StandardErrors.Unreachable
-                },
-                token
-            );
+                }
+        );
 
     [Authorize(Policy = "Admin")]
     [HttpPut("{id:guid}")]
@@ -80,15 +71,16 @@ public class CategoriesController(
             return Conflict("Route id and model id do not match.");
         }
 
-        return await categoryService.Update(model, token)
-            .MatchAsync(
-                dto => NoContent(),
-                exn => exn switch
-                {
-                    ValidationException ex => UnprocessableEntity(ex.ToProblemDetails()),
-                    _ => throw StandardErrors.Unreachable
-                },
-                token
+        return await 
+            categoryService
+                .Update(model, token)
+                .MatchActionResult(
+                    dto => NoContent(), 
+                    exn => exn switch
+                    {
+                        ValidationException ex => UnprocessableEntity(ex.ToProblemDetails()),
+                        _ => throw StandardErrors.Unreachable
+                    }
             );
     }
 

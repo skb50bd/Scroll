@@ -15,8 +15,8 @@ services:
     command: server /data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
+      interval: 5s
+      timeout: 2s
       retries: 3
 
   db:
@@ -35,9 +35,9 @@ services:
       - 5432:5432
     healthcheck:
       test: [ "CMD", "pg_isready" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: 5s
+      timeout: 2s
+      retries: 3
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
@@ -47,26 +47,31 @@ services:
     build:
       context: .
       dockerfile: ./src/Api/Dockerfile
-      target: development
     image: scroll-api:latest
     container_name: scroll-api
+    expose:
+      - 80
     ports:
       - 8080:80
-    depends_on:
-      db:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
     networks:
       - scroll-net
-    develop:
-      watch:
-        - action: rebuild
-          path: .
     environment:
       ConnectionStrings__ScrollDb: "Host=db;Port=5432;Database=scroll1;Username=postgres;Password=yourPassword"
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:80'
+
+  web:
+    build:
+      context: .
+      dockerfile: ./src/Web/Dockerfile
+    image: scroll-web:latest
+    container_name: scroll-web
+    expose:
+      - 80
+    ports:
+      - 8081:80
+    networks:
+      - scroll-net
 
 volumes:
   pgdata:

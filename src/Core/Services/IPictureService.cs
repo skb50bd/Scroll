@@ -1,4 +1,5 @@
-﻿using Scroll.Domain;
+﻿using LanguageExt;
+using Scroll.Domain;
 using Scroll.Domain.Entities;
 
 namespace Scroll.Core.Services;
@@ -19,7 +20,7 @@ public interface IPictureService
 
     Task<PagedList<ScrollFileInfo>> Get(int pageIndex = 0, int pageSize = 10, CancellationToken token = default);
 
-    Task<ScrollFile?> Get(string name, CancellationToken token);
+    Task<Option<ScrollFile>> Get(string name, CancellationToken token);
 
     Task<bool> Exists(string name, CancellationToken token);
 }
