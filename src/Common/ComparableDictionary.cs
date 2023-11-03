@@ -1,4 +1,4 @@
-﻿namespace Scroll.Domain;
+﻿namespace Scroll.Common;
 
 public class ComparableDictionary<TKey, TValue> : Dictionary<TKey, TValue> where TKey : notnull
 {

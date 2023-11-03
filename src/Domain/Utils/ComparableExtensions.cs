@@ -1,9 +1,12 @@
-﻿namespace Scroll.Domain.Utils;
+﻿using Scroll.Common;
+
+namespace Scroll.Domain.Utils;
 
 public static class ComparableExtensions
 {
     public static ComparableList<TItem> ToComparableList<TItem>(
-        this IEnumerable<TItem> list)
+        this IEnumerable<TItem> list
+    )
     {
         var comparableList =
             new ComparableList<TItem>();
@@ -14,7 +17,8 @@ public static class ComparableExtensions
     }
 
     public static ComparableDictionary<TKey, TValue> ToComparableDict<TKey, TValue>(
-        this IDictionary<TKey, TValue> dict) where TKey : notnull
+        this IDictionary<TKey, TValue> dict
+    ) where TKey : notnull
     {
         var comparableDict =
             new ComparableDictionary<TKey, TValue>();

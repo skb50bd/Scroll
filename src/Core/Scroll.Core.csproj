@@ -5,19 +5,26 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Scroll.Core</RootNamespace>
   </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\Data\Scroll.Data.csproj"/>
+    <ProjectReference Include="..\Data\Scroll.Data.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="11.8.0"/>
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.0"/>
-    <PackageReference Include="LanguageExt.Core" Version="4.4.7"/>
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.4.0"/>
+    <PackageReference Include="FluentValidation" Version="11.8.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.0" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0-rc.2.23480.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0-rc.2.23479.6"/>
-    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.0-rc.2.23480.2"/>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0-rc.2.23479.6" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.0-rc.2.23480.2" />
     <PackageReference Include="Riok.Mapperly" Version="3.2.0" />
-    <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Scroll.Common" />
+    <Using Include="Scroll.Common.DTOs" />
+  </ItemGroup>
+
 </Project>

@@ -1,8 +1,6 @@
 using LanguageExt;
 using Riok.Mapperly.Abstractions;
-using Scroll.Core.Extensions;
-using Scroll.Domain;
-using Scroll.Domain.DTOs;
+using Scroll.Common.Extensions;
 using Scroll.Domain.Entities;
 using Scroll.Domain.InputModels;
 
@@ -57,13 +55,13 @@ public static partial class ProductMapper
         var srcObject = await source;
         return srcObject.Map(ToDto).Map(x => x!);
     }
-    
+
     public static async Task<Option<ProductDto>> ToDtoAsync(this Task<Option<Product>> source)
     {
         var srcObject = await source;
         return srcObject.Map(ToDto).Map(x => x!);
     }
-    
+
     public static async Task<Option<ProductEditModel>> ToEditModelAsync(this Task<Product?> source)
     {
         var srcObject = await source;

@@ -1,4 +1,4 @@
-﻿namespace Scroll.Domain.DTOs;
+﻿namespace Scroll.Common.DTOs;
 
 public class Picture(
     Stream stream,

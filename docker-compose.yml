@@ -1,7 +1,7 @@
 version: '3'
 services:
   minio:
-    image: minio/minio
+    image: quay.io/minio/minio
     container_name: minio
     networks:
       - scroll-net
@@ -12,7 +12,11 @@ services:
       - MINIO_ROOT_PASSWORD=yourPassword
     expose:
       - 9000
-    command: server /data
+      - 9090
+    ports:
+      - 9000:9000
+      - 9090:9090
+    command: server /data --console-address ":9090"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 5s

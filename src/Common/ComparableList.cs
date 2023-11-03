@@ -1,4 +1,4 @@
-﻿namespace Scroll.Domain;
+﻿namespace Scroll.Common;
 
 public class ComparableList<TItem> : List<TItem>
 {

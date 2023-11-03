@@ -1,90 +1,110 @@
-// using Minio;
-// using Minio.DataModel;
-// using System;
-// using System.Collections.Generic;
-// using System.IO;
-// using System.Linq;
-// using System.Threading.Tasks;
+using LanguageExt;
+using Minio;
+using Minio.DataModel.Args;
+using Minio.Exceptions;
+using Scroll.Data.Repositories;
+using Scroll.Domain;
+using Scroll.Domain.Entities;
 
-// public class MinioFileRepository : IFileRepository
-// {
-//     private readonly MinioClient _minioClient;
-//     private readonly string _bucketName;
+public class MinioFileRepository(IMinioClient client) : IFileRepository
+{
+    public Task Delete(string name, CancellationToken cancellationToken) =>
+        client.RemoveObjectAsync(
+            new RemoveObjectArgs().WithObject(name),
+            cancellationToken
+        );
 
-//     public MinioFileRepository(string endpoint, string accessKey, string secretKey, string bucketName)
-//     {
-//         _minioClient = new MinioClient(endpoint, accessKey, secretKey);
-//         _bucketName = bucketName;
-//     }
+    public Task DeleteFilesWithoutReference(CancellationToken cancellationToken)
+    {
+        // You'll need to define how you track references to files to implement this.
+        throw new NotImplementedException();
+    }
 
-//     public async Task Delete(string name)
-//     {
-//         await _minioClient.RemoveObjectAsync(_bucketName, name);
-//     }
+    public async Task<Option<ScrollFile>> Download(string fileName, CancellationToken cancellationToken)
+    {
+        await using var stream = new MemoryStream();
+        var args =
+            new GetObjectArgs()
+                .WithObject(fileName)
+                .WithCallbackStream(x => x.CopyTo(stream));
 
-//     public async Task DeleteFilesWithoutReference()
-//     {
-//         // This method may require additional logic to determine which files should be deleted.
-//         // Here's a simple example that deletes all files in the bucket.
-//         var objectsList = await _minioClient.ListObjectsAsync(_bucketName, recursive: true);
-//         foreach (var item in objectsList)
-//         {
-//             await _minioClient.RemoveObjectAsync(_bucketName, item.Key);
-//         }
-//     }
+        await client.GetObjectAsync(args, cancellationToken);
 
-//     public async Task<ScrollFile?> Download(string fileName)
-//     {
-//         await _minioClient.GetObjectAsync(_bucketName, fileName, stream =>
-//         {
-//             using (var memoryStream = new MemoryStream())
-//             {
-//                 stream.CopyTo(memoryStream);
-//                 return new ScrollFile
-//                 {
-//                     FileName = fileName,
-//                     Content = memoryStream.ToArray()
-//                 };
-//             }
-//         });
-//         return null;  // Return null if the object does not exist
-//     }
+        if (stream.Length is 0)
+        {
+            return Option<ScrollFile>.None;
+        }
 
-//     public async Task<bool> Exists(string name)
-//     {
-//         try
-//         {
-//             await _minioClient.StatObjectAsync(_bucketName, name);
-//             return true;
-//         }
-//         catch (Exception)
-//         {
-//             return false;
-//         }
-//     }
+        var newFile = new ScrollFile
+        {
+            Id          = FileId.New(),
+            Name        = fileName,
+            Content     = stream.ToArray(),
+            Size        = stream.Length,
+            ContentType = "application/octet-stream"
+        };
 
-//     public IQueryable<ScrollFileInfo> GetAll()
-//     {
-//         var objectsList = _minioClient.ListObjectsAsync(_bucketName, recursive: true).Result;
-//         return objectsList.Select(item => new ScrollFileInfo
-//         {
-//             FileName = item.Key,
-//             Size = item.Size
-//         }).AsQueryable();
-//     }
+        return newFile;
+    }
 
-//     public async Task Upload(FileInfo fileInfo, string contentType)
-//     {
-//         await _minioClient.PutObjectAsync(_bucketName, fileInfo.Name, fileInfo.FullName, contentType);
-//     }
+    public async Task<bool> Exists(string name, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await client.StatObjectAsync(
+                new StatObjectArgs().WithObject(name),
+                cancellationToken
+            )
+            .ConfigureAwait(false);
 
-//     public async Task Upload(Stream stream, string fileName, string contentType)
-//     {
-//         await _minioClient.PutObjectAsync(_bucketName, fileName, stream, stream.Length, contentType);
-//     }
+            return true;
+        }
+        catch (MinioException)
+        {
+            return false;
+        }
+    }
 
-//     public async Task Upload(string filePath, string fileName, string contentType)
-//     {
-//         await _minioClient.PutObjectAsync(_bucketName, fileName, filePath, contentType);
-//     }
-// }
+    public IQueryable<ScrollFileInfo> GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task Upload(FileInfo fileInfo, string contentType, CancellationToken cancellationToken)
+    {
+        await using var fileStream = fileInfo.OpenRead();
+        await client.PutObjectAsync(
+            new PutObjectArgs()
+                .WithObject(fileInfo.Name)
+                .WithStreamData(fileStream)
+                .WithContentType(contentType),
+            cancellationToken
+        )
+        .ConfigureAwait(false);
+    }
+
+    public async Task Upload(Stream stream, string fileName, string contentType, CancellationToken cancellationToken)
+    {
+        await client.PutObjectAsync(
+            new PutObjectArgs()
+                .WithObject(fileName)
+                .WithStreamData(stream)
+                .WithContentType(contentType),
+            cancellationToken
+        )
+        .ConfigureAwait(false);
+    }
+
+    public async Task Upload(string filePath, string fileName, string contentType, CancellationToken cancellationToken)
+    {
+        await using var fileStream = new FileStream(filePath, FileMode.Open);
+        await client.PutObjectAsync(
+            new PutObjectArgs()
+                .WithObject(fileName)
+                .WithStreamData(fileStream)
+                .WithContentType(contentType),
+            cancellationToken: cancellationToken
+        )
+        .ConfigureAwait(false);
+    }
+}

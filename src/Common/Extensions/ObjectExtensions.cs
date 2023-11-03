@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace Scroll.Core.Extensions;
+namespace Scroll.Common.Extensions;
 
 public static class ObjectExtensions
 {

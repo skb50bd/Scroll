@@ -3,11 +3,10 @@ using StronglyTypedIds;
 [assembly:StronglyTypedIdDefaults(
     backingType: StronglyTypedIdBackingType.Guid,
     converters: StronglyTypedIdConverter.TypeConverter
-        | StronglyTypedIdConverter.EfCoreValueConverter
         | StronglyTypedIdConverter.SystemTextJson
 )]
 
-namespace Scroll.Domain;
+namespace Scroll.Common;
 
 [StronglyTypedId]
 public partial struct ProductId { }

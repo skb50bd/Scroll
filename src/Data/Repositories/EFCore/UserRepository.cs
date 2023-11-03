@@ -1,7 +1,6 @@
 using LanguageExt;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Scroll.Domain;
 using Scroll.Domain.Entities;
 
 namespace Scroll.Data.Repositories.EFCore;

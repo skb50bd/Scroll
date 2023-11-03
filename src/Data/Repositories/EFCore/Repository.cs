@@ -75,12 +75,8 @@ public class Repository<TKey, T>(
 
     public void DeleteNoSave(IEnumerable<T> items) =>  Set.RemoveRange(items);
 
-    public async Task<bool> Exists(TKey id, CancellationToken token)
-    {
-        // TODO: Fix this to use AnyAsync
-        var item = await Set.FindAsync(id, token);
-        return item is not null;
-    }
+    public Task<bool> Exists(TKey id, CancellationToken token) =>
+        Set.AnyAsync(x => x.Id.Equals(id), token);
 
     public Task SaveChanges(CancellationToken token) => dbCtx.SaveChangesAsync(token);
 }

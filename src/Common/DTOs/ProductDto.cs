@@ -1,4 +1,4 @@
-﻿namespace Scroll.Domain.DTOs;
+﻿namespace Scroll.Common.DTOs;
 
 public sealed record ProductDto
 {
@@ -11,5 +11,5 @@ public sealed record ProductDto
     public string ImageName { get; set; } = string.Empty;
     public int ClickCount { get; set; }
     public int FavoriteCount { get; set; }
-    public ComparableList<CategoryDto> Categories { get; set; } = new();
+    public ComparableList<CategoryDto> Categories { get; set; } = [];
 }

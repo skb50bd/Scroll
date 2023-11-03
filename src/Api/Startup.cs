@@ -50,7 +50,18 @@ public static class WebServicesConfiguration
             .AddIdentityApiEndpoints<User>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders()
-            .AddSignInManager<AppSignInManager>();
+            .AddSignInManager<AppSignInManager>()
+                .Services
+            .AddCors(options =>
+            {
+                options.AddPolicy(
+                    "AllowAllOrigins",
+                    builder => builder
+                                .AllowAnyOrigin()
+                                .AllowAnyMethod()
+                                .AllowAnyHeader()
+                );
+            });
 
         return builder;
     }
@@ -59,6 +70,7 @@ public static class WebServicesConfiguration
     {
         if (app.Environment.IsDevelopment())
         {
+            app.UseCors("AllowAllOrigins");
             app.UseSwagger();
             app.UseSwaggerUI();
         }

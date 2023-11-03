@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Scroll.Data.Repositories;
 using Scroll.Data.Repositories.EFCore;
 using Scroll.Domain;
 using Scroll.Domain.Entities;
+using Minio;
 
 namespace Scroll.Data;
 
@@ -19,7 +21,26 @@ public static class DataConfigurator
         services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped<IFileRepository, FileRepository>();
+        // services.AddScoped<IFileRepository, FileRepository>();
+
+        services.AddSingleton<IMinioClientFactory, MinioClientFactory>(sp =>
+        {
+            var minioConfig = sp.GetRequiredService<IOptions<MinioConfig>>().Value;
+            return
+                new MinioClientFactory(config =>
+                    config.WithEndpoint(minioConfig.Endpoint)
+                        .WithCredentials(minioConfig.AccessKey, minioConfig.SecretKey)
+                );
+        });
+
+        services.AddScoped(sp =>
+        {
+            var minioClientFactory = sp.GetRequiredService<IMinioClientFactory>();
+            return minioClientFactory.CreateClient();
+        });
+
+        services.AddScoped<IFileRepository, MinioFileRepository>();
+
         return services;
     }
 

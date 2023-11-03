@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Scroll.Domain;
+using Scroll.Common;
 
 namespace Scroll.Data;
 

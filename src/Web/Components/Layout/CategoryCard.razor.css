@@ -1,0 +1,19 @@
+.category-card {
+    border: none;
+    border-radius: 15px;
+    background-color: #f4f4f4;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.category-card .card-body {
+    padding: 40px 20px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #333;
+}

@@ -1,11 +1,9 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Scroll.Core.Extensions;
+using Scroll.Api.Extensions;
 using Scroll.Core.Services;
 using Scroll.Core.Validators;
-using Scroll.Domain;
-using Scroll.Domain.DTOs;
 using Scroll.Domain.Exceptions;
 using Scroll.Domain.InputModels;
 
@@ -54,7 +52,7 @@ public class CategoriesController(
         categoryService
             .Insert(model, token)
             .MatchActionResult(
-                dto => CreatedAtAction(nameof(Get), new { id = dto.Id }, dto), 
+                dto => CreatedAtAction(nameof(Get), new { id = dto.Id }, dto),
                 exn => exn switch
                 {
                     ValidationException ex => UnprocessableEntity(ex.ToProblemDetails()),
@@ -71,11 +69,11 @@ public class CategoriesController(
             return Conflict("Route id and model id do not match.");
         }
 
-        return await 
+        return await
             categoryService
                 .Update(model, token)
                 .MatchActionResult(
-                    dto => NoContent(), 
+                    dto => NoContent(),
                     exn => exn switch
                     {
                         ValidationException ex => UnprocessableEntity(ex.ToProblemDetails()),

@@ -2,11 +2,9 @@ using System.Security.Claims;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Scroll.Core.Extensions;
+using Scroll.Api.Extensions;
 using Scroll.Core.Services;
 using Scroll.Core.Validators;
-using Scroll.Domain;
-using Scroll.Domain.DTOs;
 using Scroll.Domain.Exceptions;
 using Scroll.Domain.InputModels;
 
@@ -141,11 +139,11 @@ public class ProductsController(
             )
             .MatchActionResult(
                 count => Ok(count),
-                exn => (ActionResult<int>)(exn switch
+                exn => exn switch
                 {
                     FavoriteNotFound ex  => NotFound(ex.Message),
                     _                    => BadRequest(exn.Message)
-                })
+                }
             );
     }
 }

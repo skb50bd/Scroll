@@ -1,7 +1,7 @@
 ﻿using LanguageExt;
 using LanguageExt.Common;
-using Scroll.Domain;
-using Scroll.Domain.DTOs;
+using Scroll.Common;
+using Scroll.Common.DTOs;
 using Scroll.Domain.InputModels;
 
 namespace Scroll.Core.Services;

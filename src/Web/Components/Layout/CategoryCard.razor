@@ -1,0 +1,12 @@
+<div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+    <a href="/category/@Category.Id" class="card text-center category-card">
+        <div class="card-body">
+            @Category.Name
+        </div>
+    </a>
+</div>
+
+@code {
+    [Parameter]
+    public CategoryDto Category { get; set; } = null!;
+}

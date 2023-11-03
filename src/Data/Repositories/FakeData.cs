@@ -10,7 +10,7 @@ internal static class FakeData
 
     private static readonly Faker<Category> _categoryFaker =
         new Faker<Category>("en_US")
-            .RuleFor(c => c.Id,          f => new Domain.CategoryId(f.Database.Random.Guid()))
+            .RuleFor(c => c.Id,          f => new CategoryId(f.Database.Random.Guid()))
             .RuleFor(c => c.Name,        f => f.Commerce.Categories(1)[0])
             .RuleFor(c => c.Description, f => f.Lorem.Paragraph());
 
@@ -32,7 +32,7 @@ internal static class FakeData
 
     private static readonly Faker<Product> _productFaker =
         new Faker<Product>("en_US")
-            .RuleFor(c => c.Id,             f => new Domain.ProductId(f.Database.Random.Guid()))
+            .RuleFor(c => c.Id,             f => new ProductId(f.Database.Random.Guid()))
             .RuleFor(c => c.Title,          f => f.Commerce.ProductName())
             .RuleFor(c => c.Description,    f => f.Commerce.ProductDescription())
             .RuleFor(c => c.Price,          f => Convert.ToDecimal(f.Commerce.Price()))
