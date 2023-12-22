@@ -1,10 +1,6 @@
 using StronglyTypedIds;
 
-[assembly:StronglyTypedIdDefaults(
-    backingType: StronglyTypedIdBackingType.Guid,
-    converters: StronglyTypedIdConverter.TypeConverter
-        | StronglyTypedIdConverter.SystemTextJson
-)]
+[assembly:StronglyTypedIdDefaults(Template.Guid)]
 
 namespace Scroll.Common;
 

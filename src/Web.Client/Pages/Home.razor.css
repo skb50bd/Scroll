@@ -1,0 +1,41 @@
+.guides {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.1rem;
+}
+
+.guides-header {
+    margin-top: 1rem;
+    display: none;
+    width: 100%;
+    clear: both;
+    line-height: 1.8em;
+}
+.guides-header i {
+    margin-right: 10px;
+}
+
+.guides-header span {
+    font-weight: bold;
+    text-decoration: none;
+}
+
+@media screen and (min-width: 0) and (max-width: 767px) {
+    .guides-header {
+        display: block;
+    }
+
+    .guides {
+        margin-top: 0;
+    }
+}
+
+.products {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}

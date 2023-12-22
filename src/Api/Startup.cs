@@ -48,9 +48,9 @@ public static class WebServicesConfiguration
                 )
                 .Services
             .AddIdentityApiEndpoints<User>()
-            .AddEntityFrameworkStores<AppDbContext>()
-            .AddDefaultTokenProviders()
-            .AddSignInManager<AppSignInManager>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddSignInManager<AppSignInManager>()
+                .AddDefaultTokenProviders()
                 .Services
             .AddCors(options =>
             {

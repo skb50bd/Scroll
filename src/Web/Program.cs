@@ -1,43 +1,84 @@
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Scroll.Web.Components;
 using Scroll.Web.Services;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Scroll.Web.Identity;
+using Scroll.Core;
+using Scroll.Data;
+using Microsoft.AspNetCore.DataProtection;
+using Scroll.Domain.Entities;
+using Scroll.Web.Client.Services;
+using Scroll.Web.Client.Layout;
+using Scroll.Web.Client;
 
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
+using var cts = new CancellationTokenSource();
+Console.CancelKeyPress += (sender, e) =>
+{
+    e.Cancel = true;
+    cts.Cancel();
+};
 
-// builder.Services.AddApiAuthorization(opts =>
-// {
-//     opts.AuthenticationPaths.RegisterPath      = "account/register";
-//     opts.AuthenticationPaths.LogInPath         = "account/login";
-//     opts.AuthenticationPaths.LogInCallbackPath = "account/login-callback";
-//     opts.AuthenticationPaths.ProfilePath       = "security/profile";
-// });
-// builder.Services.AddAuthorizationCore();
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
+    .ConfigureServices()
+    .AddHttpContextAccessor()
+    .AddRazorComponents()
+    .AddInteractiveServerComponents()
+    .AddInteractiveWebAssemblyComponents()
+    .Services
+    .AddCascadingAuthenticationState()
+    .AddScoped<UserAccessor>()
+    .AddScoped<IdentityRedirectManager>()
+    .AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>()
+    .AddDataProtection()
+        .PersistKeysToDbContext<AppDbContext>()
+    .Services
+    .AddAuthorizationBuilder()
+        .AddPolicy("Admin", policy => policy.RequireClaim("IsAdmin", "True"))
+    .Services
+    .AddIdentityCore<User>()
+        .AddEntityFrameworkStores<AppDbContext>()
+        .AddSignInManager()
+        .AddDefaultTokenProviders()
+    .Services
+    .AddSingleton<IEmailSender, NoOpEmailSender>()
+    .AddOptions()
     .AddHttpClient(
         "API",
         configureClient: client =>
         {
             client.BaseAddress = new Uri("http://localhost:8080");
         }
-    );
-    // .AddHttpMessageHandler(sp =>
-    //     sp.GetService<AuthorizationMessageHandler>()
-    //         ?.ConfigureHandler(
-    //             authorizedUrls : new[] { "http://localhost:8080" },
-    //             scopes         : new[] { "api" }
-    //         )
-    //     ?? throw new InvalidOperationException(
-    //         "The authorization message handler must be registered in DI in order to use this overload."
-    //     )
-    // );
+    )
+    .Services
+    .AddScoped<CategoryService>()
+    .AddScoped<ProductService>()
+    .AddAuthentication(IdentityConstants.ApplicationScheme)
+    .AddIdentityCookies();
 
-builder.Services.AddOptions();
-builder.Services.AddScoped<CategoryService>();
-builder.Services.AddScoped<ProductService>();
+var app = builder.Build();
 
-await builder.Build().RunAsync();
+if (app.Environment.IsDevelopment())
+{
+    app.UseWebAssemblyDebugging();
+}
+else
+{
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+app.UseAntiforgery();
+
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode()
+    .AddInteractiveWebAssemblyRenderMode()
+    .AddAdditionalAssemblies(typeof(ProductCard).Assembly);
+
+app.MapAdditionalIdentityEndpoints();
+
+await app.RunAsync(cts.Token);

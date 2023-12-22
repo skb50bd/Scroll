@@ -5,5 +5,6 @@ public record UserDto(
     string Email,
     string FullName,
     string UserName,
-    DateTimeOffset JoinedOn
+    DateTimeOffset JoinedOn,
+    bool IsAdmin
 );
