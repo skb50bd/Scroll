@@ -5,7 +5,7 @@
     "dockerComposeFile": "docker-compose.yml",
     "service": "app",
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-	"forwardPorts": [5082, 7298, 5432, 9000, 9090],
+	"forwardPorts": [5082, 5067, 7298, 5432, 9000, 9090],
 	"portsAttributes": {
 		"5082": {
 			"label": "Api HTTP",
@@ -13,6 +13,10 @@
 		},
 		"7298": {
 			"label": "Api HTTPS",
+			"onAutoForward": "notify"
+		},
+		"5067": {
+			"label": "Web HTTP",
 			"onAutoForward": "notify"
 		},
 		"5432": {
@@ -28,7 +32,8 @@
 			"onAutoForward": "notify"
 		}
 	},
-	"postCreateCommand": "sudo dotnet workload update",
+	// "postCreateCommand": "sudo dotnet workload update",
+	"postCreateCommand": "dotnet dev-certs https --trust",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -36,8 +41,12 @@
 	"customizations": {
         "vscode": {
             "extensions": [
-                "humao.rest-client"
-            ]
+                "humao.rest-client",
+                "ms-dotnettools.csharp",
+                "pflannery.vscode-versionlens",
+                // "DennisMaxJung.vscode-dotnet-auto-attach"
+            ],
+			"recommendedExtensions": true
         }
 	}
 
