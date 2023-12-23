@@ -1,0 +1,46 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/dotnet-postgres
+{
+    "name": "Scroll",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"forwardPorts": [5082, 7298, 5432, 9000, 9090],
+	"portsAttributes": {
+		"5082": {
+			"label": "Api HTTP",
+			"onAutoForward": "notify"
+		},
+		"7298": {
+			"label": "Api HTTPS",
+			"onAutoForward": "notify"
+		},
+		"5432": {
+			"label": "Postgres",
+			"onAutoForward": "notify"
+		},
+		"9000": {
+			"label": "Minio",
+			"onAutoForward": "notify"
+		},
+		"9090": {
+			"label": "Minio Console",
+			"onAutoForward": "notify"
+		}
+	},
+	"postCreateCommand": "sudo dotnet workload update",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	"customizations": {
+        "vscode": {
+            "extensions": [
+                "humao.rest-client"
+            ]
+        }
+	}
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}

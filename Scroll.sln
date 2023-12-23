@@ -1,7 +1,7 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 #
 VisualStudioVersion = 17.5.002.0
-MinimumVisualStudioVersion =
+MinimumVisualStudioVersion = 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "src\Common\Scroll.Common.csproj", "{9E6E0D3F-B155-41FC-B59B-7B89C8390312}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Domain\Scroll.Domain.csproj", "{33FB2923-4691-4920-A7BF-7E07A9BE7539}"
@@ -11,10 +11,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "src\Core\Scroll.Core.csproj", "{D2B54E5B-25CD-4E6B-B123-16DF2C77BFB4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "src\Api\Scroll.Api.csproj", "{A17DD1C2-99C3-46D5-B484-603A3FCFF522}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Client", "src\Web.Client\Scroll.Web.Client.csproj", "{6F785623-ADBE-4F05-952C-6FF967E6EBF0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "src\Web\Scroll.Web.csproj", "{46B1F644-42D4-4C97-90D5-C172CCBE6DA6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "tests\Scroll.Tests\Scroll.Tests.csproj", "{80BF2FA4-3C8A-4191-A475-C7F1F9B7581C}"
 EndProject
@@ -28,6 +24,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFolder", "SolutionF
 		docker-compose.yml = docker-compose.yml
 		api-endpoints.http = api-endpoints.http
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scroll.Web", "src\Web\Scroll.Web.csproj", "{811FF7A1-7FF5-44CF-960D-9C25CCD1D641}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scroll.Web.Client", "src\Web.Client\Scroll.Web.Client.csproj", "{D2EEFD07-CF51-420C-9598-5BF1CCC13E76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,18 +55,18 @@ Global
 		{80BF2FA4-3C8A-4191-A475-C7F1F9B7581C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80BF2FA4-3C8A-4191-A475-C7F1F9B7581C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80BF2FA4-3C8A-4191-A475-C7F1F9B7581C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{46B1F644-42D4-4C97-90D5-C172CCBE6DA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{46B1F644-42D4-4C97-90D5-C172CCBE6DA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{46B1F644-42D4-4C97-90D5-C172CCBE6DA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{46B1F644-42D4-4C97-90D5-C172CCBE6DA6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9E6E0D3F-B155-41FC-B59B-7B89C8390312}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9E6E0D3F-B155-41FC-B59B-7B89C8390312}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E6E0D3F-B155-41FC-B59B-7B89C8390312}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E6E0D3F-B155-41FC-B59B-7B89C8390312}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F785623-ADBE-4F05-952C-6FF967E6EBF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F785623-ADBE-4F05-952C-6FF967E6EBF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F785623-ADBE-4F05-952C-6FF967E6EBF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F785623-ADBE-4F05-952C-6FF967E6EBF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{811FF7A1-7FF5-44CF-960D-9C25CCD1D641}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{811FF7A1-7FF5-44CF-960D-9C25CCD1D641}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{811FF7A1-7FF5-44CF-960D-9C25CCD1D641}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{811FF7A1-7FF5-44CF-960D-9C25CCD1D641}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2EEFD07-CF51-420C-9598-5BF1CCC13E76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2EEFD07-CF51-420C-9598-5BF1CCC13E76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2EEFD07-CF51-420C-9598-5BF1CCC13E76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2EEFD07-CF51-420C-9598-5BF1CCC13E76}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

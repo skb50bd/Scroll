@@ -75,7 +75,7 @@ public static class WebServicesConfiguration
             app.UseSwaggerUI();
         }
 
-        app.UseHttpsRedirection();
+        // app.UseHttpsRedirection();
 
         app.UseAuthorization();
         app.MapGroup("/account")
