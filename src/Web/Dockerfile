@@ -7,28 +7,28 @@ COPY --parents ./**/*.fsproj ./
 COPY --parents ./**/*.csproj ./
 
 RUN --mount=type=cache,target=/root/.nuget/packages \
-    dotnet restore /source/src/Api/Scroll.Api.csproj --use-current-runtime
+    dotnet restore /source/src/Web/Scroll.Web.csproj --use-current-runtime
 
-COPY ./src/Common/ ./src/Common
-COPY ./src/Domain/ ./src/Domain/
-COPY ./src/Core/   ./src/Core/
-COPY ./src/Data/   ./src/Data/
-COPY ./src/Api/    ./src/Api/
+COPY ./src/Common/     ./src/Common
+COPY ./src/Domain/     ./src/Domain/
+COPY ./src/Core/       ./src/Core/
+COPY ./src/Data/       ./src/Data/
+COPY ./src/Web.Client/ ./src/Web.Client/
+COPY ./src/Web/        ./src/Web/
 
 from build as develop
-WORKDIR /source/src/Api
+WORKDIR /source/src/Web
 RUN --mount=type=cache,target=/root/.nuget/packages \
     dotnet watch run --no-restore
 
 from build as publish
 RUN --mount=type=cache,target=/root/.nuget/packages \
-    dotnet publish /source/src/Api/Scroll.Api.csproj \
+    dotnet publish /source/src/Web/Scroll.Web.csproj \
         -o /app \
-        --no-restore \
-        /p:DebugType=None /p:DebugSymbols=false
+        --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine as final
 RUN apk add --no-cache curl
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["/app/Scroll.Api"]
+ENTRYPOINT ["/app/Scroll.Web"]

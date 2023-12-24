@@ -1,18 +1,14 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/dotnet-postgres
 {
-    "name": "Scroll",
-    "dockerComposeFile": "compose-dev.yml",
-    "service": "app",
-    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-  "forwardPorts": [5082, 5067, 7298, 5432, 9000, 9090],
+  "name": "Scroll",
+  "dockerComposeFile": "compose-dev.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "forwardPorts": [ 8080, 5067, 5432, 9000, 9090 ],
   "portsAttributes": {
-    "5082": {
+    "8080": {
       "label": "Api HTTP",
-      "onAutoForward": "notify"
-    },
-    "7298": {
-      "label": "Api HTTPS",
       "onAutoForward": "notify"
     },
     "5067": {
@@ -39,16 +35,16 @@
   // "features": {},
 
   "customizations": {
-        "vscode": {
-            "extensions": [
-                "humao.rest-client",
-                "ms-dotnettools.csharp",
-                "pflannery.vscode-versionlens",
-                "ms-dotnettools.csdevkit",
-                "ms-azuretools.vscode-docker"
-            ],
+    "vscode": {
+      "extensions": [
+        "humao.rest-client",
+        "ms-dotnettools.csharp",
+        "pflannery.vscode-versionlens",
+        "ms-dotnettools.csdevkit",
+        "ms-azuretools.vscode-docker"
+      ],
       "recommendedExtensions": true
-        }
+    }
   }
 
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.

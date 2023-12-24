@@ -17,7 +17,7 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<
-        AuthenticationStateProvider, 
+        AuthenticationStateProvider,
         PersistingRevalidatingAuthenticationStateProvider>();
 
 builder.Services
@@ -28,8 +28,8 @@ builder.Services
     })
     .AddIdentityCookies();
 
-var connectionString = 
-    builder.Configuration.GetConnectionString("DefaultConnection") 
+var connectionString =
+    builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services

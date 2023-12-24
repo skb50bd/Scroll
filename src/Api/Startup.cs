@@ -2,6 +2,8 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Minio;
+using Minio.AspNetCore.HealthChecks;
 using Scroll.Api.Services;
 using Scroll.Core;
 using Scroll.Core.Services;
@@ -35,7 +37,7 @@ public static class WebServicesConfiguration
             .AddControllers()
             .AddJsonOptions(o =>
             {
-                o.JsonSerializerOptions.ReferenceHandler       = ReferenceHandler.IgnoreCycles;
+                o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 o.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             }).Services
             .AddDataProtection()
@@ -61,7 +63,10 @@ public static class WebServicesConfiguration
                                 .AllowAnyMethod()
                                 .AllowAnyHeader()
                 );
-            });
+            })
+            .AddHealthChecks()
+                .AddNpgSql(configuration.GetConnectionString("ScrollDb")!);
+                //.AddMinio(sp => sp.GetRequiredService<MinioClient>());
 
         return builder;
     }
@@ -84,6 +89,7 @@ public static class WebServicesConfiguration
             .WithDescription("Account management endpoints");
 
         app.MapControllers();
+        app.MapHealthChecks("/health");
 
         return app;
     }

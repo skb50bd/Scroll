@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Scroll.Domain.DTOs;
 using Scroll.Domain.Entities;
 using Scroll.Web.Client;
 
@@ -89,13 +90,9 @@ internal sealed class PersistingRevalidatingAuthenticationStateProvider : Revali
             var userId = principal.FindFirst(options.ClaimsIdentity.UserIdClaimType)?.Value;
             var email = principal.FindFirst(options.ClaimsIdentity.EmailClaimType)?.Value;
 
-            if (userId != null && email != null)
+            if (Guid.TryParse(userId, out var id) && email is not null)
             {
-                state.PersistAsJson(nameof(UserInfo), new UserInfo
-                {
-                    UserId = userId,
-                    Email = email,
-                });
+                state.PersistAsJson(nameof(UserInfo), new UserInfo(id, email));
             }
         }
     }

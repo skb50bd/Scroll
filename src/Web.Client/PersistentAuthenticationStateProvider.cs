@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Scroll.Domain.DTOs;
 
 namespace Scroll.Web.Client;
 
@@ -27,7 +28,7 @@ internal class PersistentAuthenticationStateProvider : AuthenticationStateProvid
         }
 
         Claim[] claims = [
-            new Claim(ClaimTypes.NameIdentifier, userInfo.UserId),
+            new Claim(ClaimTypes.NameIdentifier, userInfo.Id.ToString()),
             new Claim(ClaimTypes.Name, userInfo.Email),
             new Claim(ClaimTypes.Email, userInfo.Email) ];
 
