@@ -15,12 +15,12 @@ COPY ./src/Core/   ./src/Core/
 COPY ./src/Data/   ./src/Data/
 COPY ./src/Api/    ./src/Api/
 
-from build as develop
+FROM build as develop
 WORKDIR /source/src/Api
 RUN --mount=type=cache,target=/root/.nuget/packages \
     dotnet watch run --no-restore
 
-from build as publish
+FROM build as publish
 RUN --mount=type=cache,target=/root/.nuget/packages \
     dotnet publish /source/src/Api/Scroll.Api.csproj \
         -o /app \

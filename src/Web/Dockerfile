@@ -16,12 +16,12 @@ COPY ./src/Data/       ./src/Data/
 COPY ./src/Web.Client/ ./src/Web.Client/
 COPY ./src/Web/        ./src/Web/
 
-from build as develop
+FROM build as develop
 WORKDIR /source/src/Web
 RUN --mount=type=cache,target=/root/.nuget/packages \
     dotnet watch run --no-restore
 
-from build as publish
+FROM build as publish
 RUN --mount=type=cache,target=/root/.nuget/packages \
     dotnet publish /source/src/Web/Scroll.Web.csproj \
         -o /app \
